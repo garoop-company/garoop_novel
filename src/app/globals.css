@@ -1,0 +1,32 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
+@theme {
+  --font-serif: "Libre Baskerville", serif;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-900 text-gray-200;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif text-white;
+  }
+
+  /* Add a custom scrollbar for a more thematic feel */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #111827; /* bg-gray-900 */
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #dc2626; /* bg-red-600 */
+    border-radius: 6px;
+    border: 3px solid #111827; /* bg-gray-900 */
+  }
+}
