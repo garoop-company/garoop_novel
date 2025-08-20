@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 
 export default function HomePage() {
@@ -12,7 +11,7 @@ export default function HomePage() {
       </div>
 
       <div className="mb-8 z-10">
-        <Image
+        <img
           src="https://placehold.co/400/000000/FFFFFF?text=?"
           alt="Mysterious Character"
           width={400}
