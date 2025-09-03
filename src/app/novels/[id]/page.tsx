@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import ClientNovelView from './ClientNovelView';
 import Link from 'next/link';
+import Footer from '@/app/components/Footer';
 
 type Novel = {
   id: string;
@@ -86,11 +87,7 @@ export default async function Page({ params, searchParams }: Props) {
         page={page}
         lang={novel.lang}   // ← 渡す
       />
-      <footer className="text-center mt-12">
-        <Link href="/novels" className="text-red-500 hover:underline">
-          &larr; Back to the Library
-        </Link>
-      </footer>
+      <Footer />
     </div>
   );
 }

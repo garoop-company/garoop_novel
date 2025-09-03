@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { promises as fs } from 'fs';
 import path from 'path';
+import Footer from '../components/Footer';
 
 type Novel = {
   id: string;
@@ -177,11 +178,7 @@ const NovelsPage = async ({ searchParams }: Props) => {
         )}
       </main>
 
-      <footer className="text-center mt-12">
-        <Link href="/" className="text-red-500 hover:underline">
-          &larr; Back to the Entrance
-        </Link>
-      </footer>
+      <Footer/>
     </div>
   );
 };
