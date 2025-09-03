@@ -1,7 +1,8 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { promises as fs } from 'fs';
 import path from 'path';
+import ClientNovelView from './ClientNovelView';
+import Link from 'next/link';
 
 type Novel = {
   id: string;
@@ -9,104 +10,87 @@ type Novel = {
   description: string;
   category: string;
   content: string[];
+  keywords: string;
+  lang: string;
 };
 
-// This function tells Next.js which dynamic routes to pre-render at build time.
-export async function generateStaticParams() {
+async function getNovels(): Promise<Novel[]> {
   const jsonDirectory = path.join(process.cwd(), 'src', 'data');
   const fileContents = await fs.readFile(path.join(jsonDirectory, 'novels.json'), 'utf8');
-  const novels: Novel[] = JSON.parse(fileContents);
-
-  return novels.map((novel) => ({
-    id: novel.id,
-  }));
+  return JSON.parse(fileContents);
 }
 
 async function getNovelById(id: string): Promise<Novel | undefined> {
-  const jsonDirectory = path.join(process.cwd(), 'src', 'data');
-  const fileContents = await fs.readFile(path.join(jsonDirectory, 'novels.json'), 'utf8');
-  const novels: Novel[] = JSON.parse(fileContents);
-  return novels.find((novel) => novel.id === id);
+  const novels = await getNovels();
+  return novels.find((n) => n.id === id);
 }
 
-type Props = {
+// 事前ビルド対象
+export async function generateStaticParams() {
+  const novels = await getNovels();
+  return novels.map((n) => ({ id: n.id }));
+}
+
+// Headではなくmetadata APIを推奨
+export async function generateMetadata({
+  params,
+  searchParams
+}: {
   params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
-
-const NovelDetailPage = async ({ params, searchParams }: Props) => {
+  searchParams: { [k: string]: string | string[] | undefined };
+}) {
   const novel = await getNovelById(params.id);
+  if (!novel) return {};
 
-  if (!novel) {
-    notFound();
-  }
+  const raw = searchParams.page ? parseInt(searchParams.page as string, 10) : 1;
+  const page = Number.isNaN(raw) || raw < 1 ? 1 : Math.min(raw, novel.content.length);
+
+  const title = `${novel.title}${novel.content.length > 1 ? ` - Page ${page}` : ''} | ${novel.category}`;
+  const description = novel.description?.slice(0, 160) ?? novel.title;
+
+  return {
+    title,
+    description,
+    keywords: novel.keywords,
+    alternates: { canonical: `/novels/${novel.id}${page > 1 ? `?page=${page}` : ''}` },
+    other: { 'content-language': novel.lang },
+    openGraph: {
+      title,
+      description,
+      type: 'article',
+      locale: novel.lang === 'ja' ? 'ja_JP' : 'en_US',
+      url: `/novels/${novel.id}${page > 1 ? `?page=${page}` : ''}`,
+      siteName: 'Garoop Novels',
+    },
+    twitter: { card: 'summary_large_image', title, description },
+  };
+}
+
+type Props = { params: { id: string }; searchParams: { [k: string]: string | string[] | undefined } };
+
+export default async function Page({ params, searchParams }: Props) {
+  const novel = await getNovelById(params.id);
+  if (!novel) notFound();
 
   let page = searchParams.page ? parseInt(searchParams.page as string, 10) : 1;
-  // Ensure page is within valid range
-  if (isNaN(page) || page < 1) {
-    page = 1;
-  }
-  if (page > novel.content.length) {
-    page = novel.content.length;
-  }
-
-  const pageIndex = page - 1;
-  const currentPageContent = novel.content[pageIndex];
-  const totalPages = novel.content.length;
-
-  const hasNextPage = pageIndex < totalPages - 1;
-  const hasPrevPage = pageIndex > 0;
+  if (isNaN(page) || page < 1) page = 1;
+  if (page > novel.content.length) page = novel.content.length;
 
   return (
-    <div className="bg-gray-900 min-h-screen text-white flex flex-col items-center p-4 sm:p-8">
-      <div className="max-w-4xl w-full bg-gray-800/50 rounded-lg shadow-lg p-4 sm:p-8">
-        <header className="text-center mb-6">
-          <h1 className="text-3xl sm:text-4xl font-bold font-serif">{novel.title}</h1>
-          <p className={`text-md sm:text-lg mt-2 inline-block ${novel.category === 'Horror' ? 'text-red-400' : 'text-blue-400'}`}>
-            {novel.category}
-          </p>
-        </header>
-
-        <main className="bg-gray-900/70 p-6 sm:p-8 rounded-lg shadow-inner mb-6 min-h-[30vh] sm:min-h-[40vh] flex items-center">
-          <p className="text-gray-300 leading-relaxed text-md sm:text-lg whitespace-pre-wrap w-full">
-            {currentPageContent}
-          </p>
-        </main>
-
-        <nav className="flex justify-between items-center">
-          <div>
-            {hasPrevPage ? (
-              <Link href={`/novels/${novel.id}?page=${page - 1}`} className="px-4 py-2 sm:px-6 sm:py-2 bg-gray-700 rounded hover:bg-gray-600 transition-colors text-sm sm:text-base">
-                &larr; Previous
-              </Link>
-            ) : (
-               <span className="px-4 py-2 sm:px-6 sm:py-2 bg-gray-800 text-gray-500 rounded cursor-not-allowed text-sm sm:text-base">&larr; Previous</span>
-            )}
-          </div>
-
-          <div className="text-gray-400 text-sm sm:text-base">
-            Page {page} of {totalPages}
-          </div>
-
-          <div>
-            {hasNextPage ? (
-              <Link href={`/novels/${novel.id}?page=${page + 1}`} className="px-4 py-2 sm:px-6 sm:py-2 bg-gray-700 rounded hover:bg-gray-600 transition-colors text-sm sm:text-base">
-                Next &rarr;
-              </Link>
-            ) : (
-              <span className="px-4 py-2 sm:px-6 sm:py-2 bg-gray-800 text-gray-500 rounded cursor-not-allowed text-sm sm:text-base">Next &rarr;</span>
-            )}
-          </div>
-        </nav>
-
-        <footer className="text-center mt-8">
-            <Link href="/novels" className="text-red-500 hover:underline">
-              Back to Library
-            </Link>
-        </footer>
-      </div>
+    <div className="bg-gray-900 min-h-screen text-white flex flex-col items-center p-4 sm:p-8 relative overflow-hidden">
+      <ClientNovelView
+        novelId={novel.id}
+        title={novel.title}
+        category={novel.category}
+        content={novel.content}
+        page={page}
+        lang={novel.lang}   // ← 渡す
+      />
+      <footer className="text-center mt-12">
+        <Link href="/novels" className="text-red-500 hover:underline">
+          &larr; Back to the Library
+        </Link>
+      </footer>
     </div>
   );
-};
-
-export default NovelDetailPage;
+}
