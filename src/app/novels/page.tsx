@@ -173,7 +173,7 @@ const NovelsPage = async ({ searchParams }: Props) => {
             <span className="text-gray-200">category = {category}</span>
             {q && (
               <>
-                , <span className="text-gray-200">title ~ "{q}"</span>
+                , <span className="text-gray-200">title ~ {q}</span>
               </>
             )}
           </span>
