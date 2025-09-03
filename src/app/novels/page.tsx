@@ -72,7 +72,11 @@ const NovelsPage = async ({ searchParams }: Props) => {
   return (
     <div className="bg-gray-900 min-h-screen text-white p-8">
       <header className="text-center mb-10">
-        <h1 className="text-5xl font-bold font-serif">Library of Whispers</h1>
+        <Link href="/novels">
+          <h1 className="text-5xl font-bold font-serif cursor-pointer hover:text-red-400 transition-colors">
+            Library of Whispers
+          </h1>
+        </Link>
         <p className="text-lg text-gray-400 mt-2">Choose your poison.</p>
 
         {/* タイトル検索フォーム（GETでクエリを保つ） */}
@@ -141,8 +145,8 @@ const NovelsPage = async ({ searchParams }: Props) => {
             <Link
               href={buildHref({ category: 'all' })}
               className={`px-3 py-1.5 rounded-full text-sm border ${category === 'all'
-                  ? 'bg-blue-500 text-white border-blue-400'
-                  : 'bg-gray-800 border-gray-600 hover:bg-gray-700'
+                ? 'bg-blue-500 text-white border-blue-400'
+                : 'bg-gray-800 border-gray-600 hover:bg-gray-700'
                 }`}
             >
               All
@@ -152,8 +156,8 @@ const NovelsPage = async ({ searchParams }: Props) => {
                 key={cat}
                 href={buildHref({ category: cat })}
                 className={`px-3 py-1.5 rounded-full text-sm border ${category === cat
-                    ? 'bg-blue-500 text-white border-blue-400'
-                    : 'bg-gray-800 border-gray-600 hover:bg-gray-700'
+                  ? 'bg-blue-500 text-white border-blue-400'
+                  : 'bg-gray-800 border-gray-600 hover:bg-gray-700'
                   }`}
               >
                 {cat}
@@ -200,8 +204,8 @@ const NovelsPage = async ({ searchParams }: Props) => {
                 <div className="flex items-center justify-between">
                   <span
                     className={`text-xs font-semibold px-2 py-0.5 rounded ${novel.category === 'Horror'
-                        ? 'bg-red-900/40 text-red-300'
-                        : 'bg-blue-900/40 text-blue-300'
+                      ? 'bg-red-900/40 text-red-300'
+                      : 'bg-blue-900/40 text-blue-300'
                       }`}
                   >
                     {novel.category}
