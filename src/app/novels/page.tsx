@@ -72,7 +72,7 @@ const NovelsPage = async ({ searchParams }: Props) => {
   return (
     <div className="bg-gray-900 min-h-screen text-white p-8">
       <header className="text-center mb-10">
-        <Link href="/novels">
+        <Link href="/">
           <h1 className="text-5xl font-bold font-serif cursor-pointer hover:text-red-400 transition-colors">
             Library of Whispers
           </h1>
