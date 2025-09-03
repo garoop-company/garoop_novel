@@ -12,7 +12,7 @@ export default function HomePage() {
 
       <div className="mb-8 z-10">
         <img
-          src="https://placehold.co/400/000000/FFFFFF?text=?"
+          src="https://d3ez7mat4qd439.cloudfront.net/garoo_kawaii.webp"
           alt="Mysterious Character"
           width={400}
           height={600}
