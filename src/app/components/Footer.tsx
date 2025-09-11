@@ -42,6 +42,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="https://garoop.notion.site/e49ed6d78ffc464f917792c822b4239f?source=copy_link" className="hover:text-pink-400 transition-colors duration-300">
+                  プライバシーポリシー
+                </Link>
+              </li>
+              <li>
                 <Link href="https://docs.google.com/forms/d/e/1FAIpQLScAQyFYrJD2ELoDTNyjVhIh3KsMPN35Rm-kpTXcpt06_wQbcA/viewform" className="hover:text-pink-400 transition-colors duration-300">
                   お問い合わせ
                 </Link>

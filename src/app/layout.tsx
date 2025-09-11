@@ -16,6 +16,7 @@ export default function RootLayout({
       <head>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7714651880162273"
           crossOrigin="anonymous"></script>
+        <meta name="icon" content="/icon.svg" />
       </head>
       <body className="antialiased">
         {children}
