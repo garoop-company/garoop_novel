@@ -79,6 +79,22 @@ const NovelsPage = async ({ searchParams }: Props) => {
         </Link>
         <p className="text-lg text-gray-400 mt-2">Choose your poison.</p>
 
+        {/* 新しいコンテンツへのリンク */}
+        <div className="mt-6 flex justify-center gap-4">
+          <Link
+            href="/games/quiz"
+            className="px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition"
+          >
+            クイズに挑戦
+          </Link>
+          <Link
+            href="/videos"
+            className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
+          >
+            動画を見る
+          </Link>
+        </div>
+
         {/* タイトル検索フォーム（GETでクエリを保つ） */}
         <form
           method="GET"
