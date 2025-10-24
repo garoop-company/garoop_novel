@@ -37,6 +37,16 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/games/quiz" className="hover:text-pink-400 transition-colors duration-300">
+                  ゲーム
+                </Link>
+              </li>
+              <li>
+                <Link href="/videos" className="hover:text-pink-400 transition-colors duration-300">
+                  動画
+                </Link>
+              </li>
+              <li>
                 <Link href="https://garooptv-lp.vercel.app/" className="hover:text-pink-400 transition-colors duration-300">
                   GaroopTV
                 </Link>
