@@ -3,18 +3,18 @@ import Script from 'next/script';
 
 // ✅ メタデータ（SEO対策）
 export const metadata = {
-  title: 'Garuchan News（ガルちゃんニュース） | AIと笑いで読む面白ニュースメディア',
+  title: 'Garuchan Game（ガルちゃんゲーム） | AIと笑いのゲームばかり',
   description:
-    'Garuchan News（ガルちゃんニュース）は、AIとユーモアで時代を読み解く新感覚ニュースメディア。生成AI、地方創生、エンタメ、教育、政治、社会トレンドを独自視点で発信。',
+    'Garuchan Game（ガルちゃんゲーム）は、AIとユーモアで時代を読み解く新感覚ニュースメディア。生成AI、地方創生、エンタメ、教育、政治、社会トレンドを独自視点で発信。',
   keywords:
     'ガルちゃんニュース, Garuchan News, Garoop, 面白ニュース, AIニュース, 生成AI, 地方創生, エンタメ, 教育, 政治, 社会, 山下大貴',
   alternates: {
     canonical: 'https://garoop.jp/news',
   },
   openGraph: {
-    title: 'Garuchan News（ガルちゃんニュース）',
+    title: 'Garuchan Game（ガルちゃんゲーム）',
     description:
-      'AIと笑いで読む面白ニュースメディア｜Garoop公式',
+      'AIと笑いのゲームばかり｜Garoop公式',
     url: 'https://garoop.jp/news',
     siteName: 'Garuchan News',
     images: [

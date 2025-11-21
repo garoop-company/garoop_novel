@@ -1,13 +1,13 @@
-import RpgGame from '@/components/games/RpgGame';
+import MovieGame from '@/components/games/MovieGame';
 import Script from 'next/script';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'ガルちゃんの冒険 | Garuchan Game',
-    description: 'バズり魔王を倒せ！SNSトレンドをテーマにしたRPG。',
+    title: 'ガルちゃんスタジオ | Garuchan Game',
+    description: '大ヒット映画を作ろう！ジャンルとテーマを選んで映画監督になろう。',
     openGraph: {
-        title: 'ガルちゃんの冒険 | Garuchan Game',
-        description: 'バズり魔王を倒せ！SNSトレンドをテーマにしたRPG。',
+        title: 'ガルちゃんスタジオ | Garuchan Game',
+        description: '大ヒット映画を作ろう！ジャンルとテーマを選んで映画監督になろう。',
         images: ['/images/garoop_battle.png'],
     },
 };
@@ -16,17 +16,17 @@ export default function Page() {
     return (
         <>
             <Script
-                id="rpg-game-jsonld"
+                id="movie-game-jsonld"
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "Game",
-                        "name": "ガルちゃんの冒険",
-                        "description": "バズり魔王を倒せ！SNSトレンドをテーマにしたRPG。",
-                        "url": "https://garoop.jp/game/rpg",
+                        "name": "ガルちゃんスタジオ",
+                        "description": "大ヒット映画を作ろう！ジャンルとテーマを選んで映画監督になろう。",
+                        "url": "https://garoop.jp/game/movie",
                         "image": "https://garoop.jp/images/garoop_battle.png",
-                        "genre": "RPG",
+                        "genre": "Simulation",
                         "author": {
                             "@type": "Organization",
                             "name": "Garoop"
@@ -34,7 +34,7 @@ export default function Page() {
                     }),
                 }}
             />
-            <RpgGame />
+            <MovieGame />
         </>
     );
 }

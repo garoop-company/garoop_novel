@@ -1,13 +1,13 @@
-import RpgGame from '@/components/games/RpgGame';
+import DonkeyGame from '@/components/games/DonkeyGame';
 import Script from 'next/script';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'ガルちゃんの冒険 | Garuchan Game',
-    description: 'バズり魔王を倒せ！SNSトレンドをテーマにしたRPG。',
+    title: 'ドンキーガルーク | Garuchan Game',
+    description: 'タルをよけて登れ！頂上を目指すクライミングアクション。',
     openGraph: {
-        title: 'ガルちゃんの冒険 | Garuchan Game',
-        description: 'バズり魔王を倒せ！SNSトレンドをテーマにしたRPG。',
+        title: 'ドンキーガルーク | Garuchan Game',
+        description: 'タルをよけて登れ！頂上を目指すクライミングアクション。',
         images: ['/images/garoop_battle.png'],
     },
 };
@@ -16,17 +16,17 @@ export default function Page() {
     return (
         <>
             <Script
-                id="rpg-game-jsonld"
+                id="donkey-game-jsonld"
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "Game",
-                        "name": "ガルちゃんの冒険",
-                        "description": "バズり魔王を倒せ！SNSトレンドをテーマにしたRPG。",
-                        "url": "https://garoop.jp/game/rpg",
+                        "name": "ドンキーガルーク",
+                        "description": "タルをよけて登れ！頂上を目指すクライミングアクション。",
+                        "url": "https://garoop.jp/game/donkey",
                         "image": "https://garoop.jp/images/garoop_battle.png",
-                        "genre": "RPG",
+                        "genre": "Action",
                         "author": {
                             "@type": "Organization",
                             "name": "Garoop"
@@ -34,7 +34,7 @@ export default function Page() {
                     }),
                 }}
             />
-            <RpgGame />
+            <DonkeyGame />
         </>
     );
 }

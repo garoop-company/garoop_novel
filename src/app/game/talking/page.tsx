@@ -1,13 +1,13 @@
-import EscapeGame from '@/components/games/EscapeGame';
+import TalkingGame from '@/components/games/TalkingGame';
 import Script from 'next/script';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: '脱出ゲーム | Garuchan Game',
-    description: '部屋から脱出せよ！謎を解いて鍵を見つけ出そう。',
+    title: 'おしゃべりガルちゃん | Garuchan Game',
+    description: 'さわるとしゃべるよ！ガルちゃんと楽しくお話ししよう。',
     openGraph: {
-        title: '脱出ゲーム | Garuchan Game',
-        description: '部屋から脱出せよ！謎を解いて鍵を見つけ出そう。',
+        title: 'おしゃべりガルちゃん | Garuchan Game',
+        description: 'さわるとしゃべるよ！ガルちゃんと楽しくお話ししよう。',
         images: ['/images/garoop_happy.png'],
     },
 };
@@ -16,17 +16,17 @@ export default function Page() {
     return (
         <>
             <Script
-                id="escape-game-jsonld"
+                id="talking-game-jsonld"
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "Game",
-                        "name": "脱出ゲーム",
-                        "description": "部屋から脱出せよ！謎を解いて鍵を見つけ出そう。",
-                        "url": "https://garoop.jp/game/escape",
+                        "name": "おしゃべりガルちゃん",
+                        "description": "さわるとしゃべるよ！ガルちゃんと楽しくお話ししよう。",
+                        "url": "https://garoop.jp/game/talking",
                         "image": "https://garoop.jp/images/garoop_happy.png",
-                        "genre": "Puzzle",
+                        "genre": "Simulation",
                         "author": {
                             "@type": "Organization",
                             "name": "Garoop"
@@ -34,7 +34,7 @@ export default function Page() {
                     }),
                 }}
             />
-            <EscapeGame />
+            <TalkingGame />
         </>
     );
 }

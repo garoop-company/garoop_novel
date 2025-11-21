@@ -1,13 +1,13 @@
-import MysteryGame from '@/components/games/MysteryGame';
+import SomenGame from '@/components/games/SomenGame';
 import Script from 'next/script';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: '名探偵ガルちゃん | Garuchan Game',
-    description: '事件を解決しよう！プリンを食べた犯人は誰だ！？',
+    title: '流しそうめん | Garuchan Game',
+    description: 'そうめんをキャッチ！流れてくるそうめんをうまくつかもう。',
     openGraph: {
-        title: '名探偵ガルちゃん | Garuchan Game',
-        description: '事件を解決しよう！プリンを食べた犯人は誰だ！？',
+        title: '流しそうめん | Garuchan Game',
+        description: 'そうめんをキャッチ！流れてくるそうめんをうまくつかもう。',
         images: ['/images/garoop_thinking.png'],
     },
 };
@@ -16,17 +16,17 @@ export default function Page() {
     return (
         <>
             <Script
-                id="mystery-game-jsonld"
+                id="somen-game-jsonld"
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "Game",
-                        "name": "名探偵ガルちゃん",
-                        "description": "事件を解決しよう！プリンを食べた犯人は誰だ！？",
-                        "url": "https://garoop.jp/game/mystery",
+                        "name": "流しそうめん",
+                        "description": "そうめんをキャッチ！流れてくるそうめんをうまくつかもう。",
+                        "url": "https://garoop.jp/game/somen",
                         "image": "https://garoop.jp/images/garoop_thinking.png",
-                        "genre": "Adventure",
+                        "genre": "Action",
                         "author": {
                             "@type": "Organization",
                             "name": "Garoop"
@@ -34,7 +34,7 @@ export default function Page() {
                     }),
                 }}
             />
-            <MysteryGame />
+            <SomenGame />
         </>
     );
 }

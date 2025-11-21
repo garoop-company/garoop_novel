@@ -1,13 +1,13 @@
-import RpgGame from '@/components/games/RpgGame';
+import FfGame from '@/components/games/FfGame';
 import Script from 'next/script';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'ガルちゃんの冒険 | Garuchan Game',
-    description: 'バズり魔王を倒せ！SNSトレンドをテーマにしたRPG。',
+    title: 'ファイナルガルーク | Garuchan Game',
+    description: 'クリスタルを守れ！アクティブタイムバトルで戦うRPG。',
     openGraph: {
-        title: 'ガルちゃんの冒険 | Garuchan Game',
-        description: 'バズり魔王を倒せ！SNSトレンドをテーマにしたRPG。',
+        title: 'ファイナルガルーク | Garuchan Game',
+        description: 'クリスタルを守れ！アクティブタイムバトルで戦うRPG。',
         images: ['/images/garoop_battle.png'],
     },
 };
@@ -16,15 +16,15 @@ export default function Page() {
     return (
         <>
             <Script
-                id="rpg-game-jsonld"
+                id="ff-game-jsonld"
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "Game",
-                        "name": "ガルちゃんの冒険",
-                        "description": "バズり魔王を倒せ！SNSトレンドをテーマにしたRPG。",
-                        "url": "https://garoop.jp/game/rpg",
+                        "name": "ファイナルガルーク",
+                        "description": "クリスタルを守れ！アクティブタイムバトルで戦うRPG。",
+                        "url": "https://garoop.jp/game/ff",
                         "image": "https://garoop.jp/images/garoop_battle.png",
                         "genre": "RPG",
                         "author": {
@@ -34,7 +34,7 @@ export default function Page() {
                     }),
                 }}
             />
-            <RpgGame />
+            <FfGame />
         </>
     );
 }

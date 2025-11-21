@@ -1,13 +1,13 @@
-import EscapeGame from '@/components/games/EscapeGame';
+import ManzaiGame from '@/components/games/ManzaiGame';
 import Script from 'next/script';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: '脱出ゲーム | Garuchan Game',
-    description: '部屋から脱出せよ！謎を解いて鍵を見つけ出そう。',
+    title: 'ツッコミの達人 | Garuchan Game',
+    description: 'なんでやねん！ボケに合わせてタイミングよくツッコミを入れよう。',
     openGraph: {
-        title: '脱出ゲーム | Garuchan Game',
-        description: '部屋から脱出せよ！謎を解いて鍵を見つけ出そう。',
+        title: 'ツッコミの達人 | Garuchan Game',
+        description: 'なんでやねん！ボケに合わせてタイミングよくツッコミを入れよう。',
         images: ['/images/garoop_happy.png'],
     },
 };
@@ -16,17 +16,17 @@ export default function Page() {
     return (
         <>
             <Script
-                id="escape-game-jsonld"
+                id="manzai-game-jsonld"
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "Game",
-                        "name": "脱出ゲーム",
-                        "description": "部屋から脱出せよ！謎を解いて鍵を見つけ出そう。",
-                        "url": "https://garoop.jp/game/escape",
+                        "name": "ツッコミの達人",
+                        "description": "なんでやねん！ボケに合わせてタイミングよくツッコミを入れよう。",
+                        "url": "https://garoop.jp/game/manzai",
                         "image": "https://garoop.jp/images/garoop_happy.png",
-                        "genre": "Puzzle",
+                        "genre": "Rhythm",
                         "author": {
                             "@type": "Organization",
                             "name": "Garoop"
@@ -34,7 +34,7 @@ export default function Page() {
                     }),
                 }}
             />
-            <EscapeGame />
+            <ManzaiGame />
         </>
     );
 }
