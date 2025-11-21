@@ -3,11 +3,11 @@ import Script from 'next/script';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'ファイナルガルーク | Garuchan Game',
-    description: 'クリスタルを守れ！アクティブタイムバトルで戦うRPG。',
+    title: '子供向けバトルRPG | ファイナルガルーク',
+    description: '長崎発！ハラハラドキドキのバトルRPG。クリスタルを守る冒険に出かけよう！',
     openGraph: {
-        title: 'ファイナルガルーク | Garuchan Game',
-        description: 'クリスタルを守れ！アクティブタイムバトルで戦うRPG。',
+        title: '子供向けバトルRPG | ファイナルガルーク',
+        description: '長崎発！ハラハラドキドキのバトルRPG。クリスタルを守る冒険に出かけよう！',
         images: ['/images/garoop_battle.png'],
     },
 };

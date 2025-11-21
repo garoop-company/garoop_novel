@@ -3,11 +3,11 @@ import Script from 'next/script';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'ドラゴンガルーク | Garuchan Game',
-    description: '勇者よ目覚めよ！コマンド選択式の王道RPG。',
+    title: '子供向けコマンドRPG | ドラゴンガルーク',
+    description: '長崎発！子供でも遊べるシンプル操作の王道RPG。勇者になって冒険しよう！',
     openGraph: {
-        title: 'ドラゴンガルーク | Garuchan Game',
-        description: '勇者よ目覚めよ！コマンド選択式の王道RPG。',
+        title: '子供向けコマンドRPG | ドラゴンガルーク',
+        description: '長崎発！子供でも遊べるシンプル操作の王道RPG。勇者になって冒険しよう！',
         images: ['/images/garoop_battle.png'],
     },
 };

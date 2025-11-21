@@ -1,4 +1,6 @@
-import AirRideGame from '@/components/games/AirRideGame';
+import dynamic from 'next/dynamic';
+
+const AirRideGame = dynamic(() => import('@/components/games/AirRideGame'), { ssr: false });
 import Script from 'next/script';
 import type { Metadata } from 'next';
 

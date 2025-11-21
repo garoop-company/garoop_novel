@@ -3,11 +3,11 @@ import Script from 'next/script';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'パズルゲーム | Garuchan Game',
-    description: 'いろんな絵合わせパズルだよ！造船所やサッカースタジアムのパズルで遊ぼう！',
+    title: '長崎ご当地パズル | Garuchan Game',
+    description: '長崎の造船所やスタジアムがパズルになった！子供から大人まで楽しめる無料の絵合わせゲーム。',
     openGraph: {
-        title: 'パズルゲーム | Garuchan Game',
-        description: 'いろんな絵合わせパズルだよ！造船所やサッカースタジアムのパズルで遊ぼう！',
+        title: '長崎ご当地パズル | Garuchan Game',
+        description: '長崎の造船所やスタジアムがパズルになった！子供から大人まで楽しめる無料の絵合わせゲーム。',
         images: ['/images/games/puzzle/shipbuilding.png'],
     },
 };

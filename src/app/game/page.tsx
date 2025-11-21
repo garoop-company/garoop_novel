@@ -4,15 +4,15 @@ import type { Metadata } from 'next';
 
 // ✅ メタデータ（SEO対策）
 export const metadata: Metadata = {
-  title: 'Garuchan Game（ガルちゃんゲーム） | 無料で遊べる20種類のミニゲーム',
+  title: '長崎発！子供向け無料ゲームサイト | Garuchan Game（ガルちゃんゲーム）',
   description:
-    'Garuchan Game（ガルちゃんゲーム）は、パズル、アクション、RPGなど20種類の無料ミニゲームが遊べるゲームハブです。ガルちゃんと一緒に遊ぼう！',
+    '長崎から発信する子供向け無料ゲームサイト「Garuchan Game」。RPG、パズル、アクションなど、安心・安全に遊べる20種類のミニゲームが勢揃い！',
   keywords:
-    '無料ゲーム, ミニゲーム, ガルちゃん, Garoop, パズル, アクション, RPG, 子供向けゲーム, ブラウザゲーム',
+    '長崎, ゲーム, 子供, RPG, 無料ゲーム, ミニゲーム, ガルちゃん, Garoop, 教育, 地方創生',
   openGraph: {
-    title: 'Garuchan Game（ガルちゃんゲーム） | 無料で遊べる20種類のミニゲーム',
+    title: '長崎発！子供向け無料ゲームサイト | Garuchan Game',
     description:
-      'パズル、アクション、RPGなど20種類の無料ミニゲームが遊べる！ガルちゃんと一緒に遊ぼう！',
+      '長崎から発信する子供向け無料ゲームサイト。RPGやパズルなど、親子で楽しめる20種類のゲームが遊び放題！',
     url: 'https://garoop.jp/game',
     siteName: 'Garuchan Game',
     images: [
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
         url: 'https://d3ez7mat4qd439.cloudfront.net/garoo_kawaii.webp',
         width: 1200,
         height: 630,
-        alt: 'Garuchan Game',
+        alt: 'Garuchan Game - 長崎の子供向けゲーム',
       },
     ],
     locale: 'ja_JP',
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Garuchan Game（ガルちゃんゲーム）',
+    title: '長崎発！子供向け無料ゲームサイト | Garuchan Game',
     description:
-      'パズル、アクション、RPGなど20種類の無料ミニゲームが遊べる！',
+      '長崎から発信する子供向け無料ゲームサイト。RPGやパズルなど、親子で楽しめるゲームがいっぱい！',
     images: ['https://d3ez7mat4qd439.cloudfront.net/garoo_kawaii.webp'],
   },
 };
