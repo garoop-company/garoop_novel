@@ -101,6 +101,13 @@ export default function HomePage() {
         最新ニュースを読む
       </Link>
 
+      <Link
+        href="/game"
+        className="mt-4 px-8 py-4 bg-orange-500 text-white font-bold rounded-lg hover:bg-orange-600 transition-all duration-300 text-xl z-10 shadow-lg shadow-orange-900/30"
+      >
+        ゲームランドへ GO! 🎮
+      </Link>
+
       {/* ✅ 背景エフェクト（軽い光彩） */}
       <div className="absolute inset-0 bg-gradient-to-t from-pink-950/40 via-transparent to-gray-900/90 blur-3xl" />
     </main>
