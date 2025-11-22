@@ -17,7 +17,7 @@ export default function ContactPage() {
 
                 <div className="bg-gray-100 p-6 rounded-lg mb-8">
                     <h2 className="text-lg font-bold mb-2">メールでのお問い合わせ</h2>
-                    <p className="text-xl font-mono text-blue-600">info@garoop.jp</p>
+                    <p className="text-xl font-mono text-blue-600">garoop.company@gmail.com</p>
                 </div>
 
                 <p className="text-sm text-gray-600">
