@@ -38,6 +38,8 @@ export const metadata: Metadata = {
   },
 };
 
+import Footer from "@/components/Footer";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -50,8 +52,11 @@ export default function RootLayout({
           crossOrigin="anonymous"></script>
         <meta name="icon" content="/icon.svg" />
       </head>
-      <body className="antialiased">
-        {children}
+      <body className="antialiased flex flex-col min-h-screen">
+        <div className="flex-grow">
+          {children}
+        </div>
+        <Footer />
       </body>
     </html>
   );
