@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 
 // ✅ メタデータ（SEO対策）
 export const metadata: Metadata = {
-  title: '長崎発！子供向け無料ゲームサイト | Garuchan Game（ガルちゃんゲーム）',
+  title: 'ガルちゃんゲーム | 子供向け無料ゲームサイト',
   description:
     '長崎から発信する子供向け無料ゲームサイト「Garuchan Game」。RPG、パズル、アクションなど、安心・安全に遊べる20種類のミニゲームが勢揃い！',
   keywords:
@@ -74,11 +74,11 @@ export default function Page() {
               { "@type": "Game", "name": "ガルちゃんスタジオ", "url": "https://garoop.jp/game/movie" },
               { "@type": "Game", "name": "ガルちゃんメーカー", "url": "https://garoop.jp/game/anime" },
               { "@type": "Game", "name": "スーパーガルちゃん", "url": "https://garoop.jp/game/platformer" },
-              { "@type": "Game", "name": "ドラゴンガルーク", "url": "https://garoop.jp/game/dq" },
+              { "@type": "Game", "name": "レジェンド・クエスト", "url": "https://garoop.jp/game/legend" },
               { "@type": "Game", "name": "ガルちゃんボンバー", "url": "https://garoop.jp/game/bomber" },
-              { "@type": "Game", "name": "ファイナルガルーク", "url": "https://garoop.jp/game/ff" },
-              { "@type": "Game", "name": "ドンキーガルーク", "url": "https://garoop.jp/game/donkey" },
-              { "@type": "Game", "name": "ガルちゃんエアライド", "url": "https://garoop.jp/game/airride" }
+              { "@type": "Game", "name": "クリスタル・ファンタジー", "url": "https://garoop.jp/game/crystal" },
+              { "@type": "Game", "name": "ジャングル・ジャンプ", "url": "https://garoop.jp/game/jungle" },
+              { "@type": "Game", "name": "スカイ・ライダー", "url": "https://garoop.jp/game/sky" }
             ]
           }),
         }}

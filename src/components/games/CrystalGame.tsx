@@ -16,7 +16,7 @@ interface Character {
     status?: 'ready' | 'acting' | 'dead';
 }
 
-export default function FfGame() {
+export default function CrystalGame() {
     const [characters, setCharacters] = useState<Character[]>([
         { id: 'p1', name: 'ガル', hp: 100, maxHp: 100, atb: 0, speed: 1.5, isEnemy: false },
         { id: 'p2', name: 'フレンド', hp: 80, maxHp: 80, atb: 0, speed: 1.2, isEnemy: false },

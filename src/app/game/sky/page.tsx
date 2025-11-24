@@ -1,13 +1,15 @@
-import DqGame from '@/components/games/DqGame';
+import dynamic from 'next/dynamic';
+
+const SkyGame = dynamic(() => import('@/components/games/SkyGame'), { ssr: false });
 import Script from 'next/script';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: '子供向けコマンドRPG | ドラゴンガルーク',
-    description: '長崎発！子供でも遊べるシンプル操作の王道RPG。勇者になって冒険しよう！',
+    title: 'スカイ・ライダー | Garuchan Game',
+    description: '大空を自由に飛び回れ！3D空間を滑空するレースゲーム。',
     openGraph: {
-        title: '子供向けコマンドRPG | ドラゴンガルーク',
-        description: '長崎発！子供でも遊べるシンプル操作の王道RPG。勇者になって冒険しよう！',
+        title: 'スカイ・ライダー | Garuchan Game',
+        description: '大空を自由に飛び回れ！3D空間を滑空するレースゲーム。',
         images: ['/images/garoop_battle.png'],
     },
 };
@@ -16,17 +18,17 @@ export default function Page() {
     return (
         <>
             <Script
-                id="dq-game-jsonld"
+                id="sky-game-jsonld"
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "Game",
-                        "name": "ドラゴンガルーク",
-                        "description": "勇者よ目覚めよ！コマンド選択式の王道RPG。",
-                        "url": "https://garoop.jp/game/dq",
+                        "name": "スカイ・ライダー",
+                        "description": "大空を自由に飛び回れ！3D空間を滑空するレースゲーム。",
+                        "url": "https://garoop.jp/game/sky",
                         "image": "https://garoop.jp/images/garoop_battle.png",
-                        "genre": "RPG",
+                        "genre": "Racing",
                         "author": {
                             "@type": "Organization",
                             "name": "Garoop"
@@ -34,7 +36,7 @@ export default function Page() {
                     }),
                 }}
             />
-            <DqGame />
+            <SkyGame />
         </>
     );
 }

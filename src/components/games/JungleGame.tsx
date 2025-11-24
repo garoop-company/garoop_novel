@@ -21,7 +21,7 @@ interface Entity {
     isClimbing?: boolean;
 }
 
-export default function DonkeyGame() {
+export default function JungleGame() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [gameState, setGameState] = useState<'start' | 'playing' | 'gameover' | 'win'>('start');
 
@@ -282,7 +282,7 @@ export default function DonkeyGame() {
             </div>
 
             <h1 className="text-3xl md:text-4xl font-black text-red-600 mb-4 z-10 drop-shadow-sm stroke-white stroke-2">
-                ドンキー ガルーク
+                ジャングル・ジャンプ
             </h1>
 
             <div className="relative border-4 border-red-800 rounded-xl overflow-hidden">
@@ -296,7 +296,7 @@ export default function DonkeyGame() {
                 {/* Start Overlay */}
                 {gameState === 'start' && (
                     <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white">
-                        <p className="text-2xl font-bold mb-8">タルをよけて いただきをめざせ！</p>
+                        <p className="text-2xl font-bold mb-8">いわをよけて いただきをめざせ！</p>
                         <button
                             onClick={startGame}
                             className="bg-red-500 text-white px-8 py-4 rounded-full font-black text-2xl hover:bg-red-600 shadow-lg animate-bounce"

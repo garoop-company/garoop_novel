@@ -145,6 +145,11 @@ export default function SlotGame() {
                 <div className="flex items-center gap-2 bg-slate-800 px-3 py-1 rounded-full">Any Pair = 20</div>
             </div>
 
+            <div className="mt-8 text-center text-xs text-gray-400 opacity-70 z-10">
+                ※このゲームは完全無料のシミュレーションです。金銭の賭け事は一切行われません。<br />
+                (This game is a free simulation. No real money gambling is involved.)
+            </div>
+
         </div>
     );
 }

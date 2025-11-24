@@ -107,7 +107,7 @@ const GameScene = ({ onScore }: { onScore: () => void }) => {
     );
 };
 
-export default function AirRideGame() {
+export default function SkyGame() {
     const [score, setScore] = useState(0);
 
     return (

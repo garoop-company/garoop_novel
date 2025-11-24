@@ -128,12 +128,12 @@ const GAMES = [
         url: '/game/platformer'
     },
     {
-        id: 'dq',
-        title: 'ドラゴンガルーク',
+        id: 'legend',
+        title: 'レジェンド・クエスト',
         description: 'ゆうしゃよ めざめよ！',
         image: '/images/garoop_battle.png',
         color: 'bg-blue-800',
-        url: '/game/dq'
+        url: '/game/legend'
     },
     {
         id: 'bomber',
@@ -144,28 +144,28 @@ const GAMES = [
         url: '/game/bomber'
     },
     {
-        id: 'ff',
-        title: 'ファイナルガルーク',
+        id: 'crystal',
+        title: 'クリスタル・ファンタジー',
         description: 'クリスタルを まもれ！',
         image: '/images/garoop_battle.png',
         color: 'bg-blue-600',
-        url: '/game/ff'
+        url: '/game/crystal'
     },
     {
-        id: 'donkey',
-        title: 'ドンキーガルーク',
+        id: 'jungle',
+        title: 'ジャングル・ジャンプ',
         description: 'タルをよけて のぼれ！',
         image: '/images/garoop_battle.png',
         color: 'bg-orange-700',
-        url: '/game/donkey'
+        url: '/game/jungle'
     },
     {
-        id: 'airride',
-        title: 'ガルちゃんエアライド',
+        id: 'sky',
+        title: 'スカイ・ライダー',
         description: '大空を かけぬけろ！',
         image: '/images/garoop_battle.png',
         color: 'bg-sky-500',
-        url: '/game/airride'
+        url: '/game/sky'
     }
 ];
 

@@ -411,6 +411,10 @@ export default function PokerGame() {
                     </div>
                 </div>
             </div>
+            <div className="mt-4 text-center text-xs text-gray-400 opacity-70">
+                ※このゲームは完全無料のシミュレーションです。金銭の賭け事は一切行われません。<br />
+                (This game is a free simulation. No real money gambling is involved.)
+            </div>
         </div>
     );
 }

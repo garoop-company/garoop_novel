@@ -15,10 +15,10 @@ interface Entity {
     defense: number;
 }
 
-export default function DqGame() {
+export default function LegendGame() {
     const [player, setPlayer] = useState<Entity>({ name: 'ゆうしゃ', hp: 50, maxHp: 50, mp: 20, maxMp: 20, attack: 10, defense: 5 });
-    const [enemy, setEnemy] = useState<Entity>({ name: 'スライム', hp: 30, maxHp: 30, mp: 0, maxMp: 0, attack: 8, defense: 2 });
-    const [messages, setMessages] = useState<string[]>(['スライムが あらわれた！']);
+    const [enemy, setEnemy] = useState<Entity>({ name: 'ぷるぷる', hp: 30, maxHp: 30, mp: 0, maxMp: 0, attack: 8, defense: 2 });
+    const [messages, setMessages] = useState<string[]>(['ぷるぷるが あらわれた！']);
     const [turn, setTurn] = useState<'player' | 'enemy' | 'win' | 'lose'>('player');
     const [shake, setShake] = useState(false);
     const [flash, setFlash] = useState(false);
@@ -98,8 +98,8 @@ export default function DqGame() {
 
     const resetGame = () => {
         setPlayer({ name: 'ゆうしゃ', hp: 50, maxHp: 50, mp: 20, maxMp: 20, attack: 10, defense: 5 });
-        setEnemy({ name: 'スライム', hp: 30, maxHp: 30, mp: 0, maxMp: 0, attack: 8, defense: 2 });
-        setMessages(['スライムが あらわれた！']);
+        setEnemy({ name: 'ぷるぷる', hp: 30, maxHp: 30, mp: 0, maxMp: 0, attack: 8, defense: 2 });
+        setMessages(['ぷるぷるが あらわれた！']);
         setTurn('player');
     };
 

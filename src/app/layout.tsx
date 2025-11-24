@@ -39,6 +39,7 @@ export const metadata: Metadata = {
 };
 
 import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 
 export default function RootLayout({
   children,
@@ -53,6 +54,7 @@ export default function RootLayout({
         <meta name="icon" content="/icon.svg" />
       </head>
       <body className="antialiased flex flex-col min-h-screen">
+        <Header />
         <div className="flex-grow">
           {children}
         </div>
