@@ -209,12 +209,12 @@ export default function SomenGame() {
             </div>
 
             {/* Game Area */}
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border-8 border-green-800 bg-[#e6cfa1]">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border-8 border-green-800 bg-[#e6cfa1] max-w-full">
                 <canvas
                     ref={canvasRef}
                     width={350}
                     height={600}
-                    className="cursor-pointer touch-none"
+                    className="cursor-pointer touch-none max-w-full h-auto"
                     onMouseDown={handleCanvasClick}
                     onTouchStart={handleCanvasClick}
                 />

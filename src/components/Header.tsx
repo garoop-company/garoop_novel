@@ -8,9 +8,9 @@ export default function Header() {
 
     return (
         <header className="bg-gray-900 text-white border-b border-gray-800 sticky top-0 z-50">
-            <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div className="container mx-auto px-4 py-3 md:py-4 flex justify-between items-center">
                 {/* Logo */}
-                <Link href="/" className="text-2xl font-bold font-serif hover:text-pink-500 transition-colors">
+                <Link href="/" className="text-xl md:text-2xl font-bold font-serif hover:text-pink-500 transition-colors">
                     Garuchan News
                 </Link>
 

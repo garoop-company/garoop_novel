@@ -109,12 +109,12 @@ export default function ManzaiGame() {
 
             {/* Header */}
             <div className="absolute top-4 left-4 z-20">
-                <Link href="/game" className="bg-white text-orange-600 px-6 py-3 rounded-full font-bold shadow-lg hover:bg-orange-50 transition-colors">
+                <Link href="/game" className="bg-white text-orange-600 px-4 py-2 md:px-6 md:py-3 rounded-full font-bold shadow-lg hover:bg-orange-50 transition-colors text-sm md:text-base">
                     ← もどる
                 </Link>
             </div>
 
-            <h1 className="text-3xl md:text-5xl font-black text-orange-700 mb-8 z-10 drop-shadow-sm">
+            <h1 className="text-2xl md:text-5xl font-black text-orange-700 mb-4 md:mb-8 z-10 drop-shadow-sm mt-12 md:mt-0">
                 ツッコミの達人
             </h1>
 
@@ -171,7 +171,7 @@ export default function ManzaiGame() {
                             exit={{ scale: 0 }}
                             className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20"
                         >
-                            <span className="text-6xl font-black text-yellow-400 drop-shadow-[0_5px_5px_rgba(0,0,0,0.5)] stroke-black stroke-2">
+                            <span className="text-4xl md:text-6xl font-black text-yellow-400 drop-shadow-[0_5px_5px_rgba(0,0,0,0.5)] stroke-black stroke-2">
                                 {feedback}
                             </span>
                         </motion.div>
@@ -219,7 +219,7 @@ export default function ManzaiGame() {
                 onClick={handleTsukkomi}
                 disabled={!isPlaying}
                 className={`
-            mt-8 w-full max-w-md py-6 rounded-2xl font-black text-3xl shadow-[0_10px_0_rgb(153,27,27)] active:shadow-none active:translate-y-[10px] transition-all
+            mt-4 md:mt-8 w-full max-w-md py-4 md:py-6 rounded-2xl font-black text-2xl md:text-3xl shadow-[0_10px_0_rgb(153,27,27)] active:shadow-none active:translate-y-[10px] transition-all
             ${isPlaying ? 'bg-red-600 text-white hover:bg-red-500 cursor-pointer' : 'bg-gray-400 text-gray-200 cursor-not-allowed shadow-none'}
         `}
             >

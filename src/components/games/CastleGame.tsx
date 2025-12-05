@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 // --- Components ---
 
-const Player = ({ position, setPosition }: { position: THREE.Vector3, setPosition: (pos: THREE.Vector3) => void }) => {
+const Player = ({ position, setPosition, touchControls }: { position: THREE.Vector3, setPosition: (pos: THREE.Vector3) => void, touchControls: { forward: boolean, backward: boolean, left: boolean, right: boolean } }) => {
     const { camera } = useThree();
     const moveSpeed = 0.1;
     const keys = useRef<{ [key: string]: boolean }>({});
@@ -33,16 +33,16 @@ const Player = ({ position, setPosition }: { position: THREE.Vector3, setPositio
         const right = new THREE.Vector3();
         right.crossVectors(direction, new THREE.Vector3(0, 1, 0));
 
-        if (keys.current['ArrowUp'] || keys.current['KeyW']) {
+        if (keys.current['ArrowUp'] || keys.current['KeyW'] || touchControls.forward) {
             camera.position.addScaledVector(direction, moveSpeed);
         }
-        if (keys.current['ArrowDown'] || keys.current['KeyS']) {
+        if (keys.current['ArrowDown'] || keys.current['KeyS'] || touchControls.backward) {
             camera.position.addScaledVector(direction, -moveSpeed);
         }
-        if (keys.current['ArrowLeft'] || keys.current['KeyA']) {
+        if (keys.current['ArrowLeft'] || keys.current['KeyA'] || touchControls.left) {
             camera.position.addScaledVector(right, -moveSpeed);
         }
-        if (keys.current['ArrowRight'] || keys.current['KeyD']) {
+        if (keys.current['ArrowRight'] || keys.current['KeyD'] || touchControls.right) {
             camera.position.addScaledVector(right, moveSpeed);
         }
 
@@ -107,7 +107,7 @@ const KingGaroop = ({ position }: { position: [number, number, number] }) => {
     );
 };
 
-const CastleScene = ({ onWin }: { onWin: () => void }) => {
+const CastleScene = ({ onWin, touchControls }: { onWin: () => void, touchControls: { forward: boolean, backward: boolean, left: boolean, right: boolean } }) => {
     const [playerPos, setPlayerPos] = useState(new THREE.Vector3(0, 1.5, 10));
 
     useFrame(() => {
@@ -120,7 +120,7 @@ const CastleScene = ({ onWin }: { onWin: () => void }) => {
     return (
         <>
             <ambientLight intensity={0.2} />
-            <Player position={playerPos} setPosition={setPlayerPos} />
+            <Player position={playerPos} setPosition={setPlayerPos} touchControls={touchControls} />
 
             {/* Floor */}
             <Plane rotation={[-Math.PI / 2, 0, 0]} args={[30, 30]} position={[0, 0, 0]}>
@@ -158,9 +158,18 @@ const CastleScene = ({ onWin }: { onWin: () => void }) => {
 
 export default function CastleGame() {
     const [gameWon, setGameWon] = useState(false);
+    const [touchControls, setTouchControls] = useState({ forward: false, backward: false, left: false, right: false });
+
+    const handleTouchStart = (direction: 'forward' | 'backward' | 'left' | 'right') => {
+        setTouchControls(prev => ({ ...prev, [direction]: true }));
+    };
+
+    const handleTouchEnd = (direction: 'forward' | 'backward' | 'left' | 'right') => {
+        setTouchControls(prev => ({ ...prev, [direction]: false }));
+    };
 
     return (
-        <div className="w-full h-screen bg-black relative">
+        <div className="w-full h-screen bg-black relative touch-none">
             {/* Header */}
             <div className="absolute top-4 left-4 z-20">
                 <Link href="/game" className="bg-white/80 text-black px-6 py-3 rounded-full font-bold shadow-lg hover:bg-white transition-colors">
@@ -169,24 +178,63 @@ export default function CastleGame() {
             </div>
 
             {/* Controls Hint */}
-            <div className="absolute bottom-4 left-4 z-20 text-white bg-black/50 p-4 rounded-lg pointer-events-none">
+            <div className="absolute top-4 right-4 z-20 text-white bg-black/50 p-4 rounded-lg pointer-events-none text-xs md:text-base max-w-[200px] md:max-w-none">
                 <p className="font-bold">そうさ ほうほう:</p>
-                <p>マウス: してん いどう</p>
-                <p>キーボード (WASD / やじるし): いどう</p>
-                <p>スマホ: がめんを スワイプ</p>
+                <p>マウス/スワイプ: してん いどう</p>
+                <p>キーボード/ボタン: いどう</p>
             </div>
 
             {/* 3D Canvas */}
             <Canvas camera={{ position: [0, 1.5, 10], fov: 75 }}>
                 <OrbitControls enableZoom={false} enablePan={false} maxPolarAngle={Math.PI / 2} minPolarAngle={Math.PI / 3} />
-                <CastleScene onWin={() => setGameWon(true)} />
+                <CastleScene onWin={() => setGameWon(true)} touchControls={touchControls} />
             </Canvas>
+
+            {/* Mobile Controls (D-Pad) */}
+            <div className="absolute bottom-8 left-8 z-20 w-40 h-40 md:hidden">
+                <button
+                    className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-12 bg-white/30 rounded-full active:bg-white/60 backdrop-blur-sm border border-white/50"
+                    onTouchStart={() => handleTouchStart('forward')}
+                    onTouchEnd={() => handleTouchEnd('forward')}
+                    onMouseDown={() => handleTouchStart('forward')}
+                    onMouseUp={() => handleTouchEnd('forward')}
+                >
+                    ⬆️
+                </button>
+                <button
+                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-12 bg-white/30 rounded-full active:bg-white/60 backdrop-blur-sm border border-white/50"
+                    onTouchStart={() => handleTouchStart('backward')}
+                    onTouchEnd={() => handleTouchEnd('backward')}
+                    onMouseDown={() => handleTouchStart('backward')}
+                    onMouseUp={() => handleTouchEnd('backward')}
+                >
+                    ⬇️
+                </button>
+                <button
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/30 rounded-full active:bg-white/60 backdrop-blur-sm border border-white/50"
+                    onTouchStart={() => handleTouchStart('left')}
+                    onTouchEnd={() => handleTouchEnd('left')}
+                    onMouseDown={() => handleTouchStart('left')}
+                    onMouseUp={() => handleTouchEnd('left')}
+                >
+                    ⬅️
+                </button>
+                <button
+                    className="absolute right-0 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/30 rounded-full active:bg-white/60 backdrop-blur-sm border border-white/50"
+                    onTouchStart={() => handleTouchStart('right')}
+                    onTouchEnd={() => handleTouchEnd('right')}
+                    onMouseDown={() => handleTouchStart('right')}
+                    onMouseUp={() => handleTouchEnd('right')}
+                >
+                    ➡️
+                </button>
+            </div>
 
             {/* Win Overlay */}
             {gameWon && (
                 <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center text-white z-30">
-                    <h1 className="text-5xl font-black text-yellow-400 mb-4">おうさまに あえた！</h1>
-                    <p className="text-2xl mb-8">おめでとう！</p>
+                    <h1 className="text-3xl md:text-5xl font-black text-yellow-400 mb-4">おうさまに あえた！</h1>
+                    <p className="text-xl md:text-2xl mb-8">おめでとう！</p>
                     <Link href="/game" className="bg-blue-500 text-white px-8 py-4 rounded-full font-bold text-xl hover:bg-blue-600 shadow-lg">
                         ゲームいちらんへ
                     </Link>

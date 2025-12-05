@@ -5,11 +5,11 @@ export default function Footer() {
         <footer className="bg-gray-900 text-gray-400 py-8 border-t border-gray-800">
             <div className="container mx-auto px-4">
                 <div className="flex flex-col md:flex-row justify-between items-center">
-                    <div className="mb-4 md:mb-0">
+                    <div className="mb-6 md:mb-0 text-center md:text-left">
                         <Link href="/" className="text-xl font-bold text-white hover:text-pink-500 transition-colors">
                             Garuchan News
                         </Link>
-                        <p className="text-sm mt-2">AIと笑いで読む、時代のニュースメディア。</p>
+                        <p className="text-xs md:text-sm mt-2 text-gray-500">AIと笑いで読む、時代のニュースメディア。</p>
                     </div>
 
                     <div className="flex flex-wrap justify-center gap-6 text-sm">
