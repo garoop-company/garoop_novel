@@ -4,26 +4,26 @@ import "./globals.css";
 
 // ✅ メタデータ（SEO対策）
 export const metadata: Metadata = {
-  title: 'Garuchan News（ガルちゃんニュース） | AIと笑いで読む面白ニュースメディア',
+  title: 'Garuchan Land（ガルちゃんランド） | AIと笑いで遊ぶテーマパークメディア',
   description:
-    'Garuchan News（ガルちゃんニュース）は、AIとユーモアで時代を読み解く新感覚ニュースメディア。生成AI、地方創生、エンタメ、教育、政治、社会トレンドを独自視点で発信。',
+    'Garuchan Land（ガルちゃんランド）は、AIとユーモアで楽しむ新感覚エンタメテーマパーク。生成AI、ゲーム、アニメ、小説など、ワクワクするコンテンツを独自視点で発信。',
   keywords:
-    'ガルちゃんニュース, Garuchan News, Garoop, 面白ニュース, AIニュース, 生成AI, 地方創生, エンタメ, 教育, 政治, 社会, 山下大貴',
+    'ガルちゃんランド, Garuchan Land, Garoop, ゲーム, AI, 生成AI, 地方創生, エンタメ, 教育, 山下大貴',
   alternates: {
-    canonical: 'https://garoop.jp/news',
+    canonical: 'https://garoop.jp',
   },
   openGraph: {
-    title: 'Garuchan News（ガルちゃんニュース）',
+    title: 'Garuchan Land（ガルちゃんランド）',
     description:
-      'AIと笑いで読む面白ニュースメディア｜Garoop公式',
-    url: 'https://garoop.jp/news',
-    siteName: 'Garuchan News',
+      'AIと笑いで遊ぶテーマパークメディア｜Garoop公式',
+    url: 'https://garoop.jp',
+    siteName: 'Garuchan Land',
     images: [
       {
         url: 'https://d3ez7mat4qd439.cloudfront.net/garoo_kawaii.webp',
         width: 1200,
         height: 630,
-        alt: 'Garuchan News',
+        alt: 'Garuchan Land',
       },
     ],
     locale: 'ja_JP',
@@ -31,9 +31,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Garuchan News（ガルちゃんニュース）',
+    title: 'Garuchan Land（ガルちゃんランド）',
     description:
-      'AIと笑いで読む面白ニュースメディア｜Garoop公式',
+      'AIと笑いで遊ぶテーマパークメディア｜Garoop公式',
     images: ['https://d3ez7mat4qd439.cloudfront.net/garoo_kawaii.webp'],
   },
 };

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'お問い合わせ | Garuchan News',
-    description: 'Garuchan News（ガルちゃんニュース）へのお問い合わせはこちらから。',
+    title: 'お問い合わせ | Garuchan Land',
+    description: 'Garuchan Land（ガルちゃんランド）へのお問い合わせはこちらから。',
 };
 
 export default function ContactPage() {

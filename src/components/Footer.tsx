@@ -2,34 +2,37 @@ import Link from 'next/link';
 
 export default function Footer() {
     return (
-        <footer className="bg-gray-900 text-gray-400 py-8 border-t border-gray-800">
+        <footer className="bg-gradient-to-r from-pink-500 to-orange-400 text-white py-10 mt-auto">
             <div className="container mx-auto px-4">
-                <div className="flex flex-col md:flex-row justify-between items-center">
+                <div className="flex flex-col md:flex-row justify-between items-center bg-white/10 backdrop-blur-sm p-8 rounded-3xl">
                     <div className="mb-6 md:mb-0 text-center md:text-left">
-                        <Link href="/" className="text-xl font-bold text-white hover:text-pink-500 transition-colors">
-                            Garuchan News
-                        </Link>
-                        <p className="text-xs md:text-sm mt-2 text-gray-500">AIと笑いで読む、時代のニュースメディア。</p>
+                        <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                            <span className="text-2xl">🎡</span>
+                            <Link href="/" className="text-2xl font-black tracking-wider hover:text-yellow-200 transition-colors">
+                                GARUCHAN LAND
+                            </Link>
+                        </div>
+                        <p className="text-sm font-medium opacity-90">AIと笑いで遊ぶ、夢のテーマパーク。</p>
                     </div>
 
-                    <div className="flex flex-wrap justify-center gap-6 text-sm">
-                        <Link href="/about" className="hover:text-white transition-colors">
+                    <div className="flex flex-wrap justify-center gap-6 text-sm font-bold">
+                        <Link href="/about" className="hover:text-yellow-200 transition-colors">
                             運営者情報
                         </Link>
-                        <Link href="/privacy" className="hover:text-white transition-colors">
+                        <Link href="/privacy" className="hover:text-yellow-200 transition-colors">
                             プライバシーポリシー
                         </Link>
-                        <Link href="/terms" className="hover:text-white transition-colors">
+                        <Link href="/terms" className="hover:text-yellow-200 transition-colors">
                             利用規約
                         </Link>
-                        <Link href="/contact" className="hover:text-white transition-colors">
+                        <Link href="/contact" className="hover:text-yellow-200 transition-colors">
                             お問い合わせ
                         </Link>
                     </div>
                 </div>
 
-                <div className="mt-8 text-center text-xs text-gray-600">
-                    &copy; {new Date().getFullYear()} Garoop. All rights reserved.
+                <div className="mt-8 text-center text-sm font-medium opacity-80">
+                    &copy; {new Date().getFullYear()} Garuchan Land. All rights reserved.
                 </div>
             </div>
         </footer>

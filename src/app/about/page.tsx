@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-    title: '運営者情報 | Garuchan News',
-    description: 'Garuchan News（ガルちゃんニュース）の運営者情報。サイトの目的や運営者について紹介します。',
+    title: '運営者情報 | Garuchan Land',
+    description: 'Garuchan Land（ガルちゃんランド）の運営者情報。サイトの目的や運営者について紹介します。',
 };
 
 export default function AboutPage() {
@@ -15,7 +15,7 @@ export default function AboutPage() {
                 <section className="mb-8">
                     <h2 className="text-xl font-bold mb-4 text-gray-900">サイト概要</h2>
                     <p className="mb-4">
-                        「Garuchan News（ガルちゃんニュース）」は、AIとユーモアを融合させた新しい形のニュースメディアです。<br />
+                        「Garuchan Land（ガルちゃんランド）」は、AIとユーモアを融合させた新しい形のエンターテインメントメディアです。<br />
                         日々のニュースをただ伝えるだけでなく、AIによる独自の視点や「笑い」の要素を取り入れることで、楽しく学べる情報発信を目指しています。
                     </p>
                     <p className="mb-4">
