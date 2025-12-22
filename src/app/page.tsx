@@ -12,6 +12,11 @@ export const metadata = {
     'Garuchan Land（ガルちゃんランド）は、AIとユーモアで楽しむ新感覚エンタメテーマパーク。生成AI、ゲーム、アニメ、小説など、ワクワクするコンテンツを独自視点で発信。',
   keywords:
     'ガルちゃんランド, Garuchan Land, Garoop, ゲーム, AI, 生成AI, 地方創生, エンタメ, 教育, 山下大貴',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.png',
+  },
   alternates: {
     canonical: 'https://garoop.jp',
   },
