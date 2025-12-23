@@ -1,6 +1,4 @@
-import dynamic from 'next/dynamic';
-
-const SkyGame = dynamic(() => import('@/components/games/SkyGame'), { ssr: false });
+import SkyGameClient from './SkyGameClient';
 import Script from 'next/script';
 import type { Metadata } from 'next';
 
@@ -36,7 +34,7 @@ export default function Page() {
                     }),
                 }}
             />
-            <SkyGame />
+            <SkyGameClient />
         </>
     );
 }

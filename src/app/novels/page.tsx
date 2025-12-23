@@ -23,10 +23,11 @@ async function getNovels(): Promise<Novel[]> {
 }
 
 type Props = {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-const NovelsPage = async ({ searchParams }: Props) => {
+const NovelsPage = async (props: Props) => {
+  const searchParams = await props.searchParams;
   const novels = await getNovels();
 
   // クエリ取得

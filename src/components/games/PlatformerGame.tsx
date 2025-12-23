@@ -32,7 +32,7 @@ export default function PlatformerGame() {
     const keysRef = useRef<{ [key: string]: boolean }>({});
     const cameraXRef = useRef(0);
     const entitiesRef = useRef<Entity[]>([]);
-    const requestRef = useRef<number>();
+    const requestRef = useRef<number | null>(null);
 
     // Initialize Level
     const initLevel = () => {
@@ -256,7 +256,7 @@ export default function PlatformerGame() {
         };
 
         requestRef.current = requestAnimationFrame(update);
-        return () => cancelAnimationFrame(requestRef.current!);
+        return () => cancelAnimationFrame(requestRef.current as number);
     }, [gameState]);
 
     return (

@@ -32,13 +32,12 @@ export async function generateStaticParams() {
 }
 
 // Headではなくmetadata APIを推奨
-export async function generateMetadata({
-  params,
-  searchParams
-}: {
-  params: { id: string };
-  searchParams: { [k: string]: string | string[] | undefined };
+export async function generateMetadata(props: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [k: string]: string | string[] | undefined }>;
 }) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
   const novel = await getNovelById(params.id);
   if (!novel) return {};
 
@@ -66,9 +65,14 @@ export async function generateMetadata({
   };
 }
 
-type Props = { params: { id: string }; searchParams: { [k: string]: string | string[] | undefined } };
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [k: string]: string | string[] | undefined }>;
+};
 
-export default async function Page({ params, searchParams }: Props) {
+export default async function Page(props: Props) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
   const novel = await getNovelById(params.id);
   if (!novel) notFound();
 

@@ -1,6 +1,4 @@
-import dynamic from 'next/dynamic';
-
-const CastleGame = dynamic(() => import('@/components/games/CastleGame'), { ssr: false });
+import CastleGameClient from './CastleGameClient';
 import Script from 'next/script';
 import type { Metadata } from 'next';
 
@@ -36,7 +34,7 @@ export default function Page() {
                     }),
                 }}
             />
-            <CastleGame />
+            <CastleGameClient />
         </>
     );
 }

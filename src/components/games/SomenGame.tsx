@@ -22,7 +22,7 @@ export default function SomenGame() {
     // Game State Refs (for loop)
     const noodlesRef = useRef<Noodle[]>([]);
     const scoreRef = useRef(0);
-    const requestRef = useRef<number>();
+    const requestRef = useRef<number | null>(null);
     const lastSpawnTime = useRef(0);
 
     // Start Game
@@ -133,7 +133,9 @@ export default function SomenGame() {
                     clearInterval(timerInterval);
                     setIsPlaying(false);
                     setGameOver(true);
-                    cancelAnimationFrame(requestRef.current!);
+                    if (requestRef.current !== null) {
+                        cancelAnimationFrame(requestRef.current);
+                    }
                     return 0;
                 }
                 return prev - 1;
@@ -141,7 +143,9 @@ export default function SomenGame() {
         }, 1000);
 
         return () => {
-            cancelAnimationFrame(requestRef.current!);
+            if (requestRef.current !== null) {
+                cancelAnimationFrame(requestRef.current);
+            }
             clearInterval(timerInterval);
         };
     }, [isPlaying]);

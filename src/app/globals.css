@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+@import "tailwindcss";
 
 @theme {
   --font-serif: "Libre Baskerville", serif;
@@ -20,10 +20,6 @@
     @apply font-serif text-white;
   }
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 :root {
   --foreground-rgb: 55, 65, 81;

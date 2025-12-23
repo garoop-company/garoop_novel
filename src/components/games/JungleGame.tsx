@@ -28,7 +28,7 @@ export default function JungleGame() {
     const playerRef = useRef<Entity>({ x: 50, y: 700, width: 30, height: 30, vx: 0, vy: 0, type: 'player' });
     const entitiesRef = useRef<Entity[]>([]);
     const keysRef = useRef<{ [key: string]: boolean }>({});
-    const requestRef = useRef<number>();
+    const requestRef = useRef<number | null>(null);
     const frameRef = useRef(0);
 
     const initLevel = () => {
@@ -268,7 +268,7 @@ export default function JungleGame() {
         };
 
         requestRef.current = requestAnimationFrame(update);
-        return () => cancelAnimationFrame(requestRef.current!);
+        return () => cancelAnimationFrame(requestRef.current as number);
     }, [gameState]);
 
     return (
