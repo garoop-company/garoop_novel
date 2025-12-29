@@ -10,17 +10,17 @@ export const metadata: Metadata = {
   keywords:
     'ガルちゃんランド, Garuchan Land, Garoop, ゲーム, AI, 生成AI, 地方創生, エンタメ, 教育, 山下大貴',
   alternates: {
-    canonical: 'https://garoop.jp',
+    canonical: 'https://www.ai-garoop-novel.com/',
   },
   openGraph: {
     title: 'Garuchan Land（ガルちゃんランド）',
     description:
       'AIと笑いで遊ぶテーマパークメディア｜Garoop公式',
-    url: 'https://garoop.jp',
+    url: 'https://www.ai-garoop-novel.com/',
     siteName: 'Garuchan Land',
     images: [
       {
-        url: 'https://d3ez7mat4qd439.cloudfront.net/garoo_kawaii.webp',
+        url: 'https://d3ez7mat4qd439.cloudfront.net/summary_image/garoop_ai_land.webp',
         width: 1200,
         height: 630,
         alt: 'Garuchan Land',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     title: 'Garuchan Land（ガルちゃんランド）',
     description:
       'AIと笑いで遊ぶテーマパークメディア｜Garoop公式',
-    images: ['https://d3ez7mat4qd439.cloudfront.net/garoo_kawaii.webp'],
+    images: ['https://d3ez7mat4qd439.cloudfront.net/summary_image/garoop_ai_land.webp'],
   },
 };
 
