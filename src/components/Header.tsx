@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { trackEvent } from '@/lib/ga';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,7 +28,17 @@ export default function Header() {
                     <Link href="/novels" className="hover:text-pink-500 transition-colors py-2">
                         ニュース
                     </Link>
-                    <Link href="/game" className="bg-gradient-to-r from-pink-500 to-orange-400 text-white px-5 py-2 rounded-full hover:shadow-lg hover:scale-105 transition-all">
+                    <Link
+                        href="/game"
+                        className="bg-gradient-to-r from-pink-500 to-orange-400 text-white px-5 py-2 rounded-full hover:shadow-lg hover:scale-105 transition-all"
+                        onClick={() =>
+                            trackEvent("cta_click", {
+                                cta_label: "play_games",
+                                cta_location: "header_nav",
+                                cta_target: "/game",
+                            })
+                        }
+                    >
                         ゲームで遊ぶ 🎮
                     </Link>
                     <Link href="/about" className="hover:text-pink-500 transition-colors py-2">
@@ -71,7 +82,14 @@ export default function Header() {
                         <Link
                             href="/game"
                             className="text-pink-500"
-                            onClick={() => setIsMenuOpen(false)}
+                            onClick={() => {
+                                trackEvent("cta_click", {
+                                    cta_label: "play_games",
+                                    cta_location: "header_nav_mobile",
+                                    cta_target: "/game",
+                                });
+                                setIsMenuOpen(false);
+                            }}
                         >
                             ゲームで遊ぶ 🎮
                         </Link>

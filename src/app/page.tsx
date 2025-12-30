@@ -3,6 +3,7 @@ import Script from 'next/script';
 import { promises as fs } from 'fs';
 import path from 'path';
 import Image from 'next/image';
+import GaLink from '@/components/GaLink';
 
 
 // ✅ メタデータ（SEO対策）
@@ -139,18 +140,28 @@ export default async function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <Link
+            <GaLink
               href="/novels"
+              eventParams={{
+                cta_label: "read_news",
+                cta_location: "home_hero",
+                cta_target: "/novels",
+              }}
               className="px-10 py-5 bg-white text-pink-600 font-black rounded-full hover:bg-pink-50 transition-all duration-300 text-xl shadow-[0_10px_20px_rgba(236,72,153,0.3)] transform hover:-translate-y-1 border-4 border-pink-100"
             >
               📰 ニュースを読む
-            </Link>
-            <Link
+            </GaLink>
+            <GaLink
               href="/game"
+              eventParams={{
+                cta_label: "go_games",
+                cta_location: "home_hero",
+                cta_target: "/game",
+              }}
               className="px-10 py-5 bg-gradient-to-r from-pink-500 to-orange-400 text-white font-black rounded-full hover:shadow-[0_10px_20px_rgba(249,115,22,0.4)] transition-all duration-300 text-xl shadow-lg transform hover:-translate-y-1 border-4 border-white/30"
             >
               🎮 ゲームランドへ GO!
-            </Link>
+            </GaLink>
           </div>
         </div>
       </section>

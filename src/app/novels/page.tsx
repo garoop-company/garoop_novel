@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { promises as fs } from 'fs';
 import path from 'path';
 import Footer from '../components/Footer';
+import GaLink from '@/components/GaLink';
 
 type Novel = {
   id: string;
@@ -82,18 +83,28 @@ const NovelsPage = async (props: Props) => {
 
         {/* 新しいコンテンツへのリンク */}
         <div className="mt-6 flex justify-center gap-4">
-          <Link
+          <GaLink
             href="/games/quiz"
+            eventParams={{
+              cta_label: "take_quiz",
+              cta_location: "novels_header",
+              cta_target: "/games/quiz",
+            }}
             className="px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition"
           >
             クイズに挑戦
-          </Link>
-          <Link
+          </GaLink>
+          <GaLink
             href="/videos"
+            eventParams={{
+              cta_label: "watch_videos",
+              cta_location: "novels_header",
+              cta_target: "/videos",
+            }}
             className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
           >
             動画を見る
-          </Link>
+          </GaLink>
         </div>
 
         {/* タイトル検索フォーム（GETでクエリを保つ） */}

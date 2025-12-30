@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { promises as fs } from 'fs';
 import path from 'path';
+import GaLink from '@/components/GaLink';
 
 type Video = {
   id: string;
@@ -61,9 +62,17 @@ const VideosPage = async () => {
       </main>
 
       <footer className="text-center mt-12">
-        <Link href="/" className="text-pink-400 hover:underline">
+        <GaLink
+          href="/"
+          eventParams={{
+            cta_label: "back_home",
+            cta_location: "videos_footer",
+            cta_target: "/",
+          }}
+          className="text-pink-400 hover:underline"
+        >
           トップページへ戻る
-        </Link>
+        </GaLink>
       </footer>
     </div>
   );

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
+import { trackEvent } from '@/lib/ga';
 
 // Game definitions
 const GAMES = [
@@ -170,6 +171,14 @@ const GAMES = [
 ];
 
 export default function GameHub() {
+    const handleGameClick = (gameId: string, url: string) => {
+        trackEvent("cta_click", {
+            cta_label: `game_${gameId}`,
+            cta_location: "game_hub",
+            cta_target: url,
+        });
+    };
+
     return (
         <div className="min-h-screen bg-sky-200 font-sans overflow-hidden relative">
 
@@ -234,7 +243,11 @@ export default function GameHub() {
                                 viewport={{ once: true }}
                                 transition={{ delay: index * 0.05 }}
                             >
-                                <Link href={game.url} className="block group h-full">
+                                <Link
+                                    href={game.url}
+                                    className="block group h-full"
+                                    onClick={() => handleGameClick(game.id, game.url)}
+                                >
                                     <div className="relative h-full bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 hover:scale-102 border-4 border-transparent hover:border-pink-300">
 
                                         {/* Ticket Stub Design Top */}

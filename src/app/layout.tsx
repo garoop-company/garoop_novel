@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
-
-
 // ✅ メタデータ（SEO対策）
 export const metadata: Metadata = {
   title: 'Garuchan Land（ガルちゃんランド） | AIと笑いで遊ぶテーマパークメディア',
@@ -40,6 +39,9 @@ export const metadata: Metadata = {
 
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import GaPageView from "@/components/GaPageView";
+import { GA_MEASUREMENT_ID } from "@/lib/ga";
+import { Suspense } from "react";
 
 export default function RootLayout({
   children,
@@ -52,8 +54,30 @@ export default function RootLayout({
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7714651880162273"
           crossOrigin="anonymous"></script>
         <meta name="icon" content="/icon.svg" />
+        {GA_MEASUREMENT_ID ? (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}', {
+                  send_page_view: false,
+                  app_name: 'garoop_novel'
+                });
+              `}
+            </Script>
+          </>
+        ) : null}
       </head>
       <body className="antialiased flex flex-col min-h-screen">
+        <Suspense fallback={null}>
+          <GaPageView />
+        </Suspense>
         <Header />
         <div className="flex-grow">
           {children}
