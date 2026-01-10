@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import { promises as fs } from 'fs';
 import path from 'path';
-import Footer from '../components/Footer';
+import Footer from '@/components/Footer';
 import GaLink from '@/components/GaLink';
+import { locales, Locale } from '@/locales';
 
 type Novel = {
   id: string;
@@ -24,15 +25,18 @@ async function getNovels(): Promise<Novel[]> {
 }
 
 type Props = {
+  params: Promise<{ lang: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 const NovelsPage = async (props: Props) => {
+  const { lang: rawLang } = await props.params;
+  const routeLang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
   const searchParams = await props.searchParams;
   const novels = await getNovels();
 
   // クエリ取得
-  const lang = (searchParams.lang as string) || 'all';
+  const lang = (searchParams.lang as string) || routeLang;
   const category = (searchParams.category as string) || 'all';
   const q = ((searchParams.q as string) || '').trim(); // タイトル検索
 
@@ -68,7 +72,7 @@ const NovelsPage = async (props: Props) => {
     if (nextQ) params.set('q', nextQ);
 
     const qs = params.toString();
-    return qs ? `/novels?${qs}` : `/novels`;
+    return qs ? `/${routeLang}/novels?${qs}` : `/${routeLang}/novels`;
   };
 
   return (
@@ -252,7 +256,7 @@ const NovelsPage = async (props: Props) => {
         )}
       </main>
 
-      <Footer />
+      <Footer lang={routeLang} />
     </div>
   );
 };

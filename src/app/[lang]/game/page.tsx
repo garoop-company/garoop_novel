@@ -1,42 +1,31 @@
 import GameHub from '@/components/GameHub';
 import Script from 'next/script';
-import type { Metadata } from 'next';
+import { locales, getDictionary, Locale } from '@/locales';
 
 // ✅ メタデータ（SEO対策）
-export const metadata: Metadata = {
-  metadataBase: new URL('https://garoop.jp'),
-  title: 'ガルちゃんゲーム | 子供向け無料ゲームサイト',
-  description:
-    '長崎から発信する子供向け無料ゲームサイト「Garuchan Game」。RPG、パズル、アクションなど、安心・安全に遊べる20種類のミニゲームが勢揃い！',
-  keywords:
-    '長崎, ゲーム, 子供, RPG, 無料ゲーム, ミニゲーム, ガルちゃん, Garoop, 教育, 地方創生',
-  openGraph: {
-    title: '長崎発！子供向け無料ゲームサイト | Garuchan Game',
-    description:
-      '長崎から発信する子供向け無料ゲームサイト。RPGやパズルなど、親子で楽しめるゲームが遊び放題！',
-    url: 'https://garoop.jp/game',
-    siteName: 'Garuchan Game',
-    images: [
-      {
-        url: '/images/game_startup.png',
-        width: 1200,
-        height: 630,
-        alt: 'Garuchan Game - 長崎の子供向けゲーム',
-      },
-    ],
-    locale: 'ja_JP',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: '長崎発！子供向け無料ゲームサイト | Garuchan Game',
-    description:
-      '長崎から発信する子供向け無料ゲームサイト。RPGやパズルなど、親子で楽しめるゲームがいっぱい！',
-    images: ['/images/game_startup.png'], // Using startup as main OG for now or maybe another one
-  },
-};
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang: rawLang } = await params;
+  const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
+  const dict = getDictionary(lang);
 
-export default function Page() {
+  return {
+    metadataBase: new URL('https://garoop.jp'),
+    title: `${dict.common.games} | Garuchan Land`,
+    description: dict.hero.subtitle,
+    openGraph: {
+      title: `${dict.common.games} | Garuchan Land`,
+      description: dict.hero.subtitle,
+      url: `https://garoop.jp/${lang}/game`,
+      images: ['/images/game_startup.png'],
+      locale: lang === 'ja' ? 'ja_JP' : lang === 'zh' ? 'zh_CN' : 'en_US',
+    },
+  };
+}
+
+export default async function Page({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang: rawLang } = await params;
+  const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
+  const dict = getDictionary(lang);
   return (
     <>
       {/* ✅ 構造化データ（JSON-LD） */}
@@ -47,9 +36,9 @@ export default function Page() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            "name": "Garuchan Game（ガルちゃんゲーム）",
-            "description": "無料ミニゲームが遊べるゲームハブ",
-            "url": "https://garoop.jp/game",
+            "name": `${dict.common.games} | Garuchan Land`,
+            "description": dict.hero.subtitle,
+            "url": `https://garoop.jp/${lang}/game`,
             "image": "https://garoop.jp/images/game_startup.png",
             "publisher": {
               "@type": "Organization",

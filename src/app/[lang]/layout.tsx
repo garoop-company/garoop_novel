@@ -1,23 +1,24 @@
 import type { Metadata } from "next";
+import { locales, Locale } from "@/locales";
 import Script from "next/script";
 import "./globals.css";
 // ✅ メタデータ（SEO対策）
 export const metadata: Metadata = {
-  title: 'Garuchan Land（ガルちゃんランド） | AIと笑いで遊ぶテーマパークメディア',
+  title: 'カンガルーの遊園地 | 生成AIと赤ちゃんランド',
   description:
-    'Garuchan Land（ガルちゃんランド）は、AIとユーモアで楽しむ新感覚エンタメテーマパーク。生成AI、ゲーム、アニメ、小説など、ワクワクするコンテンツを独自視点で発信。',
+    'カンガルーの遊園地（ガルちゃんランド）は、生成AIと赤ちゃんが大暴れする新感覚エンタメテーマパーク。AI、ゲーム、アニメ、小説など、ワクワクするコンテンツを発信中。',
   keywords:
-    'ガルちゃんランド, Garuchan Land, Garoop, ゲーム, AI, 生成AI, 地方創生, エンタメ, 教育, 山下大貴',
+    'カンガルーの遊園地, 赤ちゃんランド, ガルちゃんランド, Garuchan Land, Garoop, ゲーム, AI, 生成AI, 教育, 山下大貴',
   metadataBase: new URL('https://garoop.jp'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Garuchan Land（ガルちゃんランド）',
+    title: 'カンガルーの遊園地（ガルちゃんランド）',
     description:
-      'AIと笑いで遊ぶテーマパークメディア｜Garoop公式',
-    url: 'https://www.ai-garoop-novel.com/',
-    siteName: 'Garuchan Land',
+      '生成AIと赤ちゃんが主役のエンタメメディア｜Garoop公式',
+    url: 'https://garoop.jp',
+    siteName: 'カンガルーの遊園地',
     images: [
       {
         url: 'https://d3ez7mat4qd439.cloudfront.net/summary_image/garoop_ai_land.webp',
@@ -31,26 +32,31 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Garuchan Land（ガルちゃんランド）',
+    title: 'カンガルーの遊園地（ガルちゃんランド）',
     description:
-      'AIと笑いで遊ぶテーマパークメディア｜Garoop公式',
-    images: ['https://d3ez7mat4qd439.cloudfront.net/summary_image/garoop_ai_land.webp'],
+      '生成AIと赤ちゃんが主役のエンタメメディア｜Garoop公式',
+    images: ['https://www.ai-garoop-novel.com/images/garuchan_island_map.png'],
   },
 };
 
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import BottomNav from "@/components/BottomNav";
 import GaPageView from "@/components/GaPageView";
 import { GA_MEASUREMENT_ID } from "@/lib/ga";
 import { Suspense } from "react";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
+  params,
+}: {
   children: React.ReactNode;
-}>) {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang: rawLang } = await params;
+  const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
   return (
-    <html lang="ja">
+    <html lang={lang}>
       <head>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7714651880162273"
           crossOrigin="anonymous"></script>
@@ -80,10 +86,11 @@ export default function RootLayout({
           <GaPageView />
         </Suspense>
         <Header />
-        <div className="flex-grow">
+        <div className="flex-grow pb-20 md:pb-0">
           {children}
         </div>
-        <Footer />
+        <Footer lang={lang} />
+        <BottomNav />
       </body>
     </html>
   );

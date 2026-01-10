@@ -2,7 +2,8 @@ import { notFound } from 'next/navigation';
 import { promises as fs } from 'fs';
 import path from 'path';
 import ClientNovelView from './ClientNovelView';
-import Footer from '@/app/components/Footer';
+import Footer from '@/components/Footer';
+import { locales, Locale } from '@/locales';
 
 type Novel = {
   id: string;
@@ -28,17 +29,24 @@ async function getNovelById(id: string): Promise<Novel | undefined> {
 // 事前ビルド対象
 export async function generateStaticParams() {
   const novels = await getNovels();
-  return novels.map((n) => ({ id: n.id }));
+  const params = [];
+  for (const lang of locales) {
+    for (const n of novels) {
+      params.push({ lang, id: n.id });
+    }
+  }
+  return params;
 }
 
 // Headではなくmetadata APIを推奨
 export async function generateMetadata(props: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; lang: string }>;
   searchParams: Promise<{ [k: string]: string | string[] | undefined }>;
 }) {
-  const params = await props.params;
+  const { id, lang: rawLang } = await props.params;
+  const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
   const searchParams = await props.searchParams;
-  const novel = await getNovelById(params.id);
+  const novel = await getNovelById(id);
   if (!novel) return {};
 
   const raw = searchParams.page ? parseInt(searchParams.page as string, 10) : 1;
@@ -51,7 +59,7 @@ export async function generateMetadata(props: {
     title,
     description,
     keywords: novel.keywords,
-    alternates: { canonical: `/novels/${novel.id}${page > 1 ? `?page=${page}` : ''}` },
+    alternates: { canonical: `/${lang}/novels/${novel.id}${page > 1 ? `?page=${page}` : ''}` },
     other: { 'content-language': novel.lang },
     openGraph: {
       title,
@@ -66,14 +74,15 @@ export async function generateMetadata(props: {
 }
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; lang: string }>;
   searchParams: Promise<{ [k: string]: string | string[] | undefined }>;
 };
 
 export default async function Page(props: Props) {
-  const params = await props.params;
+  const { id, lang: rawLang } = await props.params;
+  const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
   const searchParams = await props.searchParams;
-  const novel = await getNovelById(params.id);
+  const novel = await getNovelById(id);
   if (!novel) notFound();
 
   let page = searchParams.page ? parseInt(searchParams.page as string, 10) : 1;
@@ -160,7 +169,7 @@ export default async function Page(props: Props) {
         page={page}
         lang={novel.lang}   // ← 渡す
       />
-      <Footer />
+      <Footer lang={lang} />
     </div>
   );
 }

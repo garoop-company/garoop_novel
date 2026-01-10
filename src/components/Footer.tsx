@@ -1,6 +1,13 @@
 import Link from 'next/link';
+import { getDictionary, Locale } from '@/locales';
 
-export default function Footer() {
+interface FooterProps {
+    lang?: Locale;
+}
+
+export default function Footer({ lang = 'ja' }: FooterProps) {
+    const dict = getDictionary(lang);
+    const pg = (path: string) => `/${lang}${path === '/' ? '' : path}`;
     return (
         <footer className="bg-gradient-to-r from-pink-500 to-orange-400 text-white py-10 mt-auto">
             <div className="container mx-auto px-4">
@@ -8,25 +15,25 @@ export default function Footer() {
                     <div className="mb-6 md:mb-0 text-center md:text-left">
                         <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
                             <span className="text-2xl">🎡</span>
-                            <Link href="/" className="text-2xl font-black tracking-wider hover:text-yellow-200 transition-colors">
-                                GARUCHAN LAND
+                            <Link href={pg('/')} className="text-2xl font-black tracking-wider hover:text-yellow-200 transition-colors">
+                                {dict.hero.title}
                             </Link>
                         </div>
-                        <p className="text-sm font-medium opacity-90">AIと笑いで遊ぶ、夢のテーマパーク。</p>
+                        <p className="text-sm font-medium opacity-90">{dict.hero.subtitle}</p>
                     </div>
 
                     <div className="flex flex-wrap justify-center gap-6 text-sm font-bold">
-                        <Link href="/about" className="hover:text-yellow-200 transition-colors">
-                            運営者情報
+                        <Link href={pg('/about')} className="hover:text-yellow-200 transition-colors">
+                            {dict.common.about}
                         </Link>
-                        <Link href="/privacy" className="hover:text-yellow-200 transition-colors">
-                            プライバシーポリシー
+                        <Link href={pg('/privacy')} className="hover:text-yellow-200 transition-colors text-xs opacity-70">
+                            {dict.common.privacy}
                         </Link>
-                        <Link href="/terms" className="hover:text-yellow-200 transition-colors">
-                            利用規約
+                        <Link href={pg('/terms')} className="hover:text-yellow-200 transition-colors text-xs opacity-70">
+                            {dict.common.terms}
                         </Link>
-                        <Link href="/contact" className="hover:text-yellow-200 transition-colors">
-                            お問い合わせ
+                        <Link href={pg('/contact')} className="hover:text-yellow-200 transition-colors">
+                            {dict.common.contact}
                         </Link>
                     </div>
                 </div>

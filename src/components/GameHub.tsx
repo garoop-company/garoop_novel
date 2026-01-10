@@ -5,64 +5,68 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { trackEvent } from '@/lib/ga';
+import { usePathname } from 'next/navigation';
+import { locales, getDictionary, Locale } from '@/locales';
 
 // Game definitions
-const GAMES = [
-    {
-        id: 'startup',
-        title: 'ガループスタートアップ',
-        description: '生成AI企業を経営せよ！',
-        image: '/images/game_startup.png',
-        color: 'bg-indigo-700',
-        url: '/game/startup'
-    },
-    {
-        id: 'poker',
-        title: 'ポーカー',
-        description: 'カジノで一攫千金！',
-        image: '/images/game_poker.png',
-        color: 'bg-indigo-600',
-        url: '/game/poker'
-    },
-    {
-        id: 'mystery',
-        title: '名探偵ガルちゃん',
-        description: '犯人は誰だ！？',
-        image: '/images/game_mystery.png',
-        color: 'bg-gray-800',
-        url: '/game/mystery'
-    },
-    {
-        id: 'escape',
-        title: '脱出ゲーム',
-        description: '密室から脱出せよ！',
-        image: '/images/game_escape.png',
-        color: 'bg-teal-600',
-        url: '/game/escape'
-    },
-    {
-        id: 'rpg',
-        title: 'ガルちゃんの冒険',
-        description: '王道コマンドRPG！',
-        image: '/images/game_rpg.png',
-        color: 'bg-pink-600',
-        url: '/game/rpg'
-    },
-
-
-
-    {
-        id: 'card',
-        title: 'カードバトル',
-        description: '最強デッキを作ろう！',
-        image: '/images/game_card.png',
-        color: 'bg-red-500',
-        url: '/game/card'
-    },
-
-];
-
 export default function GameHub() {
+    const pathname = usePathname();
+    const segments = pathname.split('/');
+    const currentLocale = (locales.includes(segments[1] as Locale) ? segments[1] : 'ja') as Locale;
+    const dict = getDictionary(currentLocale);
+
+    const pg = (path: string) => `/${currentLocale}${path === '/' ? '' : path}`;
+
+    const GAMES = [
+        {
+            id: 'startup',
+            title: dict.games.startup.title,
+            description: dict.games.startup.desc,
+            image: '/images/game_startup.png',
+            color: 'bg-indigo-700',
+            url: pg('/game/startup')
+        },
+        {
+            id: 'poker',
+            title: dict.games.poker.title,
+            description: dict.games.poker.desc,
+            image: '/images/game_poker.png',
+            color: 'bg-indigo-600',
+            url: pg('/game/poker')
+        },
+        {
+            id: 'mystery',
+            title: dict.games.mystery.title,
+            description: dict.games.mystery.desc,
+            image: '/images/game_mystery.png',
+            color: 'bg-gray-800',
+            url: pg('/game/mystery')
+        },
+        {
+            id: 'escape',
+            title: dict.games.escape.title,
+            description: dict.games.escape.desc,
+            image: '/images/game_escape.png',
+            color: 'bg-teal-600',
+            url: pg('/game/escape')
+        },
+        {
+            id: 'rpg',
+            title: dict.games.rpg.title,
+            description: dict.games.rpg.desc,
+            image: '/images/game_rpg.png',
+            color: 'bg-pink-600',
+            url: pg('/game/rpg')
+        },
+        {
+            id: 'card',
+            title: dict.games.card.title,
+            description: dict.games.card.desc,
+            image: '/images/game_card.png',
+            color: 'bg-red-500',
+            url: pg('/game/card')
+        },
+    ];
     const handleGameClick = (gameId: string, url: string) => {
         trackEvent("cta_click", {
             cta_label: `game_${gameId}`,
@@ -107,10 +111,10 @@ export default function GameHub() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent flex items-end justify-center pb-8 p-4">
                             <div className="text-center">
                                 <h2 className="text-3xl md:text-5xl font-black text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] mb-2">
-                                    ようこそ！ カンガルーの遊園地へ
+                                    {dict.hero.welcome}
                                 </h2>
                                 <p className="text-white text-lg font-bold drop-shadow-md bg-black/30 px-6 py-2 rounded-full backdrop-blur-sm inline-block">
-                                    生成AIと赤ちゃんランド！
+                                    {dict.hero.subtitle}
                                 </p>
                             </div>
                         </div>
@@ -122,7 +126,7 @@ export default function GameHub() {
                 <div className="w-full max-w-6xl">
                     <div className="flex items-center gap-4 mb-8">
                         <div className="h-2 w-10 bg-pink-500 rounded-full"></div>
-                        <h3 className="text-3xl font-black text-pink-600 drop-shadow-sm">アトラクション (ゲーム)</h3>
+                        <h3 className="text-3xl font-black text-pink-600 drop-shadow-sm">{dict.common.games}</h3>
                         <div className="h-2 flex-grow bg-pink-200 rounded-full"></div>
                     </div>
 
