@@ -8,7 +8,11 @@ export const metadata: Metadata = {
     openGraph: {
         title: '名探偵ガルちゃん | Garuchan Game',
         description: '事件を解決しよう！プリンを食べた犯人は誰だ！？',
-        images: ['/images/garoop_thinking.png'],
+        images: ['/images/game_mystery.png'],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        images: ['/images/game_mystery.png'],
     },
 };
 
@@ -25,7 +29,7 @@ export default function Page() {
                         "name": "名探偵ガルちゃん",
                         "description": "事件を解決しよう！プリンを食べた犯人は誰だ！？",
                         "url": "https://garoop.jp/game/mystery",
-                        "image": "https://garoop.jp/images/garoop_thinking.png",
+                        "image": "https://garoop.jp/images/game_mystery.png",
                         "genre": "Adventure",
                         "author": {
                             "@type": "Organization",

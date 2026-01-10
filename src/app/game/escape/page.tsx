@@ -8,7 +8,11 @@ export const metadata: Metadata = {
     openGraph: {
         title: '脱出ゲーム | Garuchan Game',
         description: '部屋から脱出せよ！謎を解いて鍵を見つけ出そう。',
-        images: ['/images/garoop_happy.png'],
+        images: ['/images/game_escape.png'],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        images: ['/images/game_escape.png'],
     },
 };
 
@@ -25,7 +29,7 @@ export default function Page() {
                         "name": "脱出ゲーム",
                         "description": "部屋から脱出せよ！謎を解いて鍵を見つけ出そう。",
                         "url": "https://garoop.jp/game/escape",
-                        "image": "https://garoop.jp/images/garoop_happy.png",
+                        "image": "https://garoop.jp/images/game_escape.png",
                         "genre": "Puzzle",
                         "author": {
                             "@type": "Organization",

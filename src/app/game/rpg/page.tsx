@@ -8,7 +8,11 @@ export const metadata: Metadata = {
     openGraph: {
         title: '長崎の子供向けRPG | ガルちゃんの冒険',
         description: '長崎発の子供向けRPG！バズり魔王を倒す冒険に出かけよう。安心・安全に遊べる無料ブラウザゲーム。',
-        images: ['/images/garoop_battle.png'],
+        images: ['/images/game_rpg.png'],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        images: ['/images/game_rpg.png'],
     },
 };
 
@@ -25,7 +29,7 @@ export default function Page() {
                         "name": "ガルちゃんの冒険",
                         "description": "バズり魔王を倒せ！SNSトレンドをテーマにしたRPG。",
                         "url": "https://garoop.jp/game/rpg",
-                        "image": "https://garoop.jp/images/garoop_battle.png",
+                        "image": "https://garoop.jp/images/game_rpg.png",
                         "genre": "RPG",
                         "author": {
                             "@type": "Organization",

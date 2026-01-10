@@ -8,11 +8,12 @@ import GaLink from '@/components/GaLink';
 
 // ✅ メタデータ（SEO対策）
 export const metadata = {
-  title: 'Garuchan Land（ガルちゃんランド） | AIと笑いで遊ぶテーマパークメディア',
+  metadataBase: new URL('https://garoop.jp'),
+  title: 'カンガルーの遊園地 | 生成AIと赤ちゃんランド',
   description:
-    'Garuchan Land（ガルちゃんランド）は、AIとユーモアで楽しむ新感覚エンタメテーマパーク。生成AI、ゲーム、アニメ、小説など、ワクワクするコンテンツを独自視点で発信。',
+    'カンガルーの遊園地（ガルちゃんランド）は、生成AIと赤ちゃんが大暴れする新感覚エンタメテーマパーク。AI、ゲーム、アニメ、小説など、ワクワクするコンテンツを発信中。',
   keywords:
-    'ガルちゃんランド, Garuchan Land, Garoop, ゲーム, AI, 生成AI, 地方創生, エンタメ, 教育, 山下大貴',
+    'カンガルーの遊園地, 赤ちゃんランド, ガルちゃんランド, Garuchan Land, Garoop, ゲーム, AI, 生成AI, 教育, 山下大貴',
   icons: {
     icon: '/icon.svg',
     shortcut: '/icon.svg',
@@ -132,11 +133,11 @@ export default async function HomePage() {
           </div>
           <h1 className="text-5xl md:text-8xl font-black mb-6 tracking-tight text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.2)]"
             style={{ textShadow: '4px 4px 0px #ec4899, 8px 8px 0px #f97316' }}>
-            Garuchan Land
+            カンガルーの遊園地
           </h1>
           <p className="text-xl md:text-2xl text-gray-700 mb-10 max-w-2xl mx-auto leading-relaxed font-bold bg-white/60 p-6 rounded-3xl shadow-lg backdrop-blur-sm">
-            AIと笑いで遊ぶ、夢のテーマパークへようこそ！<br />
-            <span className="text-base text-gray-500 mt-2 block font-normal">地方創生 × エンタメ × テクノロジー</span>
+            生成AIと赤ちゃんが主役の、夢の遊園地へようこそ！<br />
+            <span className="text-base text-gray-500 mt-2 block font-normal">生成AI × 赤ちゃんランド × テクノロジー</span>
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -236,13 +237,13 @@ export default async function HomePage() {
                 <p className="text-xs text-gray-500 font-bold">本格RPG</p>
               </div>
             </Link>
-            <Link href="/game/puzzle" className="group relative rounded-3xl overflow-hidden aspect-[4/3] bg-white border-4 border-white shadow-xl hover:shadow-2xl hover:border-blue-300 transition-all transform hover:-translate-y-2">
+            <Link href="/game/startup" className="group relative rounded-3xl overflow-hidden aspect-[4/3] bg-white border-4 border-white shadow-xl hover:shadow-2xl hover:border-blue-300 transition-all transform hover:-translate-y-2">
               <div className="absolute inset-0 bg-blue-100 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">
-                🧩
+                🚀
               </div>
               <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm p-4 border-t border-gray-100">
-                <h3 className="font-black text-lg text-gray-800 group-hover:text-blue-500 transition-colors">パズル</h3>
-                <p className="text-xs text-gray-500 font-bold">頭の体操</p>
+                <h3 className="font-black text-lg text-gray-800 group-hover:text-blue-500 transition-colors">スタートアップ</h3>
+                <p className="text-xs text-gray-500 font-bold">経営シミュレーション</p>
               </div>
             </Link>
             <Link href="/game/mystery" className="group relative rounded-3xl overflow-hidden aspect-[4/3] bg-white border-4 border-white shadow-xl hover:shadow-2xl hover:border-gray-500 transition-all transform hover:-translate-y-2">
@@ -254,13 +255,13 @@ export default async function HomePage() {
                 <p className="text-xs text-gray-500 font-bold">謎解きアドベンチャー</p>
               </div>
             </Link>
-            <Link href="/game/action" className="group relative rounded-3xl overflow-hidden aspect-[4/3] bg-white border-4 border-white shadow-xl hover:shadow-2xl hover:border-red-300 transition-all transform hover:-translate-y-2">
+            <Link href="/game/poker" className="group relative rounded-3xl overflow-hidden aspect-[4/3] bg-white border-4 border-white shadow-xl hover:shadow-2xl hover:border-red-300 transition-all transform hover:-translate-y-2">
               <div className="absolute inset-0 bg-red-100 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">
-                🏃
+                🃏
               </div>
               <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm p-4 border-t border-gray-100">
-                <h3 className="font-black text-lg text-gray-800 group-hover:text-red-500 transition-colors">スーパーガルちゃん</h3>
-                <p className="text-xs text-gray-500 font-bold">アクションゲーム</p>
+                <h3 className="font-black text-lg text-gray-800 group-hover:text-red-500 transition-colors">ポーカー</h3>
+                <p className="text-xs text-gray-500 font-bold">動物と対決！</p>
               </div>
             </Link>
           </div>

@@ -4,11 +4,15 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: 'ポーカー | Garuchan Game',
-    description: 'みんなでポーカーしよう！5人で対戦するテキサスホールデムポーカー。',
+    description: '動物たちと対戦する1v1ポーカー！最強の役を作ってチップを奪い合おう。',
     openGraph: {
         title: 'ポーカー | Garuchan Game',
-        description: 'みんなでポーカーしよう！5人で対戦するテキサスホールデムポーカー。',
-        images: ['/images/garoop_thinking.png'],
+        description: 'みんなでポーカーしよう！動物たちと対戦するテキサスホールデムポーカー。',
+        images: ['/images/game_poker.png'],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        images: ['/images/game_poker.png'],
     },
 };
 
@@ -23,9 +27,9 @@ export default function Page() {
                         "@context": "https://schema.org",
                         "@type": "Game",
                         "name": "ポーカー",
-                        "description": "みんなでポーカーしよう！5人で対戦するテキサスホールデムポーカー。",
+                        "description": "みんなでポーカーしよう！動物たちと対戦するテキサスホールデムポーカー。",
                         "url": "https://garoop.jp/game/poker",
-                        "image": "https://garoop.jp/images/garoop_thinking.png",
+                        "image": "https://garoop.jp/images/game_poker.png",
                         "genre": "Card Game",
                         "author": {
                             "@type": "Organization",

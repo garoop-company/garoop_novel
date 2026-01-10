@@ -8,7 +8,11 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'カードバトル | Garuchan Game',
         description: 'ガルちゃんカードでバトルだ！戦略を駆使して勝利を目指せ！',
-        images: ['/images/garoop_battle.png'],
+        images: ['/images/game_card.png'],
+    },
+    twitter: {
+        card: 'summary_large_image',
+        images: ['/images/game_card.png'],
     },
 };
 
@@ -25,7 +29,7 @@ export default function Page() {
                         "name": "カードバトル",
                         "description": "ガルちゃんカードでバトルだ！戦略を駆使して勝利を目指せ！",
                         "url": "https://garoop.jp/game/card",
-                        "image": "https://garoop.jp/images/garoop_battle.png",
+                        "image": "https://garoop.jp/images/game_card.png",
                         "genre": "Card Game",
                         "author": {
                             "@type": "Organization",

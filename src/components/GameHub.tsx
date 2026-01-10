@@ -9,10 +9,18 @@ import { trackEvent } from '@/lib/ga';
 // Game definitions
 const GAMES = [
     {
+        id: 'startup',
+        title: 'ガループスタートアップ',
+        description: '生成AI企業を経営せよ！',
+        image: '/images/game_startup.png',
+        color: 'bg-indigo-700',
+        url: '/game/startup'
+    },
+    {
         id: 'poker',
         title: 'ポーカー',
         description: 'カジノで一攫千金！',
-        image: '/images/garuchan_poker.png', // New Asset
+        image: '/images/game_poker.png',
         color: 'bg-indigo-600',
         url: '/game/poker'
     },
@@ -20,7 +28,7 @@ const GAMES = [
         id: 'mystery',
         title: '名探偵ガルちゃん',
         description: '犯人は誰だ！？',
-        image: '/images/garuchan_detective.png', // New Asset
+        image: '/images/game_mystery.png',
         color: 'bg-gray-800',
         url: '/game/mystery'
     },
@@ -28,7 +36,7 @@ const GAMES = [
         id: 'escape',
         title: '脱出ゲーム',
         description: '密室から脱出せよ！',
-        image: '/images/garuchan_escape.png', // New Asset
+        image: '/images/game_escape.png',
         color: 'bg-teal-600',
         url: '/game/escape'
     },
@@ -36,138 +44,22 @@ const GAMES = [
         id: 'rpg',
         title: 'ガルちゃんの冒険',
         description: '王道コマンドRPG！',
-        image: '/images/garoop_battle.png',
+        image: '/images/game_rpg.png',
         color: 'bg-pink-600',
         url: '/game/rpg'
     },
-    {
-        id: 'puzzle',
-        title: 'パズル',
-        description: '絵合わせパズル！',
-        image: '/images/games/puzzle/shipbuilding.png',
-        color: 'bg-blue-500',
-        url: '/game/puzzle'
-    },
-    {
-        id: 'shooter',
-        title: 'シューティング',
-        description: '敵を撃ち落とせ！',
-        image: '/images/games/shooter/garoop_shooter.png',
-        color: 'bg-purple-500',
-        url: '/game/shooter'
-    },
-    {
-        id: 'legend',
-        title: 'レジェンド・クエスト',
-        description: '伝説の勇者になろう！',
-        image: '/images/garoop_battle.png',
-        color: 'bg-blue-800',
-        url: '/game/legend'
-    },
+
+
+
     {
         id: 'card',
         title: 'カードバトル',
         description: '最強デッキを作ろう！',
-        image: '/images/garoop_battle.png',
+        image: '/images/game_card.png',
         color: 'bg-red-500',
         url: '/game/card'
     },
-    {
-        id: 'talking',
-        title: 'おしゃべりガルちゃん',
-        description: '楽しくおしゃべり！',
-        image: '/images/garoop_happy.png',
-        color: 'bg-yellow-500',
-        url: '/game/talking'
-    },
-    {
-        id: 'manzai',
-        title: 'ツッコミの達人',
-        description: '笑いのセンスを磨け！',
-        image: '/images/garoop_happy.png',
-        color: 'bg-orange-500',
-        url: '/game/manzai'
-    },
-    {
-        id: 'somen',
-        title: '流しそうめん',
-        description: '夏だ！そうめんだ！',
-        image: '/images/garoop_thinking.png',
-        color: 'bg-green-500',
-        url: '/game/somen'
-    },
-    {
-        id: 'castle',
-        title: 'お城探検',
-        description: '3Dダンジョン！',
-        image: '/images/garoop_battle.png',
-        color: 'bg-gray-700',
-        url: '/game/castle'
-    },
-    {
-        id: 'slot',
-        title: 'サイバースロット',
-        description: '大当たりを目指せ！',
-        image: '/images/garoop_thinking.png',
-        color: 'bg-purple-700',
-        url: '/game/slot'
-    },
-    {
-        id: 'movie',
-        title: 'ガルちゃんスタジオ',
-        description: '映画監督になろう！',
-        image: '/images/garoop_battle.png',
-        color: 'bg-blue-600',
-        url: '/game/movie'
-    },
-    {
-        id: 'anime',
-        title: 'ガルちゃんメーカー',
-        description: '自分だけのキャラ！',
-        image: '/images/garoop_happy.png',
-        color: 'bg-indigo-500',
-        url: '/game/anime'
-    },
-    {
-        id: 'platformer',
-        title: 'スーパーガルちゃん',
-        description: 'アクション大冒険！',
-        image: '/images/garoop_battle.png',
-        color: 'bg-red-600',
-        url: '/game/platformer'
-    },
-    {
-        id: 'bomber',
-        title: 'ガルちゃんボンバー',
-        description: '爆発注意！',
-        image: '/images/garoop_battle.png',
-        color: 'bg-green-600',
-        url: '/game/bomber'
-    },
-    {
-        id: 'crystal',
-        title: 'クリスタル F.',
-        description: '神秘の冒険へ！',
-        image: '/images/garoop_battle.png',
-        color: 'bg-blue-600',
-        url: '/game/crystal'
-    },
-    {
-        id: 'jungle',
-        title: 'ジャングル J.',
-        description: '野生の大冒険！',
-        image: '/images/garoop_battle.png',
-        color: 'bg-orange-700',
-        url: '/game/jungle'
-    },
-    {
-        id: 'sky',
-        title: 'スカイ・ライダー',
-        description: '空を駆け抜けろ！',
-        image: '/images/garoop_battle.png',
-        color: 'bg-sky-500',
-        url: '/game/sky'
-    }
+
 ];
 
 export default function GameHub() {
@@ -215,10 +107,10 @@ export default function GameHub() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent flex items-end justify-center pb-8 p-4">
                             <div className="text-center">
                                 <h2 className="text-3xl md:text-5xl font-black text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] mb-2">
-                                    ようこそ！ ガルちゃんランドへ
+                                    ようこそ！ カンガルーの遊園地へ
                                 </h2>
                                 <p className="text-white text-lg font-bold drop-shadow-md bg-black/30 px-6 py-2 rounded-full backdrop-blur-sm inline-block">
-                                    AIと笑いの夢の国！
+                                    生成AIと赤ちゃんランド！
                                 </p>
                             </div>
                         </div>
