@@ -8,46 +8,56 @@ import { locales, getDictionary, Locale } from '@/locales';
 
 
 // ✅ メタデータ（SEO対策）
-export const metadata = {
-  metadataBase: new URL('https://garoop.jp'),
-  title: 'カンガルーの遊園地 | 生成AIと赤ちゃんランド',
-  description:
-    'カンガルーの遊園地（ガルちゃんランド）は、生成AIと赤ちゃんが大暴れする新感覚エンタメテーマパーク。AI、ゲーム、アニメ、小説など、ワクワクするコンテンツを発信中。',
-  keywords:
-    'カンガルーの遊園地, 赤ちゃんランド, ガルちゃんランド, Garuchan Land, Garoop, ゲーム, AI, 生成AI, 教育, 山下大貴',
-  icons: {
-    icon: '/icon.svg',
-    shortcut: '/icon.svg',
-    apple: '/icon.png',
-  },
-  alternates: {
-    canonical: 'https://garoop.jp',
-  },
-  openGraph: {
-    title: 'Garuchan Land（ガルちゃんランド）',
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang: rawLang } = await params;
+  const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
+  const siteUrl = 'https://www.ai-garoop-novel.com';
+
+  return {
+    metadataBase: new URL(siteUrl),
+    title: 'カンガルーの遊園地 | 生成AIと赤ちゃんランド',
     description:
-      'AIと笑いで遊ぶテーマパークメディア｜Garoop公式',
-    url: 'https://garoop.jp',
-    siteName: 'Garuchan Land',
-    images: [
-      {
-        url: 'https://www.ai-garoop-novel.com/images/garuchan_island_map.png',
-        width: 1200,
-        height: 630,
-        alt: 'Garuchan Land',
+      'カンガルーの遊園地（ガルちゃんランド）は、生成AIと赤ちゃんが大暴れする新感覚エンタメテーマパーク。AI、ゲーム、アニメ、小説など、ワクワクするコンテンツを発信中。',
+    keywords:
+      'カンガルーの遊園地, 赤ちゃんランド, ガルちゃんランド, Garuchan Land, Garoop, ゲーム, AI, 生成AI, 教育, 山下大貴',
+    icons: {
+      icon: '/icon.svg',
+      shortcut: '/icon.svg',
+      apple: '/icon.png',
+    },
+    alternates: {
+      canonical: `${siteUrl}/${lang}`,
+      languages: {
+        ja: `${siteUrl}/ja`,
+        en: `${siteUrl}/en`,
+        zh: `${siteUrl}/zh`,
+        'x-default': `${siteUrl}/ja`,
       },
-    ],
-    locale: 'ja_JP',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Garuchan Land（ガルちゃんランド）',
-    description:
-      'AIと笑いで遊ぶテーマパークメディア｜Garoop公式',
-    images: ['https://www.ai-garoop-novel.com/images/garuchan_island_map.png'],
-  },
-};
+    },
+    openGraph: {
+      title: 'Garuchan Land（ガルちゃんランド）',
+      description: 'AIと笑いで遊ぶテーマパークメディア｜Garoop公式',
+      url: `${siteUrl}/${lang}`,
+      siteName: 'Garuchan Land',
+      images: [
+        {
+          url: `${siteUrl}/images/garuchan_island_map.png`,
+          width: 1200,
+          height: 630,
+          alt: 'Garuchan Land',
+        },
+      ],
+      locale: lang === 'ja' ? 'ja_JP' : lang === 'zh' ? 'zh_CN' : 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Garuchan Land（ガルちゃんランド）',
+      description: 'AIと笑いで遊ぶテーマパークメディア｜Garoop公式',
+      images: [`${siteUrl}/images/garuchan_island_map.png`],
+    },
+  };
+}
 
 // 小説データの型定義
 type Novel = {
