@@ -30,7 +30,7 @@ export const metadata = {
     siteName: 'Garuchan Land',
     images: [
       {
-        url: 'https://d3ez7mat4qd439.cloudfront.net/garoo_kawaii.webp',
+        url: 'https://www.ai-garoop-novel.com/images/garuchan_island_map.png',
         width: 1200,
         height: 630,
         alt: 'Garuchan Land',
@@ -44,7 +44,7 @@ export const metadata = {
     title: 'Garuchan Land（ガルちゃんランド）',
     description:
       'AIと笑いで遊ぶテーマパークメディア｜Garoop公式',
-    images: ['https://d3ez7mat4qd439.cloudfront.net/garoo_kawaii.webp'],
+    images: ['https://www.ai-garoop-novel.com/images/garuchan_island_map.png'],
   },
 };
 
@@ -94,7 +94,7 @@ export default async function HomePage() {
             "@type": "NewsMediaOrganization",
             "name": "Garuchan Land",
             "url": "https://garoop.jp",
-            "logo": "https://d3ez7mat4qd439.cloudfront.net/garoo_kawaii.webp",
+            "logo": "https://www.ai-garoop-novel.com/images/garuchan_island_map.png",
             "founder": {
               "@type": "Person",
               "name": "山下大貴",
@@ -116,7 +116,19 @@ export default async function HomePage() {
       />
 
       {/* ✅ ヒーローセクション (Entrance) */}
-      <section className="relative py-24 px-4 flex flex-col items-center justify-center text-center">
+      <section className="relative py-24 px-4 flex flex-col items-center justify-center text-center overflow-hidden">
+        {/* Faded Background Image */}
+        <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
+          <Image
+            src="/images/garuchan_island_map.png"
+            alt="Hero Background"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-sky-300/50 via-transparent to-green-100/50"></div>
+        </div>
+
         <div className="relative z-10 max-w-5xl mx-auto">
           {/* Decorative Elements */}
           <div className="absolute -top-12 -right-4 lg:-right-24 w-40 h-40 lg:w-56 lg:h-56 animate-float hidden md:block" style={{ animationDelay: '1s' }}>
@@ -229,8 +241,8 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <Link href="/game/rpg" className="group relative rounded-3xl overflow-hidden aspect-[4/3] bg-white border-4 border-white shadow-xl hover:shadow-2xl hover:border-orange-300 transition-all transform hover:-translate-y-2">
-              <div className="absolute inset-0 bg-pink-100 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">
-                ⚔️
+              <div className="absolute inset-0 bg-pink-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <Image src="/images/game_rpg.png" alt="RPG" fill className="object-cover" />
               </div>
               <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm p-4 border-t border-gray-100">
                 <h3 className="font-black text-lg text-gray-800 group-hover:text-orange-500 transition-colors">ガルちゃんの冒険</h3>
@@ -238,8 +250,8 @@ export default async function HomePage() {
               </div>
             </Link>
             <Link href="/game/startup" className="group relative rounded-3xl overflow-hidden aspect-[4/3] bg-white border-4 border-white shadow-xl hover:shadow-2xl hover:border-blue-300 transition-all transform hover:-translate-y-2">
-              <div className="absolute inset-0 bg-blue-100 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">
-                🚀
+              <div className="absolute inset-0 bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <Image src="/images/game_startup.png" alt="Startup" fill className="object-cover" />
               </div>
               <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm p-4 border-t border-gray-100">
                 <h3 className="font-black text-lg text-gray-800 group-hover:text-blue-500 transition-colors">スタートアップ</h3>
@@ -247,8 +259,8 @@ export default async function HomePage() {
               </div>
             </Link>
             <Link href="/game/mystery" className="group relative rounded-3xl overflow-hidden aspect-[4/3] bg-white border-4 border-white shadow-xl hover:shadow-2xl hover:border-gray-500 transition-all transform hover:-translate-y-2">
-              <div className="absolute inset-0 bg-gray-200 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">
-                🕵️‍♂️
+              <div className="absolute inset-0 bg-gray-200 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <Image src="/images/game_mystery.png" alt="Mystery" fill className="object-cover" />
               </div>
               <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm p-4 border-t border-gray-100">
                 <h3 className="font-black text-lg text-gray-800 group-hover:text-gray-600 transition-colors">名探偵ガルちゃん</h3>
@@ -256,8 +268,8 @@ export default async function HomePage() {
               </div>
             </Link>
             <Link href="/game/poker" className="group relative rounded-3xl overflow-hidden aspect-[4/3] bg-white border-4 border-white shadow-xl hover:shadow-2xl hover:border-red-300 transition-all transform hover:-translate-y-2">
-              <div className="absolute inset-0 bg-red-100 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">
-                🃏
+              <div className="absolute inset-0 bg-red-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <Image src="/images/game_poker.png" alt="Poker" fill className="object-cover" />
               </div>
               <div className="absolute bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm p-4 border-t border-gray-100">
                 <h3 className="font-black text-lg text-gray-800 group-hover:text-red-500 transition-colors">ポーカー</h3>
