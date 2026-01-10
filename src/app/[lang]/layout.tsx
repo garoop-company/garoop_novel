@@ -9,6 +9,10 @@ export const metadata: Metadata = {
     'カンガルーの遊園地（ガルちゃんランド）は、生成AIと赤ちゃんが大暴れする新感覚エンタメテーマパーク。AI、ゲーム、アニメ、小説など、ワクワクするコンテンツを発信中。',
   keywords:
     'カンガルーの遊園地, 赤ちゃんランド, ガルちゃんランド, Garuchan Land, Garoop, ゲーム, AI, 生成AI, 教育, 山下大貴',
+  icons: {
+    icon: '/icon.svg',
+    apple: '/icon.png',
+  },
   metadataBase: new URL('https://garoop.jp'),
   alternates: {
     canonical: '/',
@@ -60,7 +64,7 @@ export default async function RootLayout({
       <head>
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7714651880162273"
           crossOrigin="anonymous"></script>
-        <meta name="icon" content="/icon.svg" />
+        <meta name="icon" content="/favicon.ico" />
         {GA_MEASUREMENT_ID ? (
           <>
             <Script
