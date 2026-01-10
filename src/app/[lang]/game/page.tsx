@@ -2,24 +2,21 @@ import GameHub from '@/components/GameHub';
 import Script from 'next/script';
 import { locales, getDictionary, Locale } from '@/locales';
 
+import { generateLocalizedMetadata } from '@/lib/seo';
+
 // ✅ メタデータ（SEO対策）
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang: rawLang } = await params;
   const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
   const dict = getDictionary(lang);
 
-  return {
-    metadataBase: new URL('https://garoop.jp'),
+  return generateLocalizedMetadata({
     title: `${dict.common.games} | Garuchan Land`,
     description: dict.hero.subtitle,
-    openGraph: {
-      title: `${dict.common.games} | Garuchan Land`,
-      description: dict.hero.subtitle,
-      url: `https://garoop.jp/${lang}/game`,
-      images: ['/images/game_startup.png'],
-      locale: lang === 'ja' ? 'ja_JP' : lang === 'zh' ? 'zh_CN' : 'en_US',
-    },
-  };
+    lang,
+    path: '/game',
+    image: '/images/game_startup.png',
+  });
 }
 
 export default async function Page({ params }: { params: Promise<{ lang: string }> }) {

@@ -1,22 +1,24 @@
+import { locales, Locale } from '@/locales';
+import { generateLocalizedMetadata, SITE_URL } from '@/lib/seo';
 import CardGame from '@/components/games/CardGame';
 import Script from 'next/script';
-import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-    title: 'カードバトル | Garuchan Game',
-    description: 'ガルちゃんカードでバトルだ！戦略を駆使して勝利を目指せ！',
-    openGraph: {
-        title: 'カードバトル | Garuchan Game',
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+    const { lang: rawLang } = await params;
+    const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
+
+    return generateLocalizedMetadata({
+        title: 'カードバトル | Garuchan Land',
         description: 'ガルちゃんカードでバトルだ！戦略を駆使して勝利を目指せ！',
-        images: ['/images/game_card.png'],
-    },
-    twitter: {
-        card: 'summary_large_image',
-        images: ['/images/game_card.png'],
-    },
-};
+        lang,
+        path: '/game/card',
+        image: '/images/game_card.png',
+    });
+}
 
-export default function Page() {
+export default async function Page({ params }: { params: Promise<{ lang: string }> }) {
+    const { lang: rawLang } = await params;
+    const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
     return (
         <>
             <Script
@@ -28,8 +30,8 @@ export default function Page() {
                         "@type": "Game",
                         "name": "カードバトル",
                         "description": "ガルちゃんカードでバトルだ！戦略を駆使して勝利を目指せ！",
-                        "url": "https://garoop.jp/game/card",
-                        "image": "https://garoop.jp/images/game_card.png",
+                        "url": `${SITE_URL}/${lang}/game/card`,
+                        "image": `${SITE_URL}/images/game_card.png`,
                         "genre": "Card Game",
                         "author": {
                             "@type": "Organization",

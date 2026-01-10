@@ -1,9 +1,17 @@
-import type { Metadata } from 'next';
+import { locales, Locale } from '@/locales';
+import { generateLocalizedMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-    title: 'お問い合わせ | Garuchan Land',
-    description: 'Garuchan Land（ガルちゃんランド）へのお問い合わせはこちらから。',
-};
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+    const { lang: rawLang } = await params;
+    const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
+
+    return generateLocalizedMetadata({
+        title: 'お問い合わせ | Garuchan Land',
+        description: 'Garuchan Land（ガルちゃんランド）へのお問い合わせはこちらから。',
+        lang,
+        path: '/contact',
+    });
+}
 
 export default function ContactPage() {
     return (

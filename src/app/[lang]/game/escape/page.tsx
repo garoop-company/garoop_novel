@@ -1,22 +1,24 @@
+import { locales, Locale } from '@/locales';
+import { generateLocalizedMetadata, SITE_URL } from '@/lib/seo';
 import EscapeGame from '@/components/games/EscapeGame';
 import Script from 'next/script';
-import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-    title: '脱出ゲーム | Garuchan Game',
-    description: '部屋から脱出せよ！謎を解いて鍵を見つけ出そう。',
-    openGraph: {
-        title: '脱出ゲーム | Garuchan Game',
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+    const { lang: rawLang } = await params;
+    const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
+
+    return generateLocalizedMetadata({
+        title: '脱出ゲーム | Garuchan Land',
         description: '部屋から脱出せよ！謎を解いて鍵を見つけ出そう。',
-        images: ['/images/game_escape.png'],
-    },
-    twitter: {
-        card: 'summary_large_image',
-        images: ['/images/game_escape.png'],
-    },
-};
+        lang,
+        path: '/game/escape',
+        image: '/images/game_escape.png',
+    });
+}
 
-export default function Page() {
+export default async function Page({ params }: { params: Promise<{ lang: string }> }) {
+    const { lang: rawLang } = await params;
+    const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
     return (
         <>
             <Script
@@ -28,8 +30,8 @@ export default function Page() {
                         "@type": "Game",
                         "name": "脱出ゲーム",
                         "description": "部屋から脱出せよ！謎を解いて鍵を見つけ出そう。",
-                        "url": "https://garoop.jp/game/escape",
-                        "image": "https://garoop.jp/images/game_escape.png",
+                        "url": `${SITE_URL}/${lang}/game/escape`,
+                        "image": `${SITE_URL}/images/game_escape.png`,
                         "genre": "Puzzle",
                         "author": {
                             "@type": "Organization",

@@ -38,6 +38,8 @@ export async function generateStaticParams() {
   return params;
 }
 
+import { generateLocalizedMetadata, SITE_URL } from '@/lib/seo';
+
 // Headではなくmetadata APIを推奨
 export async function generateMetadata(props: {
   params: Promise<{ id: string; lang: string }>;
@@ -55,22 +57,14 @@ export async function generateMetadata(props: {
   const title = `${novel.title}${novel.content.length > 1 ? ` - Page ${page}` : ''} | ${novel.category}`;
   const description = novel.description?.slice(0, 160) ?? novel.title;
 
-  return {
+  return generateLocalizedMetadata({
     title,
     description,
-    keywords: novel.keywords,
-    alternates: { canonical: `/${lang}/novels/${novel.id}${page > 1 ? `?page=${page}` : ''}` },
-    other: { 'content-language': novel.lang },
-    openGraph: {
-      title,
-      description,
-      type: 'article',
-      locale: novel.lang === 'ja' ? 'ja_JP' : 'en_US',
-      url: `/novels/${novel.id}${page > 1 ? `?page=${page}` : ''}`,
-      siteName: 'Garoop Novels',
-    },
-    twitter: { card: 'summary_large_image', title, description },
-  };
+    lang,
+    path: `/novels/${novel.id}`,
+    type: 'article',
+    page,
+  });
 }
 
 type Props = {
@@ -89,12 +83,11 @@ export default async function Page(props: Props) {
   if (isNaN(page) || page < 1) page = 1;
   if (page > novel.content.length) page = novel.content.length;
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.ai-garoop-school.com";
-  const canonical = `${baseUrl}/novels/${novel.id}${page > 1 ? `?page=${page}` : ''}`;
+  const canonical = `${SITE_URL}/${lang}/novels/${novel.id}${page > 1 ? `?page=${page}` : ''}`;
 
   // Prev / Next（複数ページ記事向け：クロール導線を明確化）
-  const prevHref = page > 1 ? `${baseUrl}/novels/${novel.id}?page=${page - 1}` : null;
-  const nextHref = page < novel.content.length ? `${baseUrl}/novels/${novel.id}?page=${page + 1}` : null;
+  const prevHref = page > 1 ? `${SITE_URL}/${lang}/novels/${novel.id}?page=${page - 1}` : null;
+  const nextHref = page < novel.content.length ? `${SITE_URL}/${lang}/novels/${novel.id}?page=${page + 1}` : null;
 
   // JSON-LD（Article + BreadcrumbList + WebSite/Organization）
   const jsonLdArticle = {
@@ -106,13 +99,13 @@ export default async function Page(props: Props) {
     "keywords": novel.keywords,
     "description": novel.description,
     "url": canonical,
-    "isPartOf": { "@type": "WebSite", "name": "Garoop Novels", "url": baseUrl },
-    "author": { "@type": "Person", "name": "Yamashita Taiki" },
+    "isPartOf": { "@type": "WebSite", "name": "Garuchan Land", "url": SITE_URL },
+    "author": { "@type": "Person", "name": "山下大貴" },
     "publisher": {
       "@type": "Organization",
-      "name": "Garoop Inc.",
-      "url": baseUrl,
-      "logo": { "@type": "ImageObject", "url": `${baseUrl}/logo.png` }
+      "name": "Garoop株式会社",
+      "url": SITE_URL,
+      "logo": { "@type": "ImageObject", "url": `${SITE_URL}/images/garuchan_island_map.png` }
     },
     "mainEntityOfPage": canonical,
     "articleBody": novel.content.join("\n\n")
@@ -122,8 +115,8 @@ export default async function Page(props: Props) {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": baseUrl },
-      { "@type": "ListItem", "position": 2, "name": "Novels", "item": `${baseUrl}/novels` },
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+      { "@type": "ListItem", "position": 2, "name": "Novels", "item": `${SITE_URL}/${lang}/novels` },
       { "@type": "ListItem", "position": 3, "name": novel.title, "item": canonical }
     ]
   };
@@ -131,11 +124,11 @@ export default async function Page(props: Props) {
   const jsonLdWebsite = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Garoop Novels",
-    "url": baseUrl,
+    "name": "Garuchan Land",
+    "url": SITE_URL,
     "potentialAction": {
       "@type": "SearchAction",
-      "target": `${baseUrl}/novels/list?q={search_term_string}`,
+      "target": `${SITE_URL}/${lang}/novels/list?q={search_term_string}`,
       "query-input": "required name=search_term_string"
     }
   };

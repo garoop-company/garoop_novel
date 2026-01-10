@@ -1,9 +1,23 @@
+import { locales, Locale, getDictionary } from '@/locales';
+import { generateLocalizedMetadata } from '@/lib/seo';
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang: rawLang } = await params;
+  const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
+  const dict = getDictionary(lang);
+
+  return generateLocalizedMetadata({
+    title: `${dict.sections.latest_news.title} | Garuchan Land`,
+    description: dict.sections.latest_news.subtitle,
+    lang,
+    path: '/novels',
+  });
+}
 import Link from 'next/link';
 import { promises as fs } from 'fs';
 import path from 'path';
 import Footer from '@/components/Footer';
 import GaLink from '@/components/GaLink';
-import { locales, Locale } from '@/locales';
 
 type Novel = {
   id: string;

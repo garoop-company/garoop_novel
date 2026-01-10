@@ -1,9 +1,17 @@
-import type { Metadata } from 'next';
+import { locales, Locale } from '@/locales';
+import { generateLocalizedMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-    title: 'プライバシーポリシー | Garuchan News',
-    description: 'Garuchan News（ガルちゃんニュース）のプライバシーポリシー。個人情報の取り扱い、Cookie、広告配信について説明します。',
-};
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+    const { lang: rawLang } = await params;
+    const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
+
+    return generateLocalizedMetadata({
+        title: 'プライバシーポリシー | Garuchan Land',
+        description: 'Garuchan Land（ガルちゃんランド）のプライバシーポリシー。個人情報の取り扱い、Cookie、広告配信について説明します。',
+        lang,
+        path: '/privacy',
+    });
+}
 
 export default function PrivacyPage() {
     return (

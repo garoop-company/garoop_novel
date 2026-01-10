@@ -1,10 +1,18 @@
-import type { Metadata } from 'next';
+import { locales, Locale } from '@/locales';
+import { generateLocalizedMetadata } from '@/lib/seo';
 import Link from 'next/link';
 
-export const metadata: Metadata = {
-    title: '運営者情報 | Garuchan Land',
-    description: 'Garuchan Land（ガルちゃんランド）の運営者情報。サイトの目的や運営者について紹介します。',
-};
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+    const { lang: rawLang } = await params;
+    const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
+
+    return generateLocalizedMetadata({
+        title: '運営者情報 | Garuchan Land',
+        description: 'Garuchan Land（ガルちゃんランド）の運営者情報。サイトの目的や運営者について紹介します。',
+        lang,
+        path: '/about',
+    });
+}
 
 export default function AboutPage() {
     return (

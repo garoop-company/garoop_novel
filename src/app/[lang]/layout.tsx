@@ -2,55 +2,20 @@ import type { Metadata } from "next";
 import { locales, Locale } from "@/locales";
 import Script from "next/script";
 import "./globals.css";
+import { generateLocalizedMetadata } from "@/lib/seo";
+
 // ✅ メタデータ（SEO対策）
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang: rawLang } = await params;
   const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
-  const siteUrl = 'https://www.ai-garoop-novel.com';
 
-  return {
+  return generateLocalizedMetadata({
     title: 'カンガルーの遊園地 | 生成AIと赤ちゃんランド',
-    description:
-      'カンガルーの遊園地（ガルちゃんランド）は、生成AIと赤ちゃんが大暴れする新感覚エンタメテーマパーク。AI、ゲーム、アニメ、小説など、ワクワクするコンテンツを発信中。',
-    keywords:
-      'カンガルーの遊園地, 赤ちゃんランド, ガルちゃんランド, Garuchan Land, Garoop, ゲーム, AI, 生成AI, 教育, 山下大貴',
-    icons: {
-      icon: '/icon.svg',
-      apple: '/icon.png',
-    },
-    metadataBase: new URL(siteUrl),
-    alternates: {
-      canonical: `${siteUrl}/${lang}`,
-      languages: {
-        ja: `${siteUrl}/ja`,
-        en: `${siteUrl}/en`,
-        zh: `${siteUrl}/zh`,
-        'x-default': `${siteUrl}/ja`,
-      },
-    },
-    openGraph: {
-      title: 'カンガルーの遊園地（ガルちゃんランド）',
-      description: '生成AIと赤ちゃんが主役のエンタメメディア｜Garoop公式',
-      url: `${siteUrl}/${lang}`,
-      siteName: 'カンガルーの遊園地',
-      images: [
-        {
-          url: 'https://d3ez7mat4qd439.cloudfront.net/summary_image/garoop_ai_land.webp',
-          width: 1200,
-          height: 630,
-          alt: 'Garuchan Land',
-        },
-      ],
-      locale: lang === 'ja' ? 'ja_JP' : lang === 'zh' ? 'zh_CN' : 'en_US',
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: 'カンガルーの遊園地（ガルちゃんランド）',
-      description: '生成AIと赤ちゃんが主役のエンタメメディア｜Garoop公式',
-      images: [`${siteUrl}/images/garuchan_island_map.png`],
-    },
-  };
+    description: 'カンガルーの遊園地（ガルちゃんランド）は、生成AIと赤ちゃんが大暴れする新感覚エンタメテーマパーク。AI、ゲーム、アニメ、小説など、ワクワクするコンテンツを発信中。',
+    lang,
+    path: '/',
+    image: 'https://d3ez7mat4qd439.cloudfront.net/summary_image/garoop_ai_land.webp',
+  });
 }
 
 import Footer from "@/components/Footer";

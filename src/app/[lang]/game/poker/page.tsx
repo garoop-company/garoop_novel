@@ -1,22 +1,24 @@
+import { locales, Locale } from '@/locales';
+import { generateLocalizedMetadata, SITE_URL } from '@/lib/seo';
 import PokerGame from '@/components/games/PokerGame';
 import Script from 'next/script';
-import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-    title: 'ポーカー | Garuchan Game',
-    description: '動物たちと対戦する1v1ポーカー！最強の役を作ってチップを奪い合おう。',
-    openGraph: {
-        title: 'ポーカー | Garuchan Game',
-        description: 'みんなでポーカーしよう！動物たちと対戦するテキサスホールデムポーカー。',
-        images: ['/images/game_poker.png'],
-    },
-    twitter: {
-        card: 'summary_large_image',
-        images: ['/images/game_poker.png'],
-    },
-};
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+    const { lang: rawLang } = await params;
+    const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
 
-export default function Page() {
+    return generateLocalizedMetadata({
+        title: 'ポーカー | Garuchan Land',
+        description: '動物たちと対戦する1v1ポーカー！最強の役を作ってチップを奪い合おう。',
+        lang,
+        path: '/game/poker',
+        image: '/images/game_poker.png',
+    });
+}
+
+export default async function Page({ params }: { params: Promise<{ lang: string }> }) {
+    const { lang: rawLang } = await params;
+    const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
     return (
         <>
             <Script
@@ -28,8 +30,8 @@ export default function Page() {
                         "@type": "Game",
                         "name": "ポーカー",
                         "description": "みんなでポーカーしよう！動物たちと対戦するテキサスホールデムポーカー。",
-                        "url": "https://garoop.jp/game/poker",
-                        "image": "https://garoop.jp/images/game_poker.png",
+                        "url": `${SITE_URL}/${lang}/game/poker`,
+                        "image": `${SITE_URL}/images/game_poker.png`,
                         "genre": "Card Game",
                         "author": {
                             "@type": "Organization",

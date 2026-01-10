@@ -7,56 +7,21 @@ import GaLink from '@/components/GaLink';
 import { locales, getDictionary, Locale } from '@/locales';
 
 
+import { generateLocalizedMetadata, SITE_URL } from "@/lib/seo";
+
 // ✅ メタデータ（SEO対策）
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang: rawLang } = await params;
   const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
-  const siteUrl = 'https://www.ai-garoop-novel.com';
+  const dict = getDictionary(lang);
 
-  return {
-    metadataBase: new URL(siteUrl),
-    title: 'カンガルーの遊園地 | 生成AIと赤ちゃんランド',
-    description:
-      'カンガルーの遊園地（ガルちゃんランド）は、生成AIと赤ちゃんが大暴れする新感覚エンタメテーマパーク。AI、ゲーム、アニメ、小説など、ワクワクするコンテンツを発信中。',
-    keywords:
-      'カンガルーの遊園地, 赤ちゃんランド, ガルちゃんランド, Garuchan Land, Garoop, ゲーム, AI, 生成AI, 教育, 山下大貴',
-    icons: {
-      icon: '/icon.svg',
-      shortcut: '/icon.svg',
-      apple: '/icon.png',
-    },
-    alternates: {
-      canonical: `${siteUrl}/${lang}`,
-      languages: {
-        ja: `${siteUrl}/ja`,
-        en: `${siteUrl}/en`,
-        zh: `${siteUrl}/zh`,
-        'x-default': `${siteUrl}/ja`,
-      },
-    },
-    openGraph: {
-      title: 'Garuchan Land（ガルちゃんランド）',
-      description: 'AIと笑いで遊ぶテーマパークメディア｜Garoop公式',
-      url: `${siteUrl}/${lang}`,
-      siteName: 'Garuchan Land',
-      images: [
-        {
-          url: `${siteUrl}/images/garuchan_island_map.png`,
-          width: 1200,
-          height: 630,
-          alt: 'Garuchan Land',
-        },
-      ],
-      locale: lang === 'ja' ? 'ja_JP' : lang === 'zh' ? 'zh_CN' : 'en_US',
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: 'Garuchan Land（ガルちゃんランド）',
-      description: 'AIと笑いで遊ぶテーマパークメディア｜Garoop公式',
-      images: [`${siteUrl}/images/garuchan_island_map.png`],
-    },
-  };
+  return generateLocalizedMetadata({
+    title: dict.hero.title,
+    description: dict.hero.subtitle,
+    lang,
+    path: '/',
+    image: 'https://d3ez7mat4qd439.cloudfront.net/summary_image/garoop_ai_land.webp',
+  });
 }
 
 // 小説データの型定義
@@ -108,6 +73,7 @@ export default async function HomePage({
       </div>
 
       {/* ✅ 構造化データ（Googleニュース・AI検索最適化） */}
+      <link rel="canonical" href={`${SITE_URL}/${lang}`} />
       <Script
         id="structured-data"
         type="application/ld+json"
@@ -116,8 +82,8 @@ export default async function HomePage({
             "@context": "https://schema.org",
             "@type": "NewsMediaOrganization",
             "name": "Garuchan Land",
-            "url": "https://garoop.jp",
-            "logo": "https://www.ai-garoop-novel.com/images/garuchan_island_map.png",
+            "url": SITE_URL,
+            "logo": `${SITE_URL}/images/garuchan_island_map.png`,
             "founder": {
               "@type": "Person",
               "name": "山下大貴",

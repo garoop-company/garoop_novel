@@ -1,22 +1,24 @@
+import { locales, Locale } from '@/locales';
+import { generateLocalizedMetadata, SITE_URL } from '@/lib/seo';
 import MysteryGame from '@/components/games/MysteryGame';
 import Script from 'next/script';
-import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-    title: '名探偵ガルちゃん | Garuchan Game',
-    description: '事件を解決しよう！プリンを食べた犯人は誰だ！？',
-    openGraph: {
-        title: '名探偵ガルちゃん | Garuchan Game',
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+    const { lang: rawLang } = await params;
+    const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
+
+    return generateLocalizedMetadata({
+        title: '名探偵ガルちゃん | Garuchan Land',
         description: '事件を解決しよう！プリンを食べた犯人は誰だ！？',
-        images: ['/images/game_mystery.png'],
-    },
-    twitter: {
-        card: 'summary_large_image',
-        images: ['/images/game_mystery.png'],
-    },
-};
+        lang,
+        path: '/game/mystery',
+        image: '/images/game_mystery.png',
+    });
+}
 
-export default function Page() {
+export default async function Page({ params }: { params: Promise<{ lang: string }> }) {
+    const { lang: rawLang } = await params;
+    const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
     return (
         <>
             <Script
@@ -28,8 +30,8 @@ export default function Page() {
                         "@type": "Game",
                         "name": "名探偵ガルちゃん",
                         "description": "事件を解決しよう！プリンを食べた犯人は誰だ！？",
-                        "url": "https://garoop.jp/game/mystery",
-                        "image": "https://garoop.jp/images/game_mystery.png",
+                        "url": `${SITE_URL}/${lang}/game/mystery`,
+                        "image": `${SITE_URL}/images/game_mystery.png`,
                         "genre": "Adventure",
                         "author": {
                             "@type": "Organization",

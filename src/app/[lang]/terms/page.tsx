@@ -1,9 +1,17 @@
-import type { Metadata } from 'next';
+import { locales, Locale } from '@/locales';
+import { generateLocalizedMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-    title: '利用規約 | Garuchan News',
-    description: 'Garuchan News（ガルちゃんニュース）の利用規約。サイトの利用ルールについて説明します。',
-};
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+    const { lang: rawLang } = await params;
+    const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
+
+    return generateLocalizedMetadata({
+        title: '利用規約 | Garuchan Land',
+        description: 'Garuchan Land（ガルちゃんランド）の利用規約。サイトの利用ルールについて説明します。',
+        lang,
+        path: '/terms',
+    });
+}
 
 export default function TermsPage() {
     return (
