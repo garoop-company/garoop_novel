@@ -39,9 +39,9 @@ export default function LanguageSwitcher() {
         <div className="relative">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-3 py-2 bg-white/80 backdrop-blur-md border-2 border-pink-200 rounded-full hover:bg-pink-50 transition-all text-gray-700 font-bold shadow-sm"
+                className="flex items-center gap-2 px-3 py-2 bg-slate-900/80 backdrop-blur-md border border-slate-700 rounded-full hover:bg-slate-800/90 transition-all text-slate-200 font-bold shadow-sm"
             >
-                <FaGlobe className="text-pink-500" />
+                <FaGlobe className="text-amber-300" />
                 <span className="uppercase text-xs">{currentLocale}</span>
             </button>
 
@@ -56,14 +56,14 @@ export default function LanguageSwitcher() {
                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                            className="absolute right-0 mt-2 w-40 bg-white rounded-2xl shadow-2xl border-2 border-pink-100 overflow-hidden z-50"
+                            className="absolute right-0 mt-2 w-40 bg-slate-950 rounded-2xl shadow-2xl border border-slate-800 overflow-hidden z-50"
                         >
                             <div className="flex flex-col py-2">
                                 {locales.map((locale) => (
                                     <button
                                         key={locale}
                                         onClick={() => handleLanguageChange(locale as Locale)}
-                                        className={`px-4 py-3 text-left hover:bg-pink-50 transition-colors font-bold text-sm ${currentLocale === locale ? 'text-pink-600 bg-pink-50' : 'text-gray-600'
+                                        className={`px-4 py-3 text-left hover:bg-slate-800 transition-colors font-bold text-sm ${currentLocale === locale ? 'text-amber-200 bg-amber-500/10' : 'text-slate-300'
                                             }`}
                                     >
                                         {getLangLabel(locale)}

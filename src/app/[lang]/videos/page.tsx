@@ -23,14 +23,14 @@ const VideosPage = async () => {
   const videos = await getVideos();
 
   return (
-    <div className="bg-gray-900 min-h-screen text-white p-8">
+    <div className="bg-slate-950 min-h-screen text-slate-100 p-8">
       <header className="text-center mb-10">
         <Link href="/">
-          <h1 className="text-5xl font-bold font-serif cursor-pointer hover:text-pink-400 transition-colors">
+          <h1 className="text-5xl font-bold font-serif cursor-pointer hover:text-amber-300 transition-colors">
             Featured Videos
           </h1>
         </Link>
-        <p className="text-lg text-gray-400 mt-2">
+        <p className="text-lg text-slate-400 mt-2">
           厳選された動画コンテンツをお楽しみください。
         </p>
       </header>
@@ -39,7 +39,7 @@ const VideosPage = async () => {
         {videos.map((video) => (
           <div
             key={video.id}
-            className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden shadow-lg hover:shadow-pink-900/50 transition-shadow duration-300"
+            className="bg-slate-900/70 rounded-lg border border-slate-800 overflow-hidden shadow-lg hover:shadow-amber-900/40 transition-shadow duration-300"
           >
             <div className="aspect-w-16 aspect-h-9">
               <iframe
@@ -55,7 +55,7 @@ const VideosPage = async () => {
               <h2 className="text-2xl font-bold font-serif text-white mb-2">
                 {video.title}
               </h2>
-              <p className="text-gray-400">{video.description}</p>
+              <p className="text-slate-400">{video.description}</p>
             </div>
           </div>
         ))}
@@ -69,7 +69,7 @@ const VideosPage = async () => {
             cta_location: "videos_footer",
             cta_target: "/",
           }}
-          className="text-pink-400 hover:underline"
+          className="text-amber-300 hover:underline"
         >
           トップページへ戻る
         </GaLink>

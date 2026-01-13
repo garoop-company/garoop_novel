@@ -152,7 +152,7 @@ export default async function Page(props: Props) {
   };
 
   return (
-    <div className="bg-gray-900 min-h-screen text-white flex flex-col items-center p-4 sm:p-8 relative overflow-hidden">
+    <div className="bg-slate-950 min-h-screen text-slate-100 flex flex-col items-center p-4 sm:p-8 relative overflow-hidden">
       {/* Prev/Next/Canonical 明示（head要素にリンク出力） */}
       <link rel="canonical" href={canonical} />
       {prevHref && <link rel="prev" href={prevHref} />}

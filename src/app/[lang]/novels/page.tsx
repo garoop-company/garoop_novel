@@ -90,14 +90,14 @@ const NovelsPage = async (props: Props) => {
   };
 
   return (
-    <div className="bg-gray-900 min-h-screen text-white p-8">
+    <div className="bg-slate-950 min-h-screen text-slate-100 p-8">
       <header className="text-center mb-10">
         <Link href="/">
-          <h1 className="text-5xl font-bold font-serif cursor-pointer hover:text-red-400 transition-colors">
+          <h1 className="text-5xl font-bold font-serif cursor-pointer hover:text-amber-300 transition-colors">
             Library of Whispers
           </h1>
         </Link>
-        <p className="text-lg text-gray-400 mt-2">Choose your poison.</p>
+        <p className="text-lg text-slate-400 mt-2">Choose your poison.</p>
 
         {/* 新しいコンテンツへのリンク */}
         <div className="mt-6 flex justify-center gap-4">
@@ -108,7 +108,7 @@ const NovelsPage = async (props: Props) => {
               cta_location: "novels_header",
               cta_target: "/videos",
             }}
-            className="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition"
+            className="px-6 py-3 bg-amber-500 text-slate-950 font-bold rounded-lg hover:bg-amber-400 transition"
           >
             動画を見る
           </GaLink>
@@ -128,19 +128,19 @@ const NovelsPage = async (props: Props) => {
             name="q"
             defaultValue={q}
             placeholder="Search by title..."
-            className="w-72 md:w-96 px-4 py-2 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="w-72 md:w-96 px-4 py-2 rounded bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400/70"
             aria-label="Search by title"
           />
           <button
             type="submit"
-            className="px-4 py-2 rounded bg-red-500 hover:bg-red-600 transition"
+            className="px-4 py-2 rounded bg-amber-500 text-slate-950 hover:bg-amber-400 transition"
           >
             Search
           </button>
           {q && (
             <Link
               href={buildHref({ q: '' })}
-              className="px-3 py-2 rounded bg-gray-700 hover:bg-gray-600"
+              className="px-3 py-2 rounded bg-slate-800 hover:bg-slate-700"
               aria-label="Clear title search"
             >
               Clear Title
@@ -152,21 +152,21 @@ const NovelsPage = async (props: Props) => {
         <div className="mt-6 flex justify-center gap-3 flex-wrap">
           <Link
             href={buildHref({ lang: 'en' })}
-            className={`px-4 py-2 rounded ${lang === 'en' ? 'bg-red-500 text-white' : 'bg-gray-700 hover:bg-gray-600'
+            className={`px-4 py-2 rounded ${lang === 'en' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 hover:bg-slate-700'
               }`}
           >
             English
           </Link>
           <Link
             href={buildHref({ lang: 'ja' })}
-            className={`px-4 py-2 rounded ${lang === 'ja' ? 'bg-red-500 text-white' : 'bg-gray-700 hover:bg-gray-600'
+            className={`px-4 py-2 rounded ${lang === 'ja' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 hover:bg-slate-700'
               }`}
           >
             日本語
           </Link>
           <Link
             href={buildHref({ lang: 'all' })}
-            className={`px-4 py-2 rounded ${lang === 'all' ? 'bg-red-500 text-white' : 'bg-gray-700 hover:bg-gray-600'
+            className={`px-4 py-2 rounded ${lang === 'all' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 hover:bg-slate-700'
               }`}
           >
             All Languages
@@ -175,13 +175,13 @@ const NovelsPage = async (props: Props) => {
 
         {/* カテゴリパネル */}
         <div className="mt-5">
-          <div className="text-sm text-gray-400 mb-2">Categories</div>
+          <div className="text-sm text-slate-400 mb-2">Categories</div>
           <div className="flex justify-center gap-2 flex-wrap">
             <Link
               href={buildHref({ category: 'all' })}
               className={`px-3 py-1.5 rounded-full text-sm border ${category === 'all'
-                ? 'bg-blue-500 text-white border-blue-400'
-                : 'bg-gray-800 border-gray-600 hover:bg-gray-700'
+                ? 'bg-teal-500 text-slate-950 border-teal-400'
+                : 'bg-slate-900 border-slate-700 hover:bg-slate-800'
                 }`}
             >
               All
@@ -191,8 +191,8 @@ const NovelsPage = async (props: Props) => {
                 key={cat}
                 href={buildHref({ category: cat })}
                 className={`px-3 py-1.5 rounded-full text-sm border ${category === cat
-                  ? 'bg-blue-500 text-white border-blue-400'
-                  : 'bg-gray-800 border-gray-600 hover:bg-gray-700'
+                  ? 'bg-teal-500 text-slate-950 border-teal-400'
+                  : 'bg-slate-900 border-slate-700 hover:bg-slate-800'
                   }`}
               >
                 {cat}
@@ -202,19 +202,19 @@ const NovelsPage = async (props: Props) => {
         </div>
 
         {/* 現在のフィルタ表示（クリア導線付き） */}
-        <div className="mt-4 text-sm text-gray-400">
+        <div className="mt-4 text-sm text-slate-400">
           <span>
-            Filter: <span className="text-gray-200">lang = {lang}</span>,{' '}
-            <span className="text-gray-200">category = {category}</span>
+            Filter: <span className="text-slate-200">lang = {lang}</span>,{' '}
+            <span className="text-slate-200">category = {category}</span>
             {q && (
               <>
-                , <span className="text-gray-200">title ~ {q}</span>
+                , <span className="text-slate-200">title ~ {q}</span>
               </>
             )}
           </span>
           <Link
             href="/novels"
-            className="ml-3 text-pink-400 hover:underline"
+            className="ml-3 text-amber-300 hover:underline"
             aria-label="Clear filters"
           >
             Clear All
@@ -225,7 +225,7 @@ const NovelsPage = async (props: Props) => {
       {/* 小説リスト */}
       <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
         {filtered.length === 0 ? (
-          <div className="col-span-full text-center text-gray-400">
+          <div className="col-span-full text-center text-slate-400">
             条件に一致する作品がありません。フィルタを変更してください。
           </div>
         ) : (
@@ -233,26 +233,26 @@ const NovelsPage = async (props: Props) => {
             <Link
               href={`/novels/${novel.id}`}
               key={novel.id}
-              className="p-6 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-700 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-red-900/50 h-full flex flex-col"
+              className="p-6 bg-slate-900/70 rounded-lg border border-slate-800 hover:bg-slate-800 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-amber-900/30 h-full flex flex-col"
             >
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span
                     className={`text-xs font-semibold px-2 py-0.5 rounded ${novel.category === 'Horror'
-                      ? 'bg-red-900/40 text-red-300'
-                      : 'bg-blue-900/40 text-blue-300'
+                      ? 'bg-amber-500/15 text-amber-300'
+                      : 'bg-teal-500/15 text-teal-300'
                       }`}
                   >
                     {novel.category}
                   </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-gray-700 text-gray-200">
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-200">
                     {novel.lang.toUpperCase()}
                   </span>
                 </div>
                 <h2 className="text-2xl font-bold font-serif text-white">
                   {novel.title}
                 </h2>
-                <p className="text-gray-400 flex-grow">{novel.description}</p>
+                <p className="text-slate-400 flex-grow">{novel.description}</p>
               </div>
             </Link>
           ))
