@@ -23,16 +23,19 @@ export default function Footer({ lang = 'ja' }: FooterProps) {
                     </div>
 
                     <div className="flex flex-wrap justify-center gap-6 text-sm font-bold">
-                        <Link href={pg('/about')} className="hover:text-yellow-200 transition-colors">
+                        <Link href={`/${lang}/about`} className="hover:text-pink-400 transition-colors">
                             {dict.common.about}
                         </Link>
-                        <Link href={pg('/privacy')} className="hover:text-yellow-200 transition-colors text-xs opacity-70">
+                        <Link href={`/${lang}/faq`} className="hover:text-pink-400 transition-colors">
+                            {dict.common.faq}
+                        </Link>
+                        <Link href={`/${lang}/privacy`} className="hover:text-pink-400 transition-colors">
                             {dict.common.privacy}
                         </Link>
-                        <Link href={pg('/terms')} className="hover:text-yellow-200 transition-colors text-xs opacity-70">
+                        <Link href={`/${lang}/terms`} className="hover:text-pink-400 transition-colors">
                             {dict.common.terms}
                         </Link>
-                        <Link href={pg('/contact')} className="hover:text-yellow-200 transition-colors">
+                        <Link href={`/${lang}/contact`} className="hover:text-pink-400 transition-colors">
                             {dict.common.contact}
                         </Link>
                     </div>

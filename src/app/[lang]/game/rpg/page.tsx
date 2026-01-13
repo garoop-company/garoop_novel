@@ -27,16 +27,26 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
-                        "@type": "Game",
+                        "@type": "VideoGame",
                         "name": "ガルちゃんの冒険",
-                        "description": "バズり魔王を倒せ！SNSトレンドをテーマにしたRPG。",
+                        "description": "バズり魔王を倒せ！SNSトレンドをテーマにしたファンタジーRPG。",
                         "url": `${SITE_URL}/${lang}/game/rpg`,
                         "image": `${SITE_URL}/images/game_rpg.png`,
-                        "genre": "RPG",
+                        "genre": ["RPG", "JRPG"],
+                        "gamePlatform": "Web Browser",
+                        "applicationCategory": "Game",
+                        "operatingSystem": "Any",
                         "author": {
                             "@type": "Organization",
-                            "name": "Garoop"
-                        }
+                            "name": "株式会社Garoop",
+                            "url": "https://garoop.jp"
+                        },
+                        "offers": {
+                            "@type": "Offer",
+                            "price": "0",
+                            "priceCurrency": "JPY"
+                        },
+                        "contentRating": "Everyone"
                     }),
                 }}
             />

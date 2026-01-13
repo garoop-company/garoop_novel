@@ -72,35 +72,66 @@ export default async function HomePage({
         <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[150%] aspect-square rounded-full border-[100px] border-white/5 opacity-10"></div>
       </div>
 
-      {/* ✅ 構造化データ（Googleニュース・AI検索最適化） */}
+      {/* ✅ 構造化データ（Googleニュース・AI検索・AIO最適化） */}
       <link rel="canonical" href={`${SITE_URL}/${lang}`} />
       <Script
         id="structured-data"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "NewsMediaOrganization",
-            "name": "Garuchan Land",
-            "url": SITE_URL,
-            "logo": `${SITE_URL}/images/garuchan_island_map.png`,
-            "founder": {
-              "@type": "Person",
-              "name": "山下大貴",
-              "affiliation": "Garoop株式会社",
+          __html: JSON.stringify([
+            {
+              "@context": "https://schema.org",
+              "@type": "NewsMediaOrganization",
+              "name": "Garuchan Land",
+              "alternateName": ["カンガルーの遊園地", "ガルちゃんランド"],
+              "url": SITE_URL,
+              "logo": {
+                "@type": "ImageObject",
+                "url": `${SITE_URL}/images/garuchan_island_map.png`,
+                "width": 1200,
+                "height": 630
+              },
+              "founder": {
+                "@type": "Person",
+                "name": "山下大貴",
+                "jobTitle": "代表取締役",
+                "affiliation": {
+                  "@type": "Organization",
+                  "name": "株式会社Garoop"
+                }
+              },
+              "foundingDate": "2023",
+              "address": {
+                "@type": "PostalAddress",
+                "addressRegion": "Nagasaki",
+                "addressCountry": "JP"
+              },
+              "sameAs": [
+                "https://x.com/garoop_company",
+                "https://www.instagram.com/garoop_official/",
+                "https://www.youtube.com/@garooptv",
+                "https://garoop.jp"
+              ],
+              "description": "生成AIとエンターテインメントを融合させた次世代ポータル。AI小説、ブラウザゲーム、地方創生ニュースを提供。",
+              "ethicsPolicy": `${SITE_URL}/${lang}/about`,
+              "masthead": `${SITE_URL}/${lang}/about`,
+              "isAccessibleForFree": true,
             },
-            "sameAs": [
-              "https://x.com/garoop_company",
-              "https://www.instagram.com/garoop_official/",
-              "https://www.youtube.com/@garooptv"
-            ],
-            "about": {
-              "@type": "Thing",
-              "name": "AIニュースと地方創生メディア",
-              "description":
-                "AIとユーモアで時代を読み解く面白ニュースメディア。生成AI・教育・地方創生・エンタメ・社会をテーマに記事を発信。",
-            },
-          }),
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Garuchan Land",
+              "url": SITE_URL,
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": `${SITE_URL}/${lang}/novels?q={search_term_string}`
+                },
+                "query-input": "required name=search_term_string"
+              }
+            }
+          ]),
         }}
       />
 

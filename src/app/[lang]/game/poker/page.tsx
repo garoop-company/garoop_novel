@@ -27,16 +27,26 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
-                        "@type": "Game",
-                        "name": "ポーカー",
-                        "description": "みんなでポーカーしよう！動物たちと対戦するテキサスホールデムポーカー。",
+                        "@type": "VideoGame",
+                        "name": "ポーカー | Garuchan Poker",
+                        "description": "動物たちと対戦する1v1のテキサスホールデムポーカー。AIプレイヤー相手に心理戦を楽しもう。",
                         "url": `${SITE_URL}/${lang}/game/poker`,
                         "image": `${SITE_URL}/images/game_poker.png`,
-                        "genre": "Card Game",
+                        "genre": ["Card Game", "Simulation"],
+                        "gamePlatform": "Web Browser",
+                        "applicationCategory": "Game",
+                        "operatingSystem": "Any",
                         "author": {
                             "@type": "Organization",
-                            "name": "Garoop"
-                        }
+                            "name": "株式会社Garoop",
+                            "url": "https://garoop.jp"
+                        },
+                        "offers": {
+                            "@type": "Offer",
+                            "price": "0",
+                            "priceCurrency": "JPY"
+                        },
+                        "contentRating": "Everyone"
                     }),
                 }}
             />

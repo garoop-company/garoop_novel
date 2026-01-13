@@ -100,15 +100,25 @@ export default async function Page(props: Props) {
     "description": novel.description,
     "url": canonical,
     "isPartOf": { "@type": "WebSite", "name": "Garuchan Land", "url": SITE_URL },
-    "author": { "@type": "Person", "name": "山下大貴" },
+    "author": {
+      "@type": "Person",
+      "name": "山下大貴",
+      "jobTitle": "AI Content Creator",
+      "url": "https://garoop.jp"
+    },
     "publisher": {
-      "@type": "Organization",
-      "name": "Garoop株式会社",
+      "@type": "NewsMediaOrganization",
+      "name": "株式会社Garoop",
       "url": SITE_URL,
       "logo": { "@type": "ImageObject", "url": `${SITE_URL}/images/garuchan_island_map.png` }
     },
+    "datePublished": "2024-01-01T00:00:00+09:00", // Placeholder if not in JSON
+    "dateModified": new Date().toISOString(),
     "mainEntityOfPage": canonical,
-    "articleBody": novel.content.join("\n\n")
+    "articleBody": novel.content.join("\n\n"),
+    "isAccessibleForFree": true,
+    "creativeWorkStatus": "Published",
+    "genre": novel.category
   };
 
   const jsonLdBreadcrumb = {

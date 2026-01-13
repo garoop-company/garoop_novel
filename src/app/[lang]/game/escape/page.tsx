@@ -27,16 +27,26 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
-                        "@type": "Game",
+                        "@type": "VideoGame",
                         "name": "脱出ゲーム",
-                        "description": "部屋から脱出せよ！謎を解いて鍵を見つけ出そう。",
+                        "description": "密室から脱出せよ！パズルを解いて鍵を見つけ出すブラウザ脱出ゲーム。",
                         "url": `${SITE_URL}/${lang}/game/escape`,
                         "image": `${SITE_URL}/images/game_escape.png`,
-                        "genre": "Puzzle",
+                        "genre": ["Puzzle", "Escape Room"],
+                        "gamePlatform": "Web Browser",
+                        "applicationCategory": "Game",
+                        "operatingSystem": "Any",
                         "author": {
                             "@type": "Organization",
-                            "name": "Garoop"
-                        }
+                            "name": "株式会社Garoop",
+                            "url": "https://garoop.jp"
+                        },
+                        "offers": {
+                            "@type": "Offer",
+                            "price": "0",
+                            "priceCurrency": "JPY"
+                        },
+                        "contentRating": "Everyone"
                     }),
                 }}
             />

@@ -27,16 +27,26 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
-                        "@type": "Game",
+                        "@type": "VideoGame",
                         "name": "カードバトル",
-                        "description": "ガルちゃんカードでバトルだ！戦略を駆使して勝利を目指せ！",
+                        "description": "戦略を駆使して勝利を目指せ！ブラウザで遊べる戦略的カードゲーム。",
                         "url": `${SITE_URL}/${lang}/game/card`,
                         "image": `${SITE_URL}/images/game_card.png`,
-                        "genre": "Card Game",
+                        "genre": ["Card Game", "Strategy"],
+                        "gamePlatform": "Web Browser",
+                        "applicationCategory": "Game",
+                        "operatingSystem": "Any",
                         "author": {
                             "@type": "Organization",
-                            "name": "Garoop"
-                        }
+                            "name": "株式会社Garoop",
+                            "url": "https://garoop.jp"
+                        },
+                        "offers": {
+                            "@type": "Offer",
+                            "price": "0",
+                            "priceCurrency": "JPY"
+                        },
+                        "contentRating": "Everyone"
                     }),
                 }}
             />

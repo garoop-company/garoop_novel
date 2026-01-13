@@ -27,16 +27,26 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
-                        "@type": "Game",
+                        "@type": "VideoGame",
                         "name": "ガループスタートアップ",
-                        "description": "生成AI企業を経営せよ！動物エンジニアたちと一緒に世界一のユニコーンを目指すシミュレーションゲーム。",
+                        "description": "生成AI企業を経営せよ！動物エンジニアたちと一緒に世界一のユニコーンを目指す経営シミュレーションゲーム。",
                         "url": `${SITE_URL}/${lang}/game/startup`,
                         "image": `${SITE_URL}/images/game_startup.png`,
-                        "genre": "Simulation",
+                        "genre": ["Simulation", "Educational"],
+                        "gamePlatform": "Web Browser",
+                        "applicationCategory": "Game",
+                        "operatingSystem": "Any",
                         "author": {
                             "@type": "Organization",
-                            "name": "Garoop"
-                        }
+                            "name": "株式会社Garoop",
+                            "url": "https://garoop.jp"
+                        },
+                        "offers": {
+                            "@type": "Offer",
+                            "price": "0",
+                            "priceCurrency": "JPY"
+                        },
+                        "contentRating": "Everyone"
                     }),
                 }}
             />

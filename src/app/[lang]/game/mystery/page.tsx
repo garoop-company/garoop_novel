@@ -27,16 +27,26 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
                 dangerouslySetInnerHTML={{
                     __html: JSON.stringify({
                         "@context": "https://schema.org",
-                        "@type": "Game",
+                        "@type": "VideoGame",
                         "name": "名探偵ガルちゃん",
-                        "description": "事件を解決しよう！プリンを食べた犯人は誰だ！？",
+                        "description": "事件を解決しよう！動物の世界で起こる奇妙な事件を解決する謎解きアドベンチャーゲーム。",
                         "url": `${SITE_URL}/${lang}/game/mystery`,
                         "image": `${SITE_URL}/images/game_mystery.png`,
-                        "genre": "Adventure",
+                        "genre": ["Adventure", "Mystery"],
+                        "gamePlatform": "Web Browser",
+                        "applicationCategory": "Game",
+                        "operatingSystem": "Any",
                         "author": {
                             "@type": "Organization",
-                            "name": "Garoop"
-                        }
+                            "name": "株式会社Garoop",
+                            "url": "https://garoop.jp"
+                        },
+                        "offers": {
+                            "@type": "Offer",
+                            "price": "0",
+                            "priceCurrency": "JPY"
+                        },
+                        "contentRating": "Everyone"
                     }),
                 }}
             />
