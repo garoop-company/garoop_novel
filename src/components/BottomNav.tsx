@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaHome, FaGamepad, FaNewspaper } from 'react-icons/fa';
+import { FaHome, FaNewspaper } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { locales, getDictionary, Locale } from '@/locales';
 
@@ -16,7 +16,6 @@ export default function BottomNav() {
 
     const NAV_ITEMS = [
         { href: '/', label: dict.common.home, icon: FaHome, color: 'text-pink-500' },
-        { href: '/game', label: dict.common.games, icon: FaGamepad, color: 'text-orange-500' },
         { href: '/novels', label: dict.common.news, icon: FaNewspaper, color: 'text-blue-500' },
     ];
 

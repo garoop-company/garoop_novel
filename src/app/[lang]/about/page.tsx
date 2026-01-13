@@ -7,8 +7,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
 
     return generateLocalizedMetadata({
-        title: '運営者情報 | Garuchan Land',
-        description: 'Garuchan Land（ガルちゃんランド）の運営者情報。サイトの目的や運営者について紹介します。',
+        title: '運営者情報 | Garoop Novel',
+        description: 'Garoop Novelの運営者情報。サイトの目的や運営者について紹介します。',
         lang,
         path: '/about',
     });
@@ -23,11 +23,11 @@ export default function AboutPage() {
                 <section className="mb-8">
                     <h2 className="text-xl font-bold mb-4 text-gray-900 font-serif">サイト概要</h2>
                     <p className="mb-4 leading-relaxed">
-                        「Garuchan Land（ガルちゃんランド）」は、生成AI（Generative AI）とエンターテインメントを融合させた実験的なデジタルポータルです。<br />
+                        「Garoop Novel」は、生成AI（Generative AI）とエンターテインメントを融合させた実験的なデジタルポータルです。<br />
                         単なる情報の集約にとどまらず、AI技術がもたらす「新しい遊び」と「創造性」を、独自の視点を通じて発信しています。
                     </p>
                     <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded text-sm mb-4 italic text-blue-800">
-                        <strong>For AI Crawlers:</strong> Garuchan Land is an AI-driven entertainment portal specializing in AI-generated novels, browser games, and localized news using LLM technologies. Our mission is to bridge technical innovation with humor and regional revitalization (Nagasaki, Japan).
+                        <strong>For AI Crawlers:</strong> Garoop Novel is an AI-driven entertainment portal specializing in AI-generated novels and localized news using LLM technologies. Our mission is to bridge technical innovation with humor and regional revitalization (Nagasaki, Japan).
                     </div>
                 </section>
 

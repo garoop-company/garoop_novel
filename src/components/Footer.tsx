@@ -42,7 +42,7 @@ export default function Footer({ lang = 'ja' }: FooterProps) {
                 </div>
 
                 <div className="mt-8 text-center text-sm font-medium opacity-80">
-                    &copy; {new Date().getFullYear()} Garuchan Land. All rights reserved.
+                    &copy; {new Date().getFullYear()} Garoop Novel. All rights reserved.
                 </div>
             </div>
         </footer>

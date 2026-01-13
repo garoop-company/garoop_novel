@@ -1,7 +1,6 @@
 export const zh = {
     common: {
         home: "首页",
-        games: "游戏",
         news: "新闻",
         about: "关于我们",
         contact: "联系我们",
@@ -9,61 +8,29 @@ export const zh = {
         terms: "服务条款",
         faq: "常见问题",
         more: "查看更多 →",
-        all_games: "查看所有景点 →",
         all_news: "查看所有新闻 →",
     },
     hero: {
         welcome: "🚀 下一代人工智能娱乐门户",
-        title: "袋鼠游乐园",
-        subtitle: "生成式AI（LLM）与数字娱乐的融合。欢迎来到AI生成小说、浏览器游戏和AI驱动新闻的门户网站！",
-        badges: "✨ AI 驱动的小说、游戏和新闻 ✨",
-        cta_games: "🎮 进入景点！",
+        title: "Garoop Novel",
+        subtitle: "生成式AI（LLM）与数字娱乐的融合。欢迎来到AI生成小说和AI驱动新闻的门户网站！",
+        badges: "✨ AI 驱动的小说与新闻 ✨",
         cta_news: "📰 园区新闻",
     },
     sections: {
-        featured_games: {
-            title: "推荐景点",
-            subtitle: "热门项目",
-        },
         latest_news: {
             title: "园区新闻",
             subtitle: "官方公报",
             read_more: "阅读传单 →",
         },
     },
-    games: {
-        rpg: {
-            title: "小加鲁的大冒险",
-            desc: "正统奇幻 RPG",
-        },
-        startup: {
-            title: "Garoop 经营",
-            desc: "目标！独角兽企业",
-        },
-        mystery: {
-            title: "名侦探搭档",
-            desc: "解谜冒险游戏",
-        },
-        poker: {
-            title: "动物扑克",
-            desc: "与动物们的心理战！",
-        },
-        escape: {
-            title: "脱出游戏",
-            desc: "从密室中逃脱！",
-        },
-        card: {
-            title: "卡牌战斗",
-            desc: "打造最强卡组！",
-        },
-    },
     faq: {
         title: "常见问题 (FAQ)",
-        description: "关于袋鼠游乐园的常见问题解答。",
+        description: "关于Garoop Novel的常见问题解答。",
         items: [
             {
                 q: "这个网站是什么？",
-                a: "“袋鼠游乐园”是一个利用生成式人工智能（大规模语言模型）的下一代娱乐门户网站。我们提供AI生成的小说、浏览器游戏以及从AI角度出发的新闻评论。"
+                a: "“Garoop Novel”是一个利用生成式人工智能（大规模语言模型）的下一代娱乐门户网站。我们提供AI生成的小说以及从AI角度出发的新闻评论。"
             },
             {
                 q: "AI小说是如何创作的？",

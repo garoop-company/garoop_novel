@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { trackEvent } from '@/lib/ga';
 import { locales, getDictionary, Locale } from '@/locales';
 import LanguageSwitcher from './LanguageSwitcher';
 
@@ -38,19 +37,6 @@ export default function Header() {
                     </Link>
                     <Link href={pg('/novels')} className="hover:text-pink-500 transition-colors py-2">
                         {dict.common.news}
-                    </Link>
-                    <Link
-                        href={pg('/game')}
-                        className="bg-gradient-to-r from-pink-500 to-orange-400 text-white px-5 py-2 rounded-full hover:shadow-lg hover:scale-105 transition-all"
-                        onClick={() =>
-                            trackEvent("cta_click", {
-                                cta_label: "play_games",
-                                cta_location: "header_nav",
-                                cta_target: "/game",
-                            })
-                        }
-                    >
-                        {dict.common.games} 🎮
                     </Link>
                     <Link href={pg('/about')} className="hover:text-pink-500 transition-colors py-2">
                         {dict.common.about}
@@ -98,20 +84,6 @@ export default function Header() {
                             onClick={() => setIsMenuOpen(false)}
                         >
                             {dict.common.news}
-                        </Link>
-                        <Link
-                            href={pg('/game')}
-                            className="text-pink-500"
-                            onClick={() => {
-                                trackEvent("cta_click", {
-                                    cta_label: "play_games",
-                                    cta_location: "header_nav_mobile",
-                                    cta_target: "/game",
-                                });
-                                setIsMenuOpen(false);
-                            }}
-                        >
-                            {dict.common.games} 🎮
                         </Link>
                         <Link
                             href={pg('/about')}

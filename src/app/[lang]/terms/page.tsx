@@ -6,8 +6,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
 
     return generateLocalizedMetadata({
-        title: '利用規約 | Garuchan Land',
-        description: 'Garuchan Land（ガルちゃんランド）の利用規約。サイトの利用ルールについて説明します。',
+        title: '利用規約 | Garoop Novel',
+        description: 'Garoop Novelの利用規約。サイトの利用ルールについて説明します。',
         lang,
         path: '/terms',
     });
@@ -20,7 +20,7 @@ export default function TermsPage() {
                 <h1 className="text-3xl font-bold mb-8 text-gray-900 border-b pb-4">利用規約</h1>
 
                 <p className="mb-4">
-                    この利用規約（以下，「本規約」といいます。）は，Garuchan News（以下，「当サイト」といいます。）がこのウェブサイト上で提供するサービス（以下，「本サービス」といいます。）の利用条件を定めるものです。登録ユーザーの皆さま（以下，「ユーザー」といいます。）には，本規約に従って，本サービスをご利用いただきます。
+                    この利用規約（以下，「本規約」といいます。）は，Garoop Novel（以下，「当サイト」といいます。）がこのウェブサイト上で提供するサービス（以下，「本サービス」といいます。）の利用条件を定めるものです。登録ユーザーの皆さま（以下，「ユーザー」といいます。）には，本規約に従って，本サービスをご利用いただきます。
                 </p>
 
                 <section className="mb-8">

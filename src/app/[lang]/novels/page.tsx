@@ -7,7 +7,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const dict = getDictionary(lang);
 
   return generateLocalizedMetadata({
-    title: `${dict.sections.latest_news.title} | Garuchan Land`,
+    title: `${dict.sections.latest_news.title} | Garoop Novel`,
     description: dict.sections.latest_news.subtitle,
     lang,
     path: '/novels',
@@ -101,17 +101,6 @@ const NovelsPage = async (props: Props) => {
 
         {/* 新しいコンテンツへのリンク */}
         <div className="mt-6 flex justify-center gap-4">
-          <GaLink
-            href="/games/quiz"
-            eventParams={{
-              cta_label: "take_quiz",
-              cta_location: "novels_header",
-              cta_target: "/games/quiz",
-            }}
-            className="px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition"
-          >
-            クイズに挑戦
-          </GaLink>
           <GaLink
             href="/videos"
             eventParams={{

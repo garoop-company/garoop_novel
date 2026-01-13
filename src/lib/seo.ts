@@ -44,7 +44,7 @@ export function generateLocalizedMetadata({
             title,
             description,
             url: absoluteUrl,
-            siteName: 'カンガルーの遊園地',
+            siteName: 'Garoop Novel',
             images: [
                 {
                     url: image.startsWith('http') ? image : `${SITE_URL}${image}`,

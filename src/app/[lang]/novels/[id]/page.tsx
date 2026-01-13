@@ -99,7 +99,7 @@ export default async function Page(props: Props) {
     "keywords": novel.keywords,
     "description": novel.description,
     "url": canonical,
-    "isPartOf": { "@type": "WebSite", "name": "Garuchan Land", "url": SITE_URL },
+    "isPartOf": { "@type": "WebSite", "name": "Garoop Novel", "url": SITE_URL },
     "author": {
       "@type": "Person",
       "name": "山下大貴",
@@ -110,7 +110,7 @@ export default async function Page(props: Props) {
       "@type": "NewsMediaOrganization",
       "name": "株式会社Garoop",
       "url": SITE_URL,
-      "logo": { "@type": "ImageObject", "url": `${SITE_URL}/images/garuchan_island_map.png` }
+      "logo": { "@type": "ImageObject", "url": `${SITE_URL}/images/garoop_novel_background.png` }
     },
     "datePublished": "2024-01-01T00:00:00+09:00", // Placeholder if not in JSON
     "dateModified": new Date().toISOString(),
@@ -134,7 +134,7 @@ export default async function Page(props: Props) {
   const jsonLdWebsite = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Garuchan Land",
+    "name": "Garoop Novel",
     "url": SITE_URL,
     "potentialAction": {
       "@type": "SearchAction",

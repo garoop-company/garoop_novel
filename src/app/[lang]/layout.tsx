@@ -10,8 +10,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
 
   return generateLocalizedMetadata({
-    title: 'カンガルーの遊園地 | 生成AIと赤ちゃんランド',
-    description: 'カンガルーの遊園地（ガルちゃんランド）は、生成AIと赤ちゃんが大暴れする新感覚エンタメテーマパーク。AI、ゲーム、アニメ、小説など、ワクワクするコンテンツを発信中。',
+    title: 'Garoop Novel | 生成AIと赤ちゃんランド',
+    description: 'Garoop Novelは、生成AIと赤ちゃんが大暴れする新感覚エンタメテーマパーク。AI、アニメ、小説など、ワクワクするコンテンツを発信中。',
     lang,
     path: '/',
     image: 'https://d3ez7mat4qd439.cloudfront.net/summary_image/garoop_ai_land.webp',

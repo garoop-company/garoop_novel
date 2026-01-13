@@ -82,12 +82,12 @@ export default async function HomePage({
             {
               "@context": "https://schema.org",
               "@type": "NewsMediaOrganization",
-              "name": "Garuchan Land",
-              "alternateName": ["カンガルーの遊園地", "ガルちゃんランド"],
+              "name": "Garoop Novel",
+              "alternateName": ["Garoop Novel"],
               "url": SITE_URL,
               "logo": {
                 "@type": "ImageObject",
-                "url": `${SITE_URL}/images/garuchan_island_map.png`,
+                "url": `${SITE_URL}/images/garoop_novel_background.png`,
                 "width": 1200,
                 "height": 630
               },
@@ -112,7 +112,7 @@ export default async function HomePage({
                 "https://www.youtube.com/@garooptv",
                 "https://garoop.jp"
               ],
-              "description": "生成AIとエンターテインメントを融合させた次世代ポータル。AI小説、ブラウザゲーム、地方創生ニュースを提供。",
+              "description": "生成AIとエンターテインメントを融合させた次世代ポータル。AI小説と地方創生ニュースを提供。",
               "ethicsPolicy": `${SITE_URL}/${lang}/about`,
               "masthead": `${SITE_URL}/${lang}/about`,
               "isAccessibleForFree": true,
@@ -120,7 +120,7 @@ export default async function HomePage({
             {
               "@context": "https://schema.org",
               "@type": "WebSite",
-              "name": "Garuchan Land",
+              "name": "Garoop Novel",
               "url": SITE_URL,
               "potentialAction": {
                 "@type": "SearchAction",
@@ -140,7 +140,7 @@ export default async function HomePage({
         {/* Faded Background Image */}
         <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
           <Image
-            src="/images/garuchan_island_map.png"
+            src="/images/garoop_novel_background.png"
             alt="Hero Background"
             fill
             className="object-cover scale-110 blur-[2px]"
@@ -187,96 +187,17 @@ export default async function HomePage({
 
           <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
             <GaLink
-              href="/game"
-              eventParams={{
-                cta_label: "go_games",
-                cta_location: "home_hero",
-                cta_target: "/game",
-              }}
-              className="group relative px-12 py-6 bg-gradient-to-r from-pink-500 via-orange-500 to-yellow-400 text-white font-black rounded-full hover:shadow-[0_20px_40px_rgba(249,115,22,0.5)] transition-all duration-500 text-2xl shadow-2xl transform hover:-translate-y-2 border-4 border-white active:scale-95"
-            >
-              <span className="relative z-10">{dict.hero.cta_games}</span>
-              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity rounded-full"></div>
-            </GaLink>
-            <GaLink
               href="/novels"
               eventParams={{
                 cta_label: "read_news",
                 cta_location: "home_hero",
                 cta_target: "/novels",
               }}
-              className="px-10 py-5 bg-white text-gray-800 font-black rounded-full hover:bg-gray-50 transition-all duration-300 text-xl shadow-xl transform hover:-translate-y-1 border-4 border-gray-100 active:scale-95"
+              className="group relative px-12 py-6 bg-gradient-to-r from-pink-500 via-orange-500 to-yellow-400 text-white font-black rounded-full hover:shadow-[0_20px_40px_rgba(249,115,22,0.5)] transition-all duration-500 text-2xl shadow-2xl transform hover:-translate-y-2 border-4 border-white active:scale-95"
             >
-              {dict.hero.cta_news}
+              <span className="relative z-10">{dict.hero.cta_news}</span>
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity rounded-full"></div>
             </GaLink>
-          </div>
-        </div>
-      </section>
-
-      {/* ✅ おすすめゲームセクション (Featured Games) - SWAPPED TO TOP */}
-      <section className="py-24 px-4 relative overflow-hidden">
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-pink-300 to-transparent opacity-50"></div>
-        <div className="container mx-auto max-w-6xl relative z-10">
-          <div className="flex flex-col md:flex-row items-center gap-6 mb-16">
-            <div className="h-20 w-20 bg-gradient-to-br from-orange-400 to-pink-500 rounded-[2rem] flex items-center justify-center text-5xl shadow-2xl text-white transform rotate-3">🎮</div>
-            <div className="text-center md:text-left">
-              <h2 className="text-4xl md:text-5xl font-black text-gray-800 mb-2">{dict.sections.featured_games.title}</h2>
-              <p className="text-orange-500 text-xl font-black uppercase tracking-widest italic flex items-center justify-center md:justify-start">
-                <span className="bg-orange-100 px-3 py-1 rounded-lg">{dict.sections.featured_games.subtitle}</span>
-              </p>
-            </div>
-            <Link href="/game" className="md:ml-auto px-8 py-4 bg-white text-orange-600 font-black rounded-full border-4 border-orange-100 hover:border-orange-400 hover:text-orange-500 transition-all shadow-xl hover:shadow-2xl active:scale-95">
-              {dict.common.all_games}
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-            {[
-              { id: 'rpg', title: dict.games.rpg.title, desc: dict.games.rpg.desc, img: '/images/game_rpg.png', color: 'orange', icon: '⚔️' },
-              { id: 'startup', title: dict.games.startup.title, desc: dict.games.startup.desc, img: '/images/game_startup.png', color: 'blue', icon: '🚀' },
-              { id: 'mystery', title: dict.games.mystery.title, desc: dict.games.mystery.desc, img: '/images/game_mystery.png', color: 'gray', icon: '🕵️‍♂️' },
-              { id: 'poker', title: dict.games.poker.title, desc: dict.games.poker.desc, img: '/images/game_poker.png', color: 'red', icon: '🃏' },
-            ].map((game) => (
-              <Link key={game.id} href={`/game/${game.id}`} className="group relative">
-                {/* Ticket Stub Card Design */}
-                <div className="bg-white rounded-[2rem] overflow-hidden shadow-2xl group-hover:shadow-[0_40px_60px_-15px_rgba(0,0,0,0.2)] transition-all duration-500 border-4 border-white group-hover:border-pink-300 transform group-hover:-translate-y-4">
-                  {/* Card Header (Strap Design) */}
-                  <div className={`h-4 bg-${game.color}-500 w-full mb-1 border-b-2 border-dashed border-white`}></div>
-
-                  {/* Image Container with "Perforation" effect */}
-                  <div className="relative h-48 overflow-hidden mx-3 mt-2 rounded-[1.5rem] bg-gray-100">
-                    <Image src={game.img} alt={game.title} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-lg border-2 border-pink-100 group-hover:rotate-12 transition-transform">
-                      {game.icon}
-                    </div>
-                  </div>
-
-                  <div className="p-6 relative">
-                    {/* Perforation holes on sides */}
-                    <div className="absolute top-0 -left-3 w-6 h-6 bg-sky-100 rounded-full border-4 border-white shadow-inner"></div>
-                    <div className="absolute top-0 -right-3 w-6 h-6 bg-sky-100 rounded-full border-4 border-white shadow-inner"></div>
-
-                    <h3 className="text-xl font-black text-gray-800 mb-2 group-hover:text-pink-600 transition-colors">
-                      {game.title}
-                    </h3>
-                    <p className="text-gray-500 text-sm font-bold line-clamp-1 mb-4 opacity-70">
-                      {game.desc}
-                    </p>
-
-                    <div className="flex justify-between items-center mt-2 border-t-2 border-dashed border-pink-50 pt-4">
-                      <span className="text-[10px] font-black text-pink-400 tracking-tighter uppercase">ADMIT ONE • FREE</span>
-                      <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center text-pink-500 font-bold group-hover:bg-pink-500 group-hover:text-white transition-all">
-                        ▶
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Shadow/Reflection beneath */}
-                <div className="h-4 w-4/5 mx-auto bg-black/5 blur-lg rounded-full mt-4 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
-              </Link>
-            ))}
           </div>
         </div>
       </section>

@@ -6,8 +6,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
 
     return generateLocalizedMetadata({
-        title: 'プライバシーポリシー | Garuchan Land',
-        description: 'Garuchan Land（ガルちゃんランド）のプライバシーポリシー。個人情報の取り扱い、Cookie、広告配信について説明します。',
+        title: 'プライバシーポリシー | Garoop Novel',
+        description: 'Garoop Novelのプライバシーポリシー。個人情報の取り扱い、Cookie、広告配信について説明します。',
         lang,
         path: '/privacy',
     });

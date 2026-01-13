@@ -7,7 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const siteUrl = 'https://www.ai-garoop-novel.com'
 
     // Base pages
-    const basePages = ['', '/game', '/novels', '/about', '/contact', '/privacy', '/terms']
+    const basePages = ['', '/novels', '/about', '/contact', '/privacy', '/terms']
 
     const entries: MetadataRoute.Sitemap = []
 
@@ -19,19 +19,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 lastModified: new Date(),
                 changeFrequency: 'weekly',
                 priority: page === '' ? 1.0 : 0.8,
-            })
-        }
-    }
-
-    // Games
-    const games = ['startup', 'poker', 'mystery', 'escape', 'rpg', 'card']
-    for (const lang of locales) {
-        for (const gameId of games) {
-            entries.push({
-                url: `${siteUrl}/${lang}/game/${gameId}`,
-                lastModified: new Date(),
-                changeFrequency: 'monthly',
-                priority: 0.7,
             })
         }
     }
