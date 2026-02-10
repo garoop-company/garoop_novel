@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation';
 import { promises as fs } from 'fs';
 import path from 'path';
 import ClientNovelView from './ClientNovelView';
-import Footer from '@/components/Footer';
 import { locales, Locale } from '@/locales';
 
 type Novel = {
@@ -13,6 +12,7 @@ type Novel = {
   content: string[];
   keywords: string;
   lang: string;
+  sourceVideoUrl?: string;
 };
 
 async function getNovels(): Promise<Novel[]> {
@@ -21,9 +21,9 @@ async function getNovels(): Promise<Novel[]> {
   return JSON.parse(fileContents);
 }
 
-async function getNovelById(id: string): Promise<Novel | undefined> {
+async function getNovelById(id: string, lang: string): Promise<Novel | undefined> {
   const novels = await getNovels();
-  return novels.find((n) => n.id === id);
+  return novels.find((n) => n.id === id && n.lang === lang);
 }
 
 // 事前ビルド対象
@@ -32,7 +32,9 @@ export async function generateStaticParams() {
   const params = [];
   for (const lang of locales) {
     for (const n of novels) {
-      params.push({ lang, id: n.id });
+      if (n.lang === lang) {
+        params.push({ lang, id: n.id });
+      }
     }
   }
   return params;
@@ -48,7 +50,7 @@ export async function generateMetadata(props: {
   const { id, lang: rawLang } = await props.params;
   const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
   const searchParams = await props.searchParams;
-  const novel = await getNovelById(id);
+  const novel = await getNovelById(id, lang);
   if (!novel) return {};
 
   const raw = searchParams.page ? parseInt(searchParams.page as string, 10) : 1;
@@ -76,7 +78,7 @@ export default async function Page(props: Props) {
   const { id, lang: rawLang } = await props.params;
   const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
   const searchParams = await props.searchParams;
-  const novel = await getNovelById(id);
+  const novel = await getNovelById(id, lang);
   if (!novel) notFound();
 
   let page = searchParams.page ? parseInt(searchParams.page as string, 10) : 1;
@@ -170,9 +172,9 @@ export default async function Page(props: Props) {
         category={novel.category}
         content={novel.content}
         page={page}
-        lang={novel.lang}   // ← 渡す
+        lang={novel.lang}
+        sourceVideoUrl={(novel as any).sourceVideoUrl} // Add cast or update type definition
       />
-      <Footer lang={lang} />
     </div>
   );
 }

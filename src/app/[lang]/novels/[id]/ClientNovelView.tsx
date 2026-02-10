@@ -10,10 +10,11 @@ type Props = {
     category: string;
     content: string[];
     page: number;
-    lang: string; // ← 追加
+    lang: string;
+    sourceVideoUrl?: string;
 };
 
-export default function ClientNovelView({ novelId, title, category, content, page, lang }: Props) {
+export default function ClientNovelView({ novelId, title, category, content, page, lang, sourceVideoUrl }: Props) {
     const totalPages = content.length;
     const currentPageContent = content[page - 1] ?? '';
     const hasPrevPage = page > 1;
@@ -183,11 +184,29 @@ export default function ClientNovelView({ novelId, title, category, content, pag
                             <span className="font-semibold">{lastMessage}</span>
                         </motion.div>
 
-                        <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }} className="text-center">
-                            <Link href="/novels" className="inline-block px-5 py-2 rounded bg-amber-500 hover:bg-amber-400 text-slate-950 shadow">
-                                {lang === 'ja' ? 'ライブラリに戻る' : 'Back to Library'}
-                            </Link>
-                        </motion.div>
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }} className="text-center">
+                                <Link href="/novels" className="inline-block px-5 py-2 rounded bg-slate-800 text-slate-200 hover:bg-slate-700 shadow">
+                                    {lang === 'ja' ? 'ライブラリに戻る' : 'Back to Library'}
+                                </Link>
+                            </motion.div>
+
+                            {sourceVideoUrl && (
+                                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }} className="text-center">
+                                    <a
+                                        href={sourceVideoUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-2 px-5 py-2 rounded bg-red-600 hover:bg-red-500 text-white shadow"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                                            <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
+                                        </svg>
+                                        <span>{lang === 'ja' ? '元の動画を見る' : 'Watch Original Video'}</span>
+                                    </a>
+                                </motion.div>
+                            )}
+                        </div>
                     </div>
                 )}
             </motion.div>

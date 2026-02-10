@@ -16,7 +16,6 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 import Link from 'next/link';
 import { promises as fs } from 'fs';
 import path from 'path';
-import Footer from '@/components/Footer';
 import GaLink from '@/components/GaLink';
 
 type Novel = {
@@ -232,7 +231,7 @@ const NovelsPage = async (props: Props) => {
           filtered.map((novel) => (
             <Link
               href={`/novels/${novel.id}`}
-              key={novel.id}
+              key={`${novel.id}-${novel.lang}`}
               className="p-6 bg-slate-900/70 rounded-lg border border-slate-800 hover:bg-slate-800 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-amber-900/30 h-full flex flex-col"
             >
               <div className="flex flex-col gap-2">
@@ -259,7 +258,6 @@ const NovelsPage = async (props: Props) => {
         )}
       </main>
 
-      <Footer lang={routeLang} />
     </div>
   );
 };
