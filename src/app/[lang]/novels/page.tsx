@@ -23,7 +23,10 @@ type Novel = {
   title: string;
   description: string;
   category: string;
-  content: string[];
+  content?: string[];
+  chapterFile?: string;
+  pageCount?: number;
+  animationPreset?: string;
   keywords: string;
   lang: string;
 };

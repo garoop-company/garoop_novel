@@ -1,0 +1,67 @@
+name: Groq Daily Garu Novel
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_date:
+        description: "Target date (YYYY-MM-DD). Empty = today in JST."
+        required: false
+        type: string
+  schedule:
+    - cron: "0 18 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: groq-daily-garu-novel
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      TZ: Asia/Tokyo
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve target date
+        id: date
+        run: |
+          TARGET_DATE="${{ github.event.inputs.target_date }}"
+          if [ -z "$TARGET_DATE" ]; then
+            TARGET_DATE="$(TZ=Asia/Tokyo date +%F)"
+          fi
+          echo "target_date=$TARGET_DATE" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Generate new episodes with Groq API
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_MODEL: ${{ vars.GROQ_MODEL || 'llama-3.3-70b-versatile' }}
+          TARGET_DATE: ${{ steps.date.outputs.target_date }}
+        run: node scripts/generate-daily-novels.mjs
+
+      - name: Commit and push
+        run: |
+          if [ -z "$(git status --porcelain -- src/data/novels.json src/data/chapters)" ]; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          TARGET_DATE="${{ steps.date.outputs.target_date }}"
+          git add src/data/novels.json src/data/chapters
+          git commit -m "chore(groq): generate daily Garu chapters for ${TARGET_DATE}"
+          git push

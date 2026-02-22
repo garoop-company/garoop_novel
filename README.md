@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Garoop Novel
 
-## Getting Started
+ガルちゃん（シングルマザーのカンガルー）を主人公にした連載小説サイトです。
 
-First, run the development server:
+## ローカル起動
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## データ構造
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+小説メタデータは `src/data/novels.json`、本文は `src/data/chapters/*.json` で管理します。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`novels.json` の主なフィールド:
 
-## Learn More
+- `id`: エピソードID（例: `garu-detective-001`）
+- `seriesKey`: シリーズ識別子
+- `episodeNumber`: 話数
+- `title`: タイトル
+- `description`: 概要
+- `category`: シリーズ名
+- `chapterFile`: 本文ファイル名（例: `garu-detective-001.json`）
+- `pageCount`: ページ数
+- `animationPreset`: 小説詳細ページのアニメーション種別
+- `keywords`: カンマ区切りキーワード
+- `lang`: 言語（現在は `ja`）
+- `createdAt`: 生成日（JST）
 
-To learn more about Next.js, take a look at the following resources:
+## GitHub Actions + Groq API で毎日自動生成
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+毎日、以下5シリーズの次話を自動生成して
+`src/data/novels.json` と `src/data/chapters/*.json` を更新します。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- ガルちゃん探偵
+- インテリジェンスガルちゃん
+- 10歳起業家カンガルーガルちゃん
+- 生成AIとカンガルーガルちゃん
+- 子作りを布教するガルちゃん（家族づくり・子育て支援の社会文脈で健全に表現）
 
-## Deploy on Vercel
+ワークフロー: `.github/workflows/daily-garu-novels.yml`  
+生成スクリプト: `scripts/generate-daily-novels.mjs`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 必要な設定
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. GitHub Repository Secrets に `GROQ_API_KEY` を追加
+2. 任意で Repository Variables に `GROQ_MODEL` を追加
+   - 未設定時は `llama-3.3-70b-versatile` を使用
+
+### 実行タイミング
+
+- `schedule`: 毎日 `21:00 UTC`（日本時間 翌 `06:00`）
+- `workflow_dispatch`: 手動実行可能
+
+このワークフローは Groq API を使って、Actions内で
+章ごとのファイルを追加・更新します。
+
+## 手動実行
+
+GitHubの `Actions` タブから `Groq Daily Garu Novel` を選び、`Run workflow` を実行してください。
+`target_date` を指定すると、その日付で `createdAt` を揃えた生成運用ができます。
+
+## プロンプト管理
+
+システムプロンプトは `prompts/garu-system-prompt.txt` に集約しています。
+主人公設定（シングルマザーのカンガルー・ガルちゃん）と出力ルールはここで固定しています。

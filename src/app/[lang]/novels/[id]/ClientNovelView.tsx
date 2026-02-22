@@ -11,16 +11,41 @@ type Props = {
     content: string[];
     page: number;
     lang: string;
+    animationPreset?: string;
     sourceVideoUrl?: string;
 };
 
-export default function ClientNovelView({ novelId, title, category, content, page, lang, sourceVideoUrl }: Props) {
+type AnimationPreset = {
+    shell: { y: number; duration: number };
+    page: { x: number; duration: number };
+    floatY: number;
+    glowOpacity: number;
+};
+
+const PRESETS: Record<string, AnimationPreset> = {
+    'detective-noir': { shell: { y: 12, duration: 0.32 }, page: { x: 16, duration: 0.25 }, floatY: 8, glowOpacity: 0.5 },
+    'intel-grid': { shell: { y: 8, duration: 0.28 }, page: { x: 10, duration: 0.2 }, floatY: 4, glowOpacity: 0.35 },
+    'startup-pop': { shell: { y: 18, duration: 0.36 }, page: { x: 20, duration: 0.3 }, floatY: 10, glowOpacity: 0.45 },
+    'neon-wave': { shell: { y: 10, duration: 0.4 }, page: { x: 22, duration: 0.28 }, floatY: 7, glowOpacity: 0.48 },
+    'sunrise-community': { shell: { y: 6, duration: 0.3 }, page: { x: 12, duration: 0.24 }, floatY: 5, glowOpacity: 0.4 },
+    default: { shell: { y: 12, duration: 0.35 }, page: { x: 12, duration: 0.25 }, floatY: 6, glowOpacity: 0.45 },
+};
+
+function pickPreset(novelId: string, requested?: string): AnimationPreset {
+    if (requested && PRESETS[requested]) return PRESETS[requested];
+    const keys = ['detective-noir', 'intel-grid', 'startup-pop', 'neon-wave', 'sunrise-community'];
+    const hash = novelId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    return PRESETS[keys[hash % keys.length]] ?? PRESETS.default;
+}
+
+export default function ClientNovelView({ novelId, title, category, content, page, lang, animationPreset, sourceVideoUrl }: Props) {
     const totalPages = content.length;
     const currentPageContent = content[page - 1] ?? '';
     const hasPrevPage = page > 1;
     const hasNextPage = page < totalPages;
     const isFirst = page === 1;
     const isLast = page === totalPages;
+    const preset = pickPreset(novelId, animationPreset);
 
     // 言語別メッセージ
     const firstMessage = lang === 'ja'
@@ -38,7 +63,7 @@ export default function ClientNovelView({ novelId, title, category, content, pag
                 aria-hidden
                 className="pointer-events-none absolute inset-0 opacity-40"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: isFirst || isLast ? 0.45 : 0.2 }}
+                animate={{ opacity: isFirst || isLast ? preset.glowOpacity : 0.2 }}
                 transition={{ duration: 1.2 }}
                 style={{
                     background:
@@ -48,9 +73,9 @@ export default function ClientNovelView({ novelId, title, category, content, pag
 
             <motion.div
                 className="max-w-4xl w-full bg-slate-900/60 rounded-lg shadow-lg p-4 sm:p-8 relative z-10"
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: preset.shell.y }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, ease: 'easeOut' }}
+                transition={{ duration: preset.shell.duration, ease: 'easeOut' }}
             >
                 <header className="text-center mb-6">
                     <motion.h1
@@ -76,7 +101,7 @@ export default function ClientNovelView({ novelId, title, category, content, pag
                     {/* キャラ画像（最初のページはふわふわ） */}
                     <motion.div
                         className="flex-shrink-0 w-32 sm:w-40"
-                        animate={isFirst ? { y: [0, -6, 0] } : { y: 0 }}
+                        animate={isFirst ? { y: [0, -preset.floatY, 0] } : { y: 0 }}
                         transition={isFirst ? { duration: 3, repeat: Infinity, ease: 'easeInOut' } : {}}
                     >
                         <Image
@@ -103,9 +128,9 @@ export default function ClientNovelView({ novelId, title, category, content, pag
                     <motion.div
                         className="relative bg-slate-900 text-slate-200 leading-relaxed text-md sm:text-lg whitespace-pre-wrap w-full rounded-xl p-4 sm:p-6 shadow-inner"
                         key={page}
-                        initial={{ opacity: 0, x: 12 }}
+                        initial={{ opacity: 0, x: preset.page.x }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.25 }}
+                        transition={{ duration: preset.page.duration }}
                     >
                         <span className="absolute left-[-12px] top-6 w-0 h-0 border-t-8 border-b-8 border-r-12 border-t-transparent border-b-transparent border-r-slate-900"></span>
 

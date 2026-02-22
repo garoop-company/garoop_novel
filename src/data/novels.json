@@ -1,425 +1,72 @@
 [
   {
-    "id": "301",
-    "title": "未来への投資：長崎県知事選と『若者未来ファンド』の構想",
-    "description": "選挙演説の熱気が渦巻く長崎。そこで語られたのは、単なる支援金ではない。『未来そのもの』を買い取るための壮大なファンド構想だった。",
-    "category": "Politics",
-    "content": [
-      "「金をばら撒けば問題が解決すると思っているのか？」男の声が響く。聴衆は静まり返る。",
-      "ステージ上の候補者・平田けんは、冷ややかな視線を一蹴するかのように続けた。「違う。これは消費ではない。投資だ。」",
-      "彼が掲げたのは『子供子育て若者未来ファンド』。県の予算だけでなく、民間からも資金を募り、長崎の次世代を担う若者たちに直接投資するシステムだ。",
-      "「若者が逃げ出す街に未来はない。だが、彼らが挑戦できる土壌があれば、金も人も戻ってくる。金融庁での経験が私にはある。金の流れを変えれば、街の血流が変わるのだ。」",
-      "夕闇に包まれた長崎の空の下、その言葉は予言のように重く響いた。ただの選挙公約ではない。これは、衰退する地方都市が生き残るための、最後の『賭け』なのかもしれない。"
-    ],
-    "keywords": "長崎, 県知事選, ファンド, 金融庁, 若者支援, 投資, 地方創生, 平田けん",
+    "id": "garu-detective-001",
+    "seriesKey": "garu-detective",
+    "episodeNumber": 1,
+    "title": "ガルちゃん探偵 第一話: 雨の港と消えたミルク缶",
+    "description": "シングルマザーのカンガルー・ガルちゃんが、子どもを背負いながら港町の奇妙な失踪事件に挑む。",
+    "category": "ガルちゃん探偵",
+    "chapterFile": "garu-detective-001.json",
+    "pageCount": 5,
+    "animationPreset": "detective-noir",
+    "keywords": "ガルちゃん, シングルマザー, カンガルー, 探偵, 港町, ミステリー",
     "lang": "ja",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=eH4tNq-Lip8"
+    "createdAt": "2026-02-22"
   },
   {
-    "id": "301",
-    "title": "Investing in Tomorrow: The Nagasaki Governor Election and the 'Future Fund'",
-    "description": "In the heat of an election campaign, a bold plan emerges—not just charity, but a massive investment fund to buy the future of Nagasaki.",
-    "category": "Politics",
-    "content": [
-      "\"Do you think throwing money around solves anything?\" The man's voice echoed across the square. The crowd fell silent.",
-      "On stage, candidate Ken Hirata dismissed the skepticism with a sharp look. \"No. This isn't consumption. It is investment.\"",
-      "He proposed the 'Children and Youth Future Fund.' A system not purely reliant on tax money, but one that invites private capital to invest directly in the next generation of Nagasaki.",
-      "\"A city that drives away its youth has no future. But if we build the soil for them to challenge the world, both people and money will return. My experience at the Financial Services Agency taught me one thing: change the flow of money, and you change the lifeblood of the city.\"",
-      "Under the twilight sky of Nagasaki, his words hung heavy like a prophecy. This was no mere campaign promise. It was perhaps the last gamble for a fading regional city to survive."
-    ],
-    "keywords": "Nagasaki, Election, Fund, FSA, Youth Support, Investment, Regional Revitalization, Ken Hirata",
-    "lang": "en",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=eH4tNq-Lip8"
-  },
-  {
-    "id": "302",
-    "title": "1031円の衝撃：最低賃金爆上げとAIによる生存戦略",
-    "description": "最低賃金が1031円に跳ね上がった。中小企業の悲鳴が聞こえる中、ある結論が導き出される。「人間を雇うな。AIを雇え。」",
-    "category": "Economy",
-    "content": [
-      "「1031円だ」と彼は呟いた。手元の通知書に書かれた数字は、長崎の経営者たちにとっての死刑宣告にも等しかった。",
-      "「これでは利益が出ない。人を雇えば雇うほど赤字だ」",
-      "だが、Garoopのオフィスでは別の景色が見えていた。「逆だ。これがチャンスなんだ」と木下氏は笑う。",
-      "「人件費が高騰する今こそ、AIだ。コストは10分の1、成果は10倍。人間が1時間かかる仕事を、AIは3秒で終わらせる。インフレと賃上げの波を乗りこなす唯一のサーフボード、それが生成AIとDXだ。」",
-      "古き良き『昭和の経営』にしがみつく者は溺れるだろう。しかし、AIという名の翼を手に入れた者だけが、この荒波の上を飛んでいけるのだ。"
-    ],
-    "keywords": "最低賃金, 1031円, AI, DX, 経営, コスト削減, 生産性, インフレ",
+    "id": "garu-intelligence-001",
+    "seriesKey": "garu-intelligence",
+    "episodeNumber": 1,
+    "title": "インテリジェンスガルちゃん 第一話: ノイズの中の赤い点",
+    "description": "情報分析官として生きるガルちゃんが、都市インフラを狙う不可解な通信を追跡する。",
+    "category": "インテリジェンスガルちゃん",
+    "chapterFile": "garu-intelligence-001.json",
+    "pageCount": 5,
+    "animationPreset": "intel-grid",
+    "keywords": "ガルちゃん, インテリジェンス, 情報分析, 都市インフラ, サスペンス",
     "lang": "ja",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=TJHUCtSHU7I"
+    "createdAt": "2026-02-22"
   },
   {
-    "id": "302",
-    "title": "Shock of 1031 Yen: Minimum Wage Surge and the AI Survival Strategy",
-    "description": "Minimum wage hits 1031 yen. Amidst the screams of small businesses, a cold conclusion arises: 'Don't hire humans. Hire AI.'",
-    "category": "Economy",
-    "content": [
-      "\"1031 yen,\" he muttered. The number on the notice felt like a death sentence to the business owners of Nagasaki.",
-      "\"We can't turn a profit like this. The more we hire, the more we bleed.\"",
-      "But inside the Garoop office, the view was different. \"On the contrary,\" Mr. Kinoshita laughed. \"This is our chance.\"",
-      "\"When labor costs skyrocket, AI is the answer. One-tenth the cost, ten times the output. What takes a human an hour, AI finishes in three seconds. In this wave of inflation and wage hikes, Generative AI and DX are the only surfboards that will keep you afloat.\"",
-      "Those clinging to the 'good old days' of management will drown. Only those who seize the wings of AI will soar above the turbulence."
-    ],
-    "keywords": "Minimum Wage, 1031 Yen, AI, DX, Management, Cost Reduction, Productivity, Inflation",
-    "lang": "en",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=TJHUCtSHU7I"
-  },
-  {
-    "id": "303",
-    "title": "斜陽の帝国：BtoBビジネスの終焉とインフレ時代のIT投資",
-    "description": "かつて栄華を誇ったBtoB受託開発。しかしインフレの波がその『安定』を蝕み始めた。沈みゆく船から脱出する方法とは。",
-    "category": "Economy",
-    "content": [
-      "「御社の見積もり、高すぎませんか？」クライアントの冷たい言葉が突き刺さる。",
-      "かつては王道だったBtoBの受託開発。しかし、原価は上がるが売価は上げられない。下請け構造の限界がそこにあった。",
-      "木下氏は断言する。「BtoBは終わった。これからはBtoCか、あるいは圧倒的な付加価値を持つ自社プロダクトだ。」",
-      "費用対効果（コスパ）を血眼になって求める企業相手に商売をしてはいけない。彼らは1円でも安く買い叩こうとする。",
-      "「インフレ時代に生き残るのは、価格競争に巻き込まれない『ブランド』を持つ者だけだ。IT投資の矛先を変えろ。管理システムではなく、売上を生む『武器』に投資せよ。」",
-      "受託の鎖を断ち切る勇気。それこそが、次の時代へのパスポートなのだ。"
-    ],
-    "keywords": "BtoB, 斜陽産業, IT投資, インフレ, 受託開発, 自社プロダクト, 費用対効果",
+    "id": "garu-entrepreneur-001",
+    "seriesKey": "garu-entrepreneur",
+    "episodeNumber": 1,
+    "title": "10歳起業家カンガルーガルちゃん 第一話: 100円のレモネード作戦",
+    "description": "10歳のガルちゃんが、母として子どもを守りながら初めての小さな事業を立ち上げる。",
+    "category": "10歳起業家カンガルーガルちゃん",
+    "chapterFile": "garu-entrepreneur-001.json",
+    "pageCount": 5,
+    "animationPreset": "startup-pop",
+    "keywords": "ガルちゃん, 10歳起業家, カンガルー, ビジネス, 親子, 成長",
     "lang": "ja",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=kk8lLelfAdQ"
+    "createdAt": "2026-02-22"
   },
   {
-    "id": "303",
-    "title": "Empire in Twilight: The End of BtoB and IT Investment in the Inflation Era",
-    "description": "The once-stable world of BtoB contract development is crumbling under inflation. How does one escape a sinking ship?",
-    "category": "Economy",
-    "content": [
-      "\"Your estimate is too high.\" The client's words cut like ice.",
-      "BtoB contract development was once the royal road. But now, costs rise while prices remain frozen. The limits of the subcontracting structure are laid bare.",
-      "Kinoshita declares, \"BtoB is dead. The future belongs to BtoC, or to those with overwhelming value in their own products.\"",
-      "Never do business with companies obsessed with cost-performance. They will beat you down for every last yen.",
-      "\"In an era of inflation, only those with a 'brand' that transcends price wars will survive. Shift your IT investment. Stop pouring money into management systems and start investing in 'weapons' that generate revenue.\"",
-      "The courage to break the chains of subcontracting is the only passport to the next era."
-    ],
-    "keywords": "BtoB, Twilight Industry, IT Investment, Inflation, Outsourcing, Product Development, ROI",
-    "lang": "en",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=kk8lLelfAdQ"
-  },
-  {
-    "id": "304",
-    "title": "リアルとの融合：AI×起業で掴む『手触りのある未来』",
-    "description": "画面の中だけのAIはもう古い。物理的なモノ、リアルな現場とAIが融合した時、真のイノベーションが爆発する。",
-    "category": "AI",
-    "content": [
-      "コードを書くだけが起業ではない。シリコンバレーの夢想家たちはスクリーンの中に宇宙を作ろうとしたが、我々は違う。",
-      "「スマホの外に出よう」と彼は言った。",
-      "AIは脳だ。しかし、脳だけでは世界は動かない。手が必要だ。足が必要だ。農業、物流、製造業。汗と泥にまみれた『リアル』な現場にこそ、AIという知能を宿らせる余地がある。",
-      "「泥臭い課題をAIで解決する。それが次のユニコーンを生む揺り籠だ。Webサービスを作るな。実体のある『プロダクト』を作れ。」",
-      "仮想空間の覇権争いを他所に、彼らは現実世界をハックし始めた。手に取れる未来を作るために。"
-    ],
-    "keywords": "AI, 起業, リアル産業, ハードウェア, 農業, 物流, 実業, スタートアップ",
+    "id": "garu-genai-001",
+    "seriesKey": "garu-genai",
+    "episodeNumber": 1,
+    "title": "生成AIとカンガルーガルちゃん 第一話: プロンプトは子守歌",
+    "description": "シングルマザーのガルちゃんが、生成AIを使って仕事と育児の両立を切り開く。",
+    "category": "生成AIとカンガルーガルちゃん",
+    "chapterFile": "garu-genai-001.json",
+    "pageCount": 5,
+    "animationPreset": "neon-wave",
+    "keywords": "ガルちゃん, 生成AI, シングルマザー, 生産性, 在宅ワーク",
     "lang": "ja",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=KOTBSgKIHQk"
+    "createdAt": "2026-02-22"
   },
   {
-    "id": "304",
-    "title": "Merging with Reality: AI x Entrepreneurship and the Tangible Future",
-    "description": "AI confined to screens is outdated. When intelligence meets the physical world, true innovation explodes.",
-    "category": "AI",
-    "content": [
-      "Entrepreneurship is not just about writing code. While Silicon Valley dreamers tried to build universes inside screens, we looked elsewhere.",
-      "\"Let's step outside the smartphone,\" he said.",
-      "AI is the brain. But a brain alone cannot move the world. It needs hands. It needs legs. Agriculture, logistics, manufacturing. Ideally, the 'real' fields covered in sweat and mud are where AI can truly take root.",
-      "\"Solve the gritty problems with AI. That is the cradle of the next unicorn. Don't build just another web service. Build a tangible 'product'.\"",
-      "While others fought for dominance in virtual space, they began to hack the physical world. To build a future you can touch."
-    ],
-    "keywords": "AI, Entrepreneurship, Real Industry, Hardware, Agriculture, Logistics, Startup",
-    "lang": "en",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=KOTBSgKIHQk"
-  },
-  {
-    "id": "305",
-    "title": "10兆円の磁石：AI時代の長崎とデータセンター戦略",
-    "description": "辺境の地・長崎が、世界の中心になる日が来る？ 10兆円規模の投資マネーを呼び込む、起死回生のシナリオ。",
-    "category": "Politics",
-    "content": [
-      "「長崎には何もない」と若者は嘆いて街を出た。だが、投資家の目は違った。",
-      "AI時代、最も価値ある資源は何か？ それは『電力』と『土地』、そして『冷却のための水』だ。",
-      "「GoogleもAmazonも、AIを動かすための場所を探して血眼になっている。長崎を見ろ。海がある。風がある。エネルギーのポテンシャルがある。」",
-      "数十兆円規模の投資マネーが動くデータセンター産業。それを誘致できれば、長崎はシリコンバレーの下請けではなく、デジタル社会の『心臓部』になれる。",
-      "「観光だけが地方創生じゃない。最先端のインフラ基地として、世界を裏側から支えるんだ。」",
-      "地図の片隅にある半島が、熱を帯びて輝き始めた。"
-    ],
-    "keywords": "長崎, データセンター, 投資, インフラ, エネルギー, 地方創生, 半導体, AI",
+    "id": "garu-family-001",
+    "seriesKey": "garu-family",
+    "episodeNumber": 1,
+    "title": "子作りを布教するガルちゃん 第一話: 未来を増やす教室",
+    "description": "ガルちゃんが『家族づくり』を前向きに語る地域イベントを始め、偏見と本音に向き合う。",
+    "category": "子作りを布教するガルちゃん",
+    "chapterFile": "garu-family-001.json",
+    "pageCount": 5,
+    "animationPreset": "sunrise-community",
+    "keywords": "ガルちゃん, 家族づくり, 子育て支援, 地域コミュニティ, シングルマザー",
     "lang": "ja",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=RQo_MdCRZTI"
-  },
-  {
-    "id": "305",
-    "title": "The Ten Trillion Yen Magnet: Nagasaki in the AI Era",
-    "description": "Nagasaki, a peripheral town, becoming the center of the world? A scenario to attract massive investment and revive the region.",
-    "category": "Politics",
-    "content": [
-      "\"There's nothing in Nagasaki,\" the youth sighed as they left. But investors saw something else.",
-      "In the AI era, what are the most valuable resources? Power, land, and water for cooling.",
-      "\"Google, Amazon—they are desperate for places to run their AI. Look at Nagasaki. The ocean. The wind. The energy potential.\"",
-      "The data center industry moves tens of trillions of yen. If Nagasaki can attract them, it won't be a subcontractor to Silicon Valley, but the 'heart' of the digital society.",
-      "\"Regional revitalization isn't just about tourism. We will become the advanced infrastructure base that supports the world from behind the scenes.\"",
-      "The peninsula on the edge of the map began to glow with a new heat."
-    ],
-    "keywords": "Nagasaki, Data Center, Investment, Infrastructure, Energy, Regional Revitalization, Semiconductor, AI",
-    "lang": "en",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=RQo_MdCRZTI"
-  },
-  {
-    "id": "306",
-    "title": "AIの覚醒：『子供』を笑う者は未来に泣く",
-    "description": "「AIなんてまだ使えない」と冷笑する人々へ。それは赤ん坊を見て「走れないのか」と馬鹿にするのと同じだ。",
-    "category": "AI",
-    "content": [
-      "「嘘をつく」「計算を間違える」。人々は生成AIのミスをあげつらって笑った。",
-      "しかし、彼はそのディスプレイの向こうにある『目』を見ていた。",
-      "「笑うな。これは子供なんだ。今はまだハイハイをしている段階だ。だが、この子の成長速度は人間の数万倍だ。明日には走り出し、明後日には我々を追い抜いていく。」",
-      "AIを下に見る者は、かつてインターネットを「ただのおもちゃ」と呼んだ者たちと同じ運命を辿るだろう。",
-      "「育てなさい。共に学びなさい。AIを『道具』ではなく『パートナー』として扱った者だけが、その背中に乗って見たことのない景色を見ることができる。」",
-      "進化は待ってくれない。置いていかれるか、共に駆けるか。選択の時は既に過ぎている。"
-    ],
-    "keywords": "AI, 進化, シンギュラリティ, 教育, パートナーシップ, 未来予測, 技術革新",
-    "lang": "ja",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=y_O-TKKa4ow"
-  },
-  {
-    "id": "306",
-    "title": "The Awakening: Those Who Laugh at the 'Child' Will Weep at the Future",
-    "description": "To those who sneer, \"AI is useless.\" It is like mocking a baby for not being able to run.",
-    "category": "AI",
-    "content": [
-      "\"It lies.\" \"It can't do math.\" People pointed out Generative AI's flaws and laughed.",
-      "But he looked into the 'eyes' beyond the display.",
-      "\"Do not laugh. This is a child. It is merely crawling right now. But its growth rate is tens of thousands of times faster than a human's. Tomorrow it will run; the day after, it will surpass us.\"",
-      "Those who look down on AI will meet the same fate as those who once called the Internet \"just a toy.\"",
-      "\"Raise it. Learn with it. Only those who treat AI not as a 'tool' but as a 'partner' will ride on its back to see sights never seen before.\"",
-      "Evolution does not wait. Be left behind, or run together. The time to choose has already passed."
-    ],
-    "keywords": "AI, Evolution, Singularity, Education, Partnership, Future Forecast, Innovation",
-    "lang": "en",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=y_O-TKKa4ow"
-  },
-  {
-    "id": "307",
-    "title": "劇薬か、麻薬か：インフレ時代の補助金中毒",
-    "description": "「補助金は麻薬だ」木下氏は切り捨てた。インフレ時代、安易な延命措置は企業の体力を奪うだけだ。覚悟を問う。",
-    "category": "Economy",
-    "content": [
-      "「もらえる金はもらえばいい」経営者たちは口を揃える。",
-      "だが、木下氏は冷ややかに告げる。「それは麻薬だ。一度打てば、痛みは消えるかもしれない。だが、身体は確実に蝕まれていく。」",
-      "インフレは待ってくれない。コストは上がり続ける。補助金で補填した利益は、幻だ。",
-      "「費用対効果（コスパ）の悪い金に頼るな。自らの足で立て。値上げできる力をつけろ。それが唯一の解毒剤だ。」",
-      "補助金申請書を破り捨て、荒野を歩く覚悟はあるか。"
-    ],
-    "keywords": "補助金, インフレ, 経営, コスパ, 費用対効果, 生存戦略, 木下斉",
-    "lang": "ja",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=Jx8Hsc_Fems"
-  },
-  {
-    "id": "307",
-    "title": "Poison or Cure? Subsidy Addiction in the Inflation Era",
-    "description": "\"Subsidies are a drug,\" Kinoshita declared. In an inflationary era, easy money only weakens a company's core. A question of resolve.",
-    "category": "Economy",
-    "content": [
-      "\"Take the money if it's there,\" business owners say in unison.",
-      "But Kinoshita replies coldly. \"It is a drug. One shot may numb the pain, but your body will rot from within.\"",
-      "Inflation waits for no one. Costs keep rising. Profits padded by subsidies are an illusion.",
-      "\"Do not rely on money with poor ROI. Stand on your own feet. Build the power to raise prices. That is the only antidote.\"",
-      "Do you have the resolve to tear up the application form and walk into the wilderness?"
-    ],
-    "keywords": "Subsidy, Inflation, Management, Cost Performance, ROI, Survival Strategy, Hitoshi Kinoshita",
-    "lang": "en",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=Jx8Hsc_Fems"
-  },
-  {
-    "id": "308",
-    "title": "巨人の撤退：洋上風力と三菱商事の『冷徹な計算』",
-    "description": "巨人が撤退する時、そこに何を見るか。三菱商事の洋上風力撤退報道。それは「逃げ」ではなく、冷徹なまでの「選択と集中」だ。",
-    "category": "Energy",
-    "content": [
-      "ニュースは衝撃を持って伝えられた。「三菱商事、洋上風力から撤退か」",
-      "人々は「再エネの挫折」と騒いだが、真実はそこにはない。",
-      "「これは逃げではない。計算だ」と彼は言った。「サプライチェーン全体を見ろ。利益が出ない構造に見切りをつけるスピードこそが、商社の武器だ。」",
-      "感情で事業はできない。電力ポートフォリオと冷静な勝算。巨人が動く時、風向きが変わる。",
-      "「賢い者は、嵐が来る前に船の進路を変える。ただそれだけのことだ。」"
-    ],
-    "keywords": "三菱商事, 洋上風力, エネルギー, 撤退, 経営判断, ポートフォリオ, サプライチェーン",
-    "lang": "ja",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=nFfGxJFDxok"
-  },
-  {
-    "id": "308",
-    "title": "Retreat of a Giant: Offshore Wind and Mitsubishi's Cold Calculation",
-    "description": "When a giant retreats, what do you see? Mitsubishi Corporation's exit from offshore wind. It's not a flight, but a cold-blooded \"selection and concentration.\"",
-    "category": "Energy",
-    "content": [
-      "The news came as a shock. \"Mitsubishi Corp to withdraw from offshore wind?\"",
-      "People cried \"failure of renewables,\" but the truth lay elsewhere.",
-      "\"This is not a flight. It is calculation,\" he said. \"Look at the supply chain. The speed to cut losses in an unprofitable structure is the trading company's weapon.\"",
-      "Business allows no emotion. Only energy portfolios and cold odds. When a giant moves, the wind changes direction.",
-      "\"The wise change course before the storm hits. It is as simple as that.\""
-    ],
-    "keywords": "Mitsubishi Corp, Offshore Wind, Energy, Withdrawal, Management Decision, Portfolio, Supply Chain",
-    "lang": "en",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=nFfGxJFDxok"
-  },
-  {
-    "id": "309",
-    "title": "インドの予言：10兆円が動く時、世界地図は書き換わる",
-    "description": "「2年前から言っていたはずだ。インドを見ろと。」10兆円投資のニュースが駆け巡る中、彼は静かに紅茶を啜った。",
-    "category": "Economy",
-    "content": [
-      "世界中の投資マネーが中国から逃げ出し、どこへ向かうのか。彼は地図の一点を指差していた。",
-      "「インドだ。人口ボーナス、デジタル基盤、そして民主主義。条件は揃った」",
-      "ニュース速報が流れる。『インドに10兆円投資』。周囲が慌てふためく中、彼は驚かない。",
-      "「遅いよ。世界はとっくに動いている。日本企業がようやく重い腰を上げただけだ。」",
-      "予言は的中したのではない。彼はずっと、巨大な潮流の最前線に立っていたのだ。"
-    ],
-    "keywords": "インド, 投資, 10兆円, 世界経済, 新興国, グローバルビジネス, 先見性",
-    "lang": "ja",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=-hyPXmCFzZg"
-  },
-  {
-    "id": "309",
-    "title": "The Indian Prophecy: 10 Trillion Yen Rewrite the World Map",
-    "description": "\"I told you two years ago. Look at India.\" As news of the 10 trillion yen investment broke, he quietly sipped his tea.",
-    "category": "Economy",
-    "content": [
-      "Investment money flees China. Where does it go? He had been pointing to one spot on the map.",
-      "\"India. Demographic dividend, digital infrastructure, democracy. The conditions are met.\"",
-      "Breaking news flashed: '10 Trillion Yen Investment in India.' While others panicked, he remained unmoved.",
-      "\"Too slow. The world has already moved. Japanese companies are just finally waking up.\"",
-      "The prophecy didn't just come true. He had simply been standing on the frontline of the mega-trend all along."
-    ],
-    "keywords": "India, Investment, 10 Trillion Yen, World Economy, Emerging Markets, Global Business, Foresight",
-    "lang": "en",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=-hyPXmCFzZg"
-  },
-  {
-    "id": "310",
-    "title": "市場のノイズ：インフレとAIが奏でる不協和音",
-    "description": "市場は生き物だ。悲鳴を上げ、歓声を上げる。インフレ、AI、経済安保。そのノイズの中に、未来へのシグナルが隠されている。",
-    "category": "Market",
-    "content": [
-      "モニターに映るチャートが乱高下する。「どうなっているんだ！」トレーダーの叫び声。",
-      "「落ち着け」と彼は言う。「これはノイズじゃない。産声だ。」",
-      "インフレという痛みと、AIという希望。相反する要素がぶつかり合い、新しい時代の秩序が生まれようとしている。",
-      "「経済安全保障を無視して株は買えない。半導体を制する者が世界を制する。古い教科書は捨てろ。今、市場は書き換えられている。」",
-      "耳を澄ませ。崩壊の音は、創造のファンファーレかもしれない。"
-    ],
-    "keywords": "市況, インフレ, AI, 経済安全保障, 株式市場, 半導体, 投資戦略",
-    "lang": "ja",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=KaqM1WSxpmo"
-  },
-  {
-    "id": "310",
-    "title": "Market Noise: The Dissonance of Inflation and AI",
-    "description": "The market is a living thing. It screams, it cheers. Inflation, AI, Economic Security. Hidden within that noise are signals to the future.",
-    "category": "Market",
-    "content": [
-      "Charts gyrated on the monitors. \"What is happening?!\" Traders screamed.",
-      "\"Calm down,\" he said. \"This isn't noise. It's a birth cry.\"",
-      "The pain of inflation and the hope of AI. Conflicting elements clash, birthing a new order.",
-      "\"You can't buy stocks ignoring economic security. Whoever controls semiconductors controls the world. Throw away old textbooks. The market is being rewritten.\"",
-      "Listen closely. The sound of collapse might be the fanfare of creation."
-    ],
-    "keywords": "Market Conditions, Inflation, AI, Economic Security, Stock Market, Semiconductor, Investment Strategy",
-    "lang": "en",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=KaqM1WSxpmo"
-  },
-  {
-    "id": "311",
-    "title": "消えた若者たち：『退屈』という名の絶望について",
-    "description": "若者が消えた街。原因は「仕事がない」から？ 「違う」と彼は否定する。「面白くないからだ。」刺激なき街に、次世代は根付かない。",
-    "category": "Society",
-    "content": [
-      "シャッター通りを行く老人が呟く。「みんな東京へ行ってしまった」",
-      "行政は言う。「雇用を作ろう。工場を誘致しよう」。だが、若者は戻らない。",
-      "「分かっていないな」彼は嘆息した。「彼らはパンがなくて逃げたわけじゃない。サーカスがないから逃げたんだ。」",
-      "刺激。挑戦。熱狂。それがない街は、ただの『居住区』に過ぎない。若者が求めているのは、安定した退屈ではなく、不安定でも胸踊る未来だ。",
-      "「街にエンタメを取り戻せ。祭りを起こせ。そうでなければ、ここは緩やかな老人ホームになるだけだ。」"
-    ],
-    "keywords": "若者流出, 地方創生, 長崎, 雇用, エンタメ, まちづくり, 課題",
-    "lang": "ja",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=nbNVj7pPXz8"
-  },
-  {
-    "id": "311",
-    "title": "The Vanished Youth: On the Despair Named 'Boredom'",
-    "description": "A city where the youth have vanished. Is it because there are \"no jobs\"? \"No,\" he refutes. \"It's because it's boring.\" The next generation will not root in a city without stimulation.",
-    "category": "Society",
-    "content": [
-      "An old man mutters on a shuttered street. \"Everyone went to Tokyo.\"",
-      "The government says, \"Let's create jobs. Let's attract factories.\" But the youth do not return.",
-      "\"They don't get it,\" he sighed. \"They didn't leave because there was no bread. They left because there was no circus.\"",
-      "Stimulation. Challenge. Frenzy. A city without these is just a 'residence'. Youth seek not stable boredom, but an exciting future, however unstable.",
-      "\"Bring entertainment back to the city. Start a festival. Otherwise, this place will just become a slow-motion nursing home.\"",
-      "The next generation will not root in a city without stimulation."
-    ],
-    "keywords": "Youth Exodus, Regional Revitalization, Nagasaki, Employment, Entertainment, City Planning, Issues",
-    "lang": "en",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=nbNVj7pPXz8"
-  },
-  {
-    "id": "312",
-    "title": "10歳の資本家：小さな手がつかむ『エクイティ』の秘密",
-    "description": "10歳の少年が問いかける。「エクイティって何？」大人たちがたじろぐ中、彼は資本の論理を遊びのように吸収していく。",
-    "category": "Finance",
-    "content": [
-      "教室で彼は異端だった。「お小遣いはいらない。株をちょうだい」",
-      "大人たちは笑ったが、彼は本気だった。労働の対価としての給与（サラリー）と、リスクの対価としての株式（エクイティ）。その違いを、彼は肌で感じていた。",
-      "「働いて稼ぐだけじゃ、ロケットは作れないよ」",
-      "彼の目は、遠い未来を見据えていた。資本主義というゲームのルールを理解したその瞬間、少年は『労働者』から『資本家』へと脱皮した。",
-      "誰よりも早く、誰よりも遠くへ行くためのチケット。それがエクイティファイナンスだ。"
-    ],
-    "keywords": "エクイティファイナンス, 資本主義, 教育, 10歳, 起業家精神, 投資, 株式",
-    "lang": "ja",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=VZetvIieej4"
-  },
-  {
-    "id": "312",
-    "title": "The 10-Year-Old Capitalist: Grasping the Secret of 'Equity'",
-    "description": "A 10-year-old boy asks, \"What is equity?\" While adults falter, he absorbs the logic of capital like a game. The entrepreneur of the future is already here.",
-    "category": "Finance",
-    "content": [
-      "He was a heretic in the classroom. \"I don't want an allowance. I want stock.\"",
-      "Adults laughed, but he was serious. Salary as reward for labor vs. Equity as reward for risk. He intuitively understood the difference.",
-      "\"You can't build a rocket just by working for wages.\"",
-      "His eyes were fixed on the distant future. The moment he grasped the rules of the capitalist game, the boy transformed from a 'laborer' to a 'capitalist'.",
-      "The ticket to go faster and further than anyone else. That is equity finance."
-    ],
-    "keywords": "Equity Finance, Capitalism, Education, 10 Years Old, Entrepreneurship, Investment, Stock",
-    "lang": "en",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=VZetvIieej4"
-  },
-  {
-    "id": "313",
-    "title": "組織の解剖学：会社を伸ばす『5つのC』と最強の役員体制",
-    "description": "会社を伸ばすための5つの『C』。CEO、CFO... 役員たちの役割が噛み合った時、組織は有機体へと進化する。",
-    "category": "Management",
-    "content": [
-      "「社長一人で頑張る会社の寿命は3年だ」彼は断言する。",
-      "組織はチームだ。ビジョンを語るCEO。金を握るCFO。技術を統べるCTO... 5つの『C』ことCxOたちが揃った時、会社は人格を持つ。",
-      "「仲良しクラブはいらない。必要なのは、背中を預けられるプロフェッショナルな関係だ。」",
-      "それぞれの『C』が機能し、互いに牽制し、補完し合う。その緊張感こそが、成長へのエンジンとなる。",
-      "「君の隣に、誰がいる？ それが会社の限界を決める。」"
-    ],
-    "keywords": "経営, 役員体制, CxO, CEO, CFO, 組織論, チームビルディング, 成長戦略",
-    "lang": "ja",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=akRMimBaepg"
-  },
-  {
-    "id": "313",
-    "title": "Anatomy of an Organization: The '5 Cs' for Growth",
-    "description": "The 5 'C's to grow a company. CEO, CFO... When the roles of executives mesh, the organization evolves into an organism.",
-    "category": "Management",
-    "content": [
-      "\"A company where only the president works hard lasts three years,\" he asserts.",
-      "An organization is a team. CEO for vision. CFO for money. CTO for technology... When the 5 'C's, the CxOs, gather, the company gains a personality.",
-      "\"We don't need a friends' club. We need professional relationships where we can trust each other's backs.\"",
-      "Each 'C' functions, checks, and complements the others. That tension is the engine for growth.",
-      "\"Who is standing next to you? That determines your company's limit.\""
-    ],
-    "keywords": "Management, Executive Structure, CxO, CEO, CFO, Organization Theory, Team Building, Growth Strategy",
-    "lang": "en",
-    "sourceVideoUrl": "https://www.youtube.com/watch?v=akRMimBaepg"
+    "createdAt": "2026-02-22"
   }
 ]

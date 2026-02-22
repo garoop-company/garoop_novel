@@ -9,10 +9,18 @@ type Novel = {
   title: string;
   description: string;
   category: string;
-  content: string[];
+  content?: string[];
+  chapterFile?: string;
+  pageCount?: number;
+  animationPreset?: string;
   keywords: string;
   lang: string;
   sourceVideoUrl?: string;
+};
+
+type ChapterPayload = {
+  id: string;
+  pages: string[];
 };
 
 async function getNovels(): Promise<Novel[]> {
@@ -24,6 +32,18 @@ async function getNovels(): Promise<Novel[]> {
 async function getNovelById(id: string, lang: string): Promise<Novel | undefined> {
   const novels = await getNovels();
   return novels.find((n) => n.id === id && n.lang === lang);
+}
+
+async function getNovelContent(novel: Novel): Promise<string[]> {
+  if (Array.isArray(novel.content) && novel.content.length > 0) {
+    return novel.content;
+  }
+
+  if (!novel.chapterFile) return [];
+  const chapterPath = path.join(process.cwd(), 'src', 'data', 'chapters', novel.chapterFile);
+  const chapterRaw = await fs.readFile(chapterPath, 'utf8');
+  const chapter = JSON.parse(chapterRaw) as ChapterPayload;
+  return Array.isArray(chapter.pages) ? chapter.pages : [];
 }
 
 // 事前ビルド対象
@@ -52,11 +72,12 @@ export async function generateMetadata(props: {
   const searchParams = await props.searchParams;
   const novel = await getNovelById(id, lang);
   if (!novel) return {};
+  const content = await getNovelContent(novel);
 
   const raw = searchParams.page ? parseInt(searchParams.page as string, 10) : 1;
-  const page = Number.isNaN(raw) || raw < 1 ? 1 : Math.min(raw, novel.content.length);
+  const page = Number.isNaN(raw) || raw < 1 ? 1 : Math.min(raw, content.length || 1);
 
-  const title = `${novel.title}${novel.content.length > 1 ? ` - Page ${page}` : ''} | ${novel.category}`;
+  const title = `${novel.title}${content.length > 1 ? ` - Page ${page}` : ''} | ${novel.category}`;
   const description = novel.description?.slice(0, 160) ?? novel.title;
 
   return generateLocalizedMetadata({
@@ -80,16 +101,18 @@ export default async function Page(props: Props) {
   const searchParams = await props.searchParams;
   const novel = await getNovelById(id, lang);
   if (!novel) notFound();
+  const content = await getNovelContent(novel);
+  if (content.length === 0) notFound();
 
   let page = searchParams.page ? parseInt(searchParams.page as string, 10) : 1;
   if (isNaN(page) || page < 1) page = 1;
-  if (page > novel.content.length) page = novel.content.length;
+  if (page > content.length) page = content.length;
 
   const canonical = `${SITE_URL}/${lang}/novels/${novel.id}${page > 1 ? `?page=${page}` : ''}`;
 
   // Prev / Next（複数ページ記事向け：クロール導線を明確化）
   const prevHref = page > 1 ? `${SITE_URL}/${lang}/novels/${novel.id}?page=${page - 1}` : null;
-  const nextHref = page < novel.content.length ? `${SITE_URL}/${lang}/novels/${novel.id}?page=${page + 1}` : null;
+  const nextHref = page < content.length ? `${SITE_URL}/${lang}/novels/${novel.id}?page=${page + 1}` : null;
 
   // JSON-LD（Article + BreadcrumbList + WebSite/Organization）
   const jsonLdArticle = {
@@ -117,7 +140,7 @@ export default async function Page(props: Props) {
     "datePublished": "2024-01-01T00:00:00+09:00", // Placeholder if not in JSON
     "dateModified": new Date().toISOString(),
     "mainEntityOfPage": canonical,
-    "articleBody": novel.content.join("\n\n"),
+    "articleBody": content.join("\n\n"),
     "isAccessibleForFree": true,
     "creativeWorkStatus": "Published",
     "genre": novel.category
@@ -170,9 +193,10 @@ export default async function Page(props: Props) {
         novelId={novel.id}
         title={novel.title}
         category={novel.category}
-        content={novel.content}
+        content={content}
         page={page}
         lang={novel.lang}
+        animationPreset={novel.animationPreset}
         sourceVideoUrl={(novel as any).sourceVideoUrl} // Add cast or update type definition
       />
     </div>
