@@ -70,16 +70,21 @@ function extractJsonBlock(text) {
   throw new Error('モデル出力からJSONを抽出できませんでした。');
 }
 
+function normalizeText(value) {
+  return String(value ?? '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function validateEpisode(data) {
   if (!data || typeof data !== 'object') {
     throw new Error('JSONがオブジェクトではありません。');
   }
-  if (typeof data.title !== 'string' || data.title.length < 8) {
-    throw new Error('title が不正です。');
-  }
-  if (typeof data.description !== 'string' || data.description.length < 20) {
-    throw new Error('description が不正です。');
-  }
+  const rawTitle = normalizeText(data.title);
+  const rawDescription = normalizeText(data.description);
+  const title = rawTitle.length >= 4 ? rawTitle : '';
+  const description = rawDescription.length >= 20 ? rawDescription : '';
 
   const pages = Array.isArray(data.pages)
     ? data.pages
@@ -87,19 +92,27 @@ function validateEpisode(data) {
       ? data.content
       : null;
 
-  if (!pages || pages.length < 5 || pages.length > 7 || !pages.every((p) => typeof p === 'string' && p.trim())) {
+  if (!pages || pages.length < 5 || pages.length > 7) {
     throw new Error('pages(content) は5〜7の文字列配列にしてください。');
+  }
+  const normalizedPages = pages.map((p) => normalizeText(p)).filter(Boolean);
+  if (normalizedPages.length < 5) {
+    throw new Error('pages(content) の本文が不足しています。');
   }
 
   if (!Array.isArray(data.keywords) || data.keywords.length < 3) {
     throw new Error('keywords は3件以上必要です。');
   }
+  const normalizedKeywords = data.keywords.map((k) => normalizeText(k)).filter(Boolean);
+  if (normalizedKeywords.length < 3) {
+    throw new Error('keywords の有効件数が不足しています。');
+  }
 
   return {
-    title: data.title.trim(),
-    description: data.description.trim(),
-    pages,
-    keywords: data.keywords.map((k) => String(k).trim()).filter(Boolean),
+    title,
+    description,
+    pages: normalizedPages,
+    keywords: normalizedKeywords,
   };
 }
 
@@ -133,36 +146,57 @@ async function generateEpisode({ apiKey, model, systemPrompt, series, nextEpisod
     '}',
   ].join('\n');
 
-  const response = await fetch(GROQ_API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model,
-      temperature: 0.9,
-      response_format: { type: 'json_object' },
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-    }),
-  });
+  let lastError = null;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const response = await fetch(GROQ_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          temperature: 0.9,
+          response_format: { type: 'json_object' },
+          messages: [
+            { role: 'system', content: systemPrompt },
+            {
+              role: 'user',
+              content: `${userPrompt}\n\n注意: title/description/pages/keywords を必ず埋めてください。`,
+            },
+          ],
+        }),
+      });
 
-  if (!response.ok) {
-    const err = await response.text();
-    throw new Error(`Groq APIエラー (${response.status}): ${err}`);
+      if (!response.ok) {
+        const err = await response.text();
+        throw new Error(`Groq APIエラー (${response.status}): ${err}`);
+      }
+
+      const payload = await response.json();
+      const content = payload?.choices?.[0]?.message?.content;
+      if (typeof content !== 'string' || !content.trim()) {
+        throw new Error('Groqレスポンスに本文がありませんでした。');
+      }
+
+      const parsed = JSON.parse(extractJsonBlock(content));
+      const validated = validateEpisode(parsed);
+
+      if (!validated.title) {
+        validated.title = `${series.category} 第${nextEpisode}話`;
+      }
+      if (!validated.description) {
+        validated.description = `${series.category}の第${nextEpisode}話。シングルマザーのカンガルー・ガルちゃんが新たな課題に向き合う。`;
+      }
+      return validated;
+    } catch (err) {
+      lastError = err;
+      console.warn(`[warn] ${series.category} 第${nextEpisode}話 生成失敗 (attempt ${attempt}/3): ${String(err)}`);
+    }
   }
 
-  const payload = await response.json();
-  const content = payload?.choices?.[0]?.message?.content;
-  if (typeof content !== 'string' || !content.trim()) {
-    throw new Error('Groqレスポンスに本文がありませんでした。');
-  }
-
-  const parsed = JSON.parse(extractJsonBlock(content));
-  return validateEpisode(parsed);
+  throw lastError ?? new Error('不明な生成エラー');
 }
 
 async function main() {
@@ -186,6 +220,7 @@ async function main() {
   }
 
   const created = [];
+  const failed = [];
 
   for (const series of SERIES) {
     const inSeries = novels
@@ -199,14 +234,21 @@ async function main() {
     }
 
     const nextEpisode = Number(latest?.episodeNumber || 0) + 1;
-    const generated = await generateEpisode({
-      apiKey,
-      model,
-      systemPrompt,
-      series,
-      nextEpisode,
-      recentEpisodes: inSeries.slice(-3),
-    });
+    let generated;
+    try {
+      generated = await generateEpisode({
+        apiKey,
+        model,
+        systemPrompt,
+        series,
+        nextEpisode,
+        recentEpisodes: inSeries.slice(-3),
+      });
+    } catch (err) {
+      failed.push({ series: series.category, episode: nextEpisode, error: String(err) });
+      console.error(`[error] ${series.category}: 第${nextEpisode}話の生成に失敗: ${String(err)}`);
+      continue;
+    }
 
     const id = `${series.key}-${String(nextEpisode).padStart(3, '0')}`;
     const chapterFile = `${id}.json`;
@@ -238,12 +280,20 @@ async function main() {
   }
 
   if (!created.length) {
+    if (failed.length > 0) {
+      throw new Error(`全シリーズ生成失敗: ${failed.map((f) => `${f.series}#${f.episode}`).join(', ')}`);
+    }
     console.log('新規生成なし。更新はありませんでした。');
     return;
   }
 
   await fs.writeFile(NOVELS_PATH, `${JSON.stringify(novels, null, 2)}\n`, 'utf8');
   console.log(`完了: ${created.length}件のエピソードを追加しました。`);
+  if (failed.length > 0) {
+    console.warn(
+      `一部失敗: ${failed.map((f) => `${f.series} 第${f.episode}話`).join(', ')}`
+    );
+  }
 }
 
 main().catch((err) => {
