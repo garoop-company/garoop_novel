@@ -1,25 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const locales = ['ja', 'en', 'zh'];
-const defaultLocale = 'ja';
+import { defaultLocale, isLocale } from './locales';
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
+    const segments = pathname.split('/').filter(Boolean);
+    const currentPrefix = segments[0];
 
-    // Check if there is any supported locale in the pathname
-    const pathnameHasLocale = locales.some(
-        (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-    );
+    if (currentPrefix && isLocale(currentPrefix)) {
+        if (currentPrefix === defaultLocale) {
+            const redirectUrl = request.nextUrl.clone();
+            const rest = segments.slice(1).join('/');
+            redirectUrl.pathname = rest ? `/${rest}` : '/';
+            return NextResponse.redirect(redirectUrl);
+        }
+        return NextResponse.next();
+    }
 
-    if (pathnameHasLocale) return;
-
-    // Redirect if there is no locale
-    const locale = defaultLocale; // Could be improved with accept-language detection
-    request.nextUrl.pathname = `/${locale}${pathname}`;
-
-    // e.g. incoming is /products
-    // The new URL is now /en/products
-    return NextResponse.redirect(request.nextUrl);
+    const rewriteUrl = request.nextUrl.clone();
+    rewriteUrl.pathname = pathname === '/' ? `/${defaultLocale}` : `/${defaultLocale}${pathname}`;
+    return NextResponse.rewrite(rewriteUrl);
 }
 
 export const config = {

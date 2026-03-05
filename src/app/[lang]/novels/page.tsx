@@ -1,11 +1,11 @@
-import { locales, Locale, getDictionary } from '@/locales';
+import { locales, Locale, localeMeta, getDictionary } from '@/locales';
 import { generateLocalizedMetadata } from '@/lib/seo';
+import { localizePath } from '@/lib/locale-path';
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang: rawLang } = await params;
   const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
   const dict = getDictionary(lang);
-
   return generateLocalizedMetadata({
     title: `${dict.sections.latest_news.title} | Garoop Novel`,
     description: dict.sections.latest_news.subtitle,
@@ -88,13 +88,14 @@ const NovelsPage = async (props: Props) => {
     if (nextQ) params.set('q', nextQ);
 
     const qs = params.toString();
-    return qs ? `/${routeLang}/novels?${qs}` : `/${routeLang}/novels`;
+    const base = localizePath('/novels', routeLang);
+    return qs ? `${base}?${qs}` : base;
   };
 
   return (
     <div className="bg-slate-950 min-h-screen text-slate-100 p-8">
       <header className="text-center mb-10">
-        <Link href="/">
+        <Link href={localizePath('/', routeLang)}>
           <h1 className="text-5xl font-bold font-serif cursor-pointer hover:text-amber-300 transition-colors">
             Library of Whispers
           </h1>
@@ -104,7 +105,7 @@ const NovelsPage = async (props: Props) => {
         {/* 新しいコンテンツへのリンク */}
         <div className="mt-6 flex justify-center gap-4">
           <GaLink
-            href="/videos"
+            href={localizePath('/videos', routeLang)}
             eventParams={{
               cta_label: "watch_videos",
               cta_location: "novels_header",
@@ -152,20 +153,15 @@ const NovelsPage = async (props: Props) => {
 
         {/* 言語切り替え */}
         <div className="mt-6 flex justify-center gap-3 flex-wrap">
-          <Link
-            href={buildHref({ lang: 'en' })}
-            className={`px-4 py-2 rounded ${lang === 'en' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 hover:bg-slate-700'
-              }`}
-          >
-            English
-          </Link>
-          <Link
-            href={buildHref({ lang: 'ja' })}
-            className={`px-4 py-2 rounded ${lang === 'ja' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 hover:bg-slate-700'
-              }`}
-          >
-            日本語
-          </Link>
+          {locales.map((locale) => (
+            <Link
+              key={locale}
+              href={buildHref({ lang: locale })}
+              className={`px-4 py-2 rounded ${lang === locale ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 hover:bg-slate-700'}`}
+            >
+              {localeMeta[locale].flag} {localeMeta[locale].label}
+            </Link>
+          ))}
           <Link
             href={buildHref({ lang: 'all' })}
             className={`px-4 py-2 rounded ${lang === 'all' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 hover:bg-slate-700'
@@ -215,7 +211,7 @@ const NovelsPage = async (props: Props) => {
             )}
           </span>
           <Link
-            href="/novels"
+            href={localizePath('/novels', routeLang)}
             className="ml-3 text-amber-300 hover:underline"
             aria-label="Clear filters"
           >
@@ -233,7 +229,7 @@ const NovelsPage = async (props: Props) => {
         ) : (
           filtered.map((novel) => (
             <Link
-              href={`/novels/${novel.id}`}
+              href={localizePath(`/novels/${novel.id}`, routeLang)}
               key={`${novel.id}-${novel.lang}`}
               className="p-6 bg-slate-900/70 rounded-lg border border-slate-800 hover:bg-slate-800 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-amber-900/30 h-full flex flex-col"
             >

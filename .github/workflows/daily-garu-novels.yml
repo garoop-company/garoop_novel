@@ -49,6 +49,7 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GROQ_MODEL: ${{ vars.GROQ_MODEL || 'llama-3.3-70b-versatile' }}
           TARGET_DATE: ${{ steps.date.outputs.target_date }}
+          TARGET_LANGS: ${{ vars.GROQ_TARGET_LANGS || 'ja,en,zh,fr,id,it,ne' }}
         run: node scripts/generate-daily-novels.mjs
 
       - name: Commit and push
@@ -62,6 +63,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           TARGET_DATE="${{ steps.date.outputs.target_date }}"
+          TARGET_LANGS="${{ vars.GROQ_TARGET_LANGS || 'ja,en,zh,fr,id,it,ne' }}"
           git add src/data/novels.json src/data/chapters
-          git commit -m "chore(groq): generate daily Garu chapters for ${TARGET_DATE}"
+          git commit -m "chore(groq): generate daily Garu chapters (${TARGET_LANGS}) for ${TARGET_DATE}"
           git push

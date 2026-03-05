@@ -1,6 +1,7 @@
 import { locales, Locale, getDictionary } from '@/locales';
 import { generateLocalizedMetadata, SITE_URL } from '@/lib/seo';
 import Script from 'next/script';
+import { localizePath } from '@/lib/locale-path';
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
     const { lang: rawLang } = await params;
@@ -66,7 +67,7 @@ export default async function FAQPage({ params }: { params: Promise<{ lang: stri
                 <div className="mt-16 bg-slate-900/70 rounded-2xl p-8 border border-slate-800 text-center">
                     <h3 className="text-xl font-bold text-amber-200 mb-4">他に質問がありますか？</h3>
                     <p className="text-slate-300 mb-6 font-medium">お気軽にお問い合わせください。</p>
-                    <a href={`/${lang}/contact`} className="inline-block bg-amber-500 text-slate-950 px-8 py-3 rounded-full font-bold hover:bg-amber-400 transition-colors shadow-lg shadow-amber-900/30">
+                    <a href={localizePath('/contact', lang)} className="inline-block bg-amber-500 text-slate-950 px-8 py-3 rounded-full font-bold hover:bg-amber-400 transition-colors shadow-lg shadow-amber-900/30">
                         お問い合わせはこちら
                     </a>
                 </div>

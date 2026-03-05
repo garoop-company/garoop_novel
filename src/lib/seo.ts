@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
-import { locales, Locale } from '@/locales';
+import { locales, Locale, defaultLocale, localeMeta } from '@/locales';
+import { localizePath } from './locale-path';
 
 export const SITE_URL = 'https://www.ai-garoop-novel.com';
 
@@ -24,13 +25,14 @@ export function generateLocalizedMetadata({
     novelId,
     page,
 }: SEOOptions): Metadata {
-    const absoluteUrl = `${SITE_URL}/${lang}${path === '/' ? '' : path}${page && page > 1 ? `?page=${page}` : ''}`;
+    const query = page && page > 1 ? `?page=${page}` : '';
+    const absoluteUrl = `${SITE_URL}${localizePath(path, lang)}${query}`;
 
     const languages: Record<string, string> = {};
     locales.forEach((l) => {
-        languages[l] = `${SITE_URL}/${l}${path === '/' ? '' : path}${page && page > 1 ? `?page=${page}` : ''}`;
+        languages[l] = `${SITE_URL}${localizePath(path, l)}${query}`;
     });
-    languages['x-default'] = `${SITE_URL}/ja${path === '/' ? '' : path}${page && page > 1 ? `?page=${page}` : ''}`;
+    languages['x-default'] = `${SITE_URL}${localizePath(path, defaultLocale)}${query}`;
 
     return {
         title,
@@ -51,7 +53,7 @@ export function generateLocalizedMetadata({
                     alt: title,
                 },
             ],
-            locale: lang === 'ja' ? 'ja_JP' : lang === 'zh' ? 'zh_CN' : 'en_US',
+            locale: localeMeta[lang].ogLocale,
             type,
         },
         twitter: {

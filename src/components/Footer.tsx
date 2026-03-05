@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getDictionary, Locale } from '@/locales';
+import { localizePath } from '@/lib/locale-path';
 
 interface FooterProps {
     lang?: Locale;
@@ -7,7 +8,7 @@ interface FooterProps {
 
 export default function Footer({ lang = 'ja' }: FooterProps) {
     const dict = getDictionary(lang);
-    const pg = (path: string) => `/${lang}${path === '/' ? '' : path}`;
+    const pg = (path: string) => localizePath(path, lang);
     return (
         <footer className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-slate-100 py-10 mt-auto">
             <div className="container mx-auto px-4">
@@ -23,19 +24,19 @@ export default function Footer({ lang = 'ja' }: FooterProps) {
                     </div>
 
                     <div className="flex flex-wrap justify-center gap-6 text-sm font-bold">
-                        <Link href={`/${lang}/about`} className="hover:text-amber-200 transition-colors">
+                        <Link href={pg('/about')} className="hover:text-amber-200 transition-colors">
                             {dict.common.about}
                         </Link>
-                        <Link href={`/${lang}/faq`} className="hover:text-amber-200 transition-colors">
+                        <Link href={pg('/faq')} className="hover:text-amber-200 transition-colors">
                             {dict.common.faq}
                         </Link>
-                        <Link href={`/${lang}/privacy`} className="hover:text-amber-200 transition-colors">
+                        <Link href={pg('/privacy')} className="hover:text-amber-200 transition-colors">
                             {dict.common.privacy}
                         </Link>
-                        <Link href={`/${lang}/terms`} className="hover:text-amber-200 transition-colors">
+                        <Link href={pg('/terms')} className="hover:text-amber-200 transition-colors">
                             {dict.common.terms}
                         </Link>
-                        <Link href={`/${lang}/contact`} className="hover:text-amber-200 transition-colors">
+                        <Link href={pg('/contact')} className="hover:text-amber-200 transition-colors">
                             {dict.common.contact}
                         </Link>
                     </div>

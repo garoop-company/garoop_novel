@@ -5,6 +5,7 @@ import path from 'path';
 import Image from 'next/image';
 import GaLink from '@/components/GaLink';
 import { locales, getDictionary, Locale } from '@/locales';
+import { localizePath } from '@/lib/locale-path';
 
 
 import { generateLocalizedMetadata, SITE_URL } from "@/lib/seo";
@@ -79,7 +80,7 @@ export default async function HomePage({
       </div>
 
       {/* ✅ 構造化データ（Googleニュース・AI検索・AIO最適化） */}
-      <link rel="canonical" href={`${SITE_URL}/${lang}`} />
+      <link rel="canonical" href={`${SITE_URL}${localizePath('/', lang)}`} />
       <Script
         id="structured-data"
         type="application/ld+json"
@@ -119,8 +120,8 @@ export default async function HomePage({
                 "https://garoop.jp"
               ],
               "description": "生成AIとエンターテインメントを融合させた次世代ポータル。AI小説と地方創生ニュースを提供。",
-              "ethicsPolicy": `${SITE_URL}/${lang}/about`,
-              "masthead": `${SITE_URL}/${lang}/about`,
+              "ethicsPolicy": `${SITE_URL}${localizePath('/about', lang)}`,
+              "masthead": `${SITE_URL}${localizePath('/about', lang)}`,
               "isAccessibleForFree": true,
             },
             {
@@ -132,7 +133,7 @@ export default async function HomePage({
                 "@type": "SearchAction",
                 "target": {
                   "@type": "EntryPoint",
-                  "urlTemplate": `${SITE_URL}/${lang}/novels?q={search_term_string}`
+                  "urlTemplate": `${SITE_URL}${localizePath('/novels', lang)}?q={search_term_string}`
                 },
                 "query-input": "required name=search_term_string"
               }
@@ -193,7 +194,7 @@ export default async function HomePage({
 
           <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
             <GaLink
-              href="/novels"
+              href={localizePath('/novels', lang)}
               eventParams={{
                 cta_label: "read_news",
                 cta_location: "home_hero",
@@ -219,7 +220,7 @@ export default async function HomePage({
                 <span className="bg-amber-500/10 px-3 py-1 rounded-lg text-amber-200">{dict.sections.latest_news.subtitle}</span>
               </p>
             </div>
-            <Link href="/novels" className="md:ml-auto px-8 py-4 bg-slate-900/80 text-amber-200 font-black rounded-full border border-slate-700 hover:border-amber-300/50 hover:text-amber-100 transition-all shadow-xl hover:shadow-2xl active:scale-95">
+            <Link href={localizePath('/novels', lang)} className="md:ml-auto px-8 py-4 bg-slate-900/80 text-amber-200 font-black rounded-full border border-slate-700 hover:border-amber-300/50 hover:text-amber-100 transition-all shadow-xl hover:shadow-2xl active:scale-95">
               {dict.common.all_news}
             </Link>
           </div>
@@ -227,7 +228,7 @@ export default async function HomePage({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {latestNovels.map((novel) => (
               <Link
-                href={`/novels/${novel.id}`}
+                href={localizePath(`/novels/${novel.id}`, lang)}
                 key={novel.id}
                 className="group block"
               >

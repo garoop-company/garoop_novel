@@ -21,16 +21,16 @@ npm run dev
 - `title`: タイトル
 - `description`: 概要
 - `category`: シリーズ名
-- `chapterFile`: 本文ファイル名（例: `garu-detective-001.json`）
+- `chapterFile`: 本文ファイル名（例: `garu-detective-001.ja.json`）
 - `pageCount`: ページ数
 - `animationPreset`: 小説詳細ページのアニメーション種別
 - `keywords`: カンマ区切りキーワード
-- `lang`: 言語（現在は `ja`）
+- `lang`: 言語（`ja`, `en`, `zh`, `fr`, `id`, `it`, `ne`）
 - `createdAt`: 生成日（JST）
 
 ## GitHub Actions + Groq API で毎日自動生成
 
-毎日、以下5シリーズの次話を自動生成して
+毎日、以下5シリーズの次話を多言語で自動生成して
 `src/data/novels.json` と `src/data/chapters/*.json` を更新します。
 
 - ガルちゃん探偵
@@ -47,6 +47,9 @@ npm run dev
 1. GitHub Repository Secrets に `GROQ_API_KEY` を追加
 2. 任意で Repository Variables に `GROQ_MODEL` を追加
    - 未設定時は `llama-3.3-70b-versatile` を使用
+3. 任意で Repository Variables に `GROQ_TARGET_LANGS` を追加
+   - 例: `ja,en,zh,fr,id,it,ne`
+   - 未設定時は `ja,en,zh,fr,id,it,ne` を使用
 
 ### 実行タイミング
 

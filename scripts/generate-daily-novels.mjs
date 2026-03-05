@@ -5,6 +5,59 @@ const NOVELS_PATH = path.join(process.cwd(), 'src', 'data', 'novels.json');
 const CHAPTERS_DIR = path.join(process.cwd(), 'src', 'data', 'chapters');
 const SYSTEM_PROMPT_PATH = path.join(process.cwd(), 'prompts', 'garu-system-prompt.txt');
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const SUPPORTED_LANGS = ['ja', 'en', 'zh', 'fr', 'id', 'it', 'ne'];
+
+const LOCALE_CONFIG = {
+  ja: {
+    languageName: '日本語',
+    extraStyle: '語りは自然な日本語にする。',
+    fallbackTitle: (series, episode) => `${series.category} 第${episode}話`,
+    fallbackDescription: (series, episode) =>
+      `${series.category}の第${episode}話。シングルマザーのカンガルー・ガルちゃんが新たな課題に向き合う。`,
+  },
+  en: {
+    languageName: 'English',
+    extraStyle: 'Write in natural English.',
+    fallbackTitle: (series, episode) => `${series.key} Episode ${episode}`,
+    fallbackDescription: (series, episode) =>
+      `Episode ${episode} of ${series.key}. Garu-chan, a single mother kangaroo, faces a new challenge.`,
+  },
+  zh: {
+    languageName: '中文',
+    extraStyle: '使用自然流畅的简体中文。',
+    fallbackTitle: (series, episode) => `${series.key} 第${episode}话`,
+    fallbackDescription: (series, episode) =>
+      `${series.key} 第${episode}话。单亲妈妈袋鼠Garu-chan迎接新的挑战。`,
+  },
+  fr: {
+    languageName: 'Français',
+    extraStyle: 'Rédige en français naturel.',
+    fallbackTitle: (series, episode) => `${series.key} Épisode ${episode}`,
+    fallbackDescription: (series, episode) =>
+      `Épisode ${episode} de ${series.key}. Garu-chan, une mère célibataire kangourou, relève un nouveau défi.`,
+  },
+  id: {
+    languageName: 'Bahasa Indonesia',
+    extraStyle: 'Tulis dalam Bahasa Indonesia yang natural.',
+    fallbackTitle: (series, episode) => `${series.key} Episode ${episode}`,
+    fallbackDescription: (series, episode) =>
+      `Episode ${episode} dari ${series.key}. Garu-chan, ibu tunggal kanguru, menghadapi tantangan baru.`,
+  },
+  it: {
+    languageName: 'Italiano',
+    extraStyle: 'Scrivi in italiano naturale.',
+    fallbackTitle: (series, episode) => `${series.key} Episodio ${episode}`,
+    fallbackDescription: (series, episode) =>
+      `Episodio ${episode} di ${series.key}. Garu-chan, una madre single canguro, affronta una nuova sfida.`,
+  },
+  ne: {
+    languageName: 'नेपाली',
+    extraStyle: 'प्राकृतिक नेपाली भाषामा लेख।',
+    fallbackTitle: (series, episode) => `${series.key} एपिसोड ${episode}`,
+    fallbackDescription: (series, episode) =>
+      `${series.key} को एपिसोड ${episode}। सिंगल मदर कंगारु गरु-चानले नयाँ चुनौती सामना गर्छिन्।`,
+  },
+};
 
 const SERIES = [
   {
@@ -58,6 +111,24 @@ function resolveTargetDate() {
   return fromEnv;
 }
 
+function resolveTargetLangs() {
+  const fromEnv = (process.env.TARGET_LANGS || '').trim();
+  if (!fromEnv) return SUPPORTED_LANGS;
+  const langs = fromEnv
+    .split(',')
+    .map((v) => v.trim().toLowerCase())
+    .filter(Boolean);
+  const unique = [...new Set(langs)];
+  const unsupported = unique.filter((lang) => !SUPPORTED_LANGS.includes(lang));
+  if (unsupported.length > 0) {
+    throw new Error(`TARGET_LANGS に未対応の言語があります: ${unsupported.join(', ')}`);
+  }
+  if (unique.length === 0) {
+    throw new Error('TARGET_LANGS が空です。');
+  }
+  return unique;
+}
+
 function extractJsonBlock(text) {
   const fenced = text.match(/```json\s*([\s\S]*?)\s*```/i);
   if (fenced?.[1]) return fenced[1].trim();
@@ -68,6 +139,19 @@ function extractJsonBlock(text) {
     return text.slice(first, last + 1);
   }
   throw new Error('モデル出力からJSONを抽出できませんでした。');
+}
+
+function chapterPath(chapterFile) {
+  return path.join(CHAPTERS_DIR, chapterFile);
+}
+
+async function readPagesFromChapterFile(chapterFile) {
+  const raw = await fs.readFile(chapterPath(chapterFile), 'utf8');
+  const parsed = JSON.parse(raw);
+  if (!Array.isArray(parsed.pages)) {
+    throw new Error(`chapterFile の pages が不正です: ${chapterFile}`);
+  }
+  return parsed.pages.map((p) => normalizeText(p)).filter(Boolean);
 }
 
 function normalizeText(value) {
@@ -116,7 +200,8 @@ function validateEpisode(data) {
   };
 }
 
-async function generateEpisode({ apiKey, model, systemPrompt, series, nextEpisode, recentEpisodes }) {
+async function generateEpisode({ apiKey, model, systemPrompt, series, nextEpisode, recentEpisodes, lang }) {
+  const locale = LOCALE_CONFIG[lang] || LOCALE_CONFIG.ja;
   const previousSummary = recentEpisodes.length
     ? recentEpisodes
         .map((ep) => `- 第${ep.episodeNumber}話: ${ep.title} / ${ep.description}`)
@@ -126,13 +211,16 @@ async function generateEpisode({ apiKey, model, systemPrompt, series, nextEpisod
   const userPrompt = [
     `シリーズ名: ${series.category}`,
     `生成対象: 第${nextEpisode}話`,
+    `出力言語: ${locale.languageName} (${lang})`,
     `シリーズ文体要件: ${series.style}`,
+    `言語スタイル要件: ${locale.extraStyle}`,
     '過去話サマリ:',
     previousSummary,
     '',
     '要件:',
     '- 主人公は必ずシングルマザーのカンガルー「ガルちゃん」。',
     '- 読み切りとして成立しつつ、次話へのフックを残す。',
+    `- title/description/pages/keywords は必ず ${locale.languageName} で書く。`,
     '- pages は 5〜7 ページの文字列配列にする。',
     '- keywords は 5〜8 個の文字列配列にする。',
     '- 露骨な性的描写は禁止。',
@@ -184,10 +272,10 @@ async function generateEpisode({ apiKey, model, systemPrompt, series, nextEpisod
       const validated = validateEpisode(parsed);
 
       if (!validated.title) {
-        validated.title = `${series.category} 第${nextEpisode}話`;
+        validated.title = locale.fallbackTitle(series, nextEpisode);
       }
       if (!validated.description) {
-        validated.description = `${series.category}の第${nextEpisode}話。シングルマザーのカンガルー・ガルちゃんが新たな課題に向き合う。`;
+        validated.description = locale.fallbackDescription(series, nextEpisode);
       }
       return validated;
     } catch (err) {
@@ -199,11 +287,112 @@ async function generateEpisode({ apiKey, model, systemPrompt, series, nextEpisod
   throw lastError ?? new Error('不明な生成エラー');
 }
 
+async function translateEpisodeFromJapanese({
+  apiKey,
+  model,
+  systemPrompt,
+  series,
+  sourceEpisode,
+  sourcePages,
+  targetLang,
+}) {
+  const locale = LOCALE_CONFIG[targetLang] || LOCALE_CONFIG.ja;
+  const sourcePayload = {
+    title: sourceEpisode.title,
+    description: sourceEpisode.description,
+    pages: sourcePages,
+    keywords: String(sourceEpisode.keywords || '')
+      .split(',')
+      .map((k) => normalizeText(k))
+      .filter(Boolean),
+  };
+
+  const userPrompt = [
+    `タスク: 日本語小説を ${locale.languageName} (${targetLang}) に翻訳する`,
+    `シリーズ: ${series.category}`,
+    `話数: 第${sourceEpisode.episodeNumber}話`,
+    `翻訳スタイル要件: ${locale.extraStyle}`,
+    '',
+    '要件:',
+    '- 物語の意味・出来事の順序・人物名を維持する。',
+    '- 原文にない設定を追加しない。',
+    '- pages の件数を原文と同じにする。',
+    '- keywords は 5〜8 個を目安に自然な語へ翻訳する。',
+    '- 露骨な性的描写は禁止。',
+    '',
+    '原文(JSON):',
+    JSON.stringify(sourcePayload, null, 2),
+    '',
+    '次のJSONのみ返すこと:',
+    '{',
+    '  "title": "...",',
+    '  "description": "...",',
+    '  "pages": ["...", "...", "...", "...", "..."],',
+    '  "keywords": ["...", "...", "...", "...", "..."]',
+    '}',
+  ].join('\n');
+
+  let lastError = null;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const response = await fetch(GROQ_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          temperature: 0.3,
+          response_format: { type: 'json_object' },
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userPrompt },
+          ],
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.text();
+        throw new Error(`Groq APIエラー (${response.status}): ${err}`);
+      }
+
+      const payload = await response.json();
+      const content = payload?.choices?.[0]?.message?.content;
+      if (typeof content !== 'string' || !content.trim()) {
+        throw new Error('Groqレスポンスに本文がありませんでした。');
+      }
+
+      const parsed = JSON.parse(extractJsonBlock(content));
+      const validated = validateEpisode(parsed);
+      if (validated.pages.length !== sourcePages.length) {
+        throw new Error(`翻訳結果の pages 件数が不一致です: ${validated.pages.length} != ${sourcePages.length}`);
+      }
+      if (!validated.title) {
+        validated.title = locale.fallbackTitle(series, sourceEpisode.episodeNumber);
+      }
+      if (!validated.description) {
+        validated.description = locale.fallbackDescription(series, sourceEpisode.episodeNumber);
+      }
+      return validated;
+    } catch (err) {
+      lastError = err;
+      console.warn(
+        `[warn] ${series.category} 第${sourceEpisode.episodeNumber}話 翻訳失敗 (${targetLang}, attempt ${attempt}/3): ${String(err)}`
+      );
+    }
+  }
+
+  throw lastError ?? new Error('不明な翻訳エラー');
+}
+
 async function main() {
   const apiKey = process.env.GROQ_API_KEY;
   const model = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
   const force = process.env.FORCE_GENERATION === 'true';
+  const syncFromJa = process.env.SYNC_FROM_JA !== 'false';
   const targetDate = resolveTargetDate();
+  const targetLangs = resolveTargetLangs();
 
   if (!apiKey) {
     throw new Error('GROQ_API_KEY が未設定です。');
@@ -223,60 +412,183 @@ async function main() {
   const failed = [];
 
   for (const series of SERIES) {
-    const inSeries = novels
-      .filter((n) => n.seriesKey === series.key)
+    const jaSeries = novels
+      .filter((n) => n.seriesKey === series.key && n.lang === 'ja')
       .sort((a, b) => Number(a.episodeNumber || 0) - Number(b.episodeNumber || 0));
 
-    const latest = inSeries.at(-1);
-    if (!force && latest?.createdAt === targetDate) {
-      console.log(`[skip] ${series.category}: 指定日分は生成済み (${latest.title})`);
-      continue;
+    let latestJa = jaSeries.at(-1);
+    if (!force && latestJa?.createdAt === targetDate) {
+      console.log(`[skip] ${series.category} [ja]: 指定日分は生成済み (${latestJa.title})`);
+    } else if (targetLangs.includes('ja')) {
+      const nextEpisode = Number(latestJa?.episodeNumber || 0) + 1;
+      let generated;
+      try {
+        generated = await generateEpisode({
+          apiKey,
+          model,
+          systemPrompt,
+          series,
+          nextEpisode,
+          recentEpisodes: jaSeries.slice(-3),
+          lang: 'ja',
+        });
+      } catch (err) {
+        failed.push({ series: `${series.category}[ja]`, episode: nextEpisode, error: String(err) });
+        console.error(`[error] ${series.category} [ja]: 第${nextEpisode}話の生成に失敗: ${String(err)}`);
+        continue;
+      }
+
+      const id = `${series.key}-${String(nextEpisode).padStart(3, '0')}`;
+      const chapterFile = `${id}.ja.json`;
+
+      await fs.writeFile(
+        chapterPath(chapterFile),
+        `${JSON.stringify({ id, lang: 'ja', pages: generated.pages }, null, 2)}\n`,
+        'utf8'
+      );
+
+      const item = {
+        id,
+        seriesKey: series.key,
+        episodeNumber: nextEpisode,
+        title: generated.title,
+        description: generated.description,
+        category: series.category,
+        chapterFile,
+        pageCount: generated.pages.length,
+        animationPreset: series.animationPreset,
+        keywords: generated.keywords.join(', '),
+        lang: 'ja',
+        createdAt: targetDate,
+      };
+      novels.push(item);
+      jaSeries.push(item);
+      created.push(item);
+      latestJa = item;
+      console.log(`[ok] ${series.category} [ja]: 第${nextEpisode}話を追加 (${id})`);
     }
 
-    const nextEpisode = Number(latest?.episodeNumber || 0) + 1;
-    let generated;
-    try {
-      generated = await generateEpisode({
-        apiKey,
-        model,
-        systemPrompt,
-        series,
-        nextEpisode,
-        recentEpisodes: inSeries.slice(-3),
-      });
-    } catch (err) {
-      failed.push({ series: series.category, episode: nextEpisode, error: String(err) });
-      console.error(`[error] ${series.category}: 第${nextEpisode}話の生成に失敗: ${String(err)}`);
-      continue;
+    for (const lang of targetLangs.filter((l) => l !== 'ja')) {
+      const inSeries = novels
+        .filter((n) => n.seriesKey === series.key && n.lang === lang)
+        .sort((a, b) => Number(a.episodeNumber || 0) - Number(b.episodeNumber || 0));
+
+      if (syncFromJa) {
+        const latestJaEpisodeNumber = Number(jaSeries.at(-1)?.episodeNumber || 0);
+        let nextEpisode = Number(inSeries.at(-1)?.episodeNumber || 0) + 1;
+        while (nextEpisode <= latestJaEpisodeNumber) {
+          const sourceEpisode = jaSeries.find((ep) => Number(ep.episodeNumber) === nextEpisode);
+          if (!sourceEpisode?.chapterFile) break;
+
+          let sourcePages;
+          try {
+            sourcePages = await readPagesFromChapterFile(sourceEpisode.chapterFile);
+          } catch (err) {
+            failed.push({ series: `${series.category}[${lang}]`, episode: nextEpisode, error: String(err) });
+            console.error(
+              `[error] ${series.category} [${lang}]: 第${nextEpisode}話の原文読込に失敗: ${String(err)}`
+            );
+            break;
+          }
+
+          let translated;
+          try {
+            translated = await translateEpisodeFromJapanese({
+              apiKey,
+              model,
+              systemPrompt,
+              series,
+              sourceEpisode,
+              sourcePages,
+              targetLang: lang,
+            });
+          } catch (err) {
+            failed.push({ series: `${series.category}[${lang}]`, episode: nextEpisode, error: String(err) });
+            console.error(`[error] ${series.category} [${lang}]: 第${nextEpisode}話の翻訳に失敗: ${String(err)}`);
+            break;
+          }
+
+          const id = `${series.key}-${String(nextEpisode).padStart(3, '0')}`;
+          const chapterFile = `${id}.${lang}.json`;
+          await fs.writeFile(
+            chapterPath(chapterFile),
+            `${JSON.stringify({ id, lang, pages: translated.pages }, null, 2)}\n`,
+            'utf8'
+          );
+
+          const item = {
+            id,
+            seriesKey: series.key,
+            episodeNumber: nextEpisode,
+            title: translated.title,
+            description: translated.description,
+            category: series.category,
+            chapterFile,
+            pageCount: translated.pages.length,
+            animationPreset: series.animationPreset,
+            keywords: translated.keywords.join(', '),
+            lang,
+            createdAt: sourceEpisode.createdAt || targetDate,
+          };
+          novels.push(item);
+          inSeries.push(item);
+          created.push(item);
+          console.log(`[ok] ${series.category} [${lang}]: 第${nextEpisode}話を翻訳追加 (${id})`);
+          nextEpisode += 1;
+        }
+        continue;
+      }
+
+      const latest = inSeries.at(-1);
+      if (!force && latest?.createdAt === targetDate) {
+        console.log(`[skip] ${series.category} [${lang}]: 指定日分は生成済み (${latest.title})`);
+        continue;
+      }
+
+      const nextEpisode = Number(latest?.episodeNumber || 0) + 1;
+      let generated;
+      try {
+        generated = await generateEpisode({
+          apiKey,
+          model,
+          systemPrompt,
+          series,
+          nextEpisode,
+          recentEpisodes: inSeries.slice(-3),
+          lang,
+        });
+      } catch (err) {
+        failed.push({ series: `${series.category}[${lang}]`, episode: nextEpisode, error: String(err) });
+        console.error(`[error] ${series.category} [${lang}]: 第${nextEpisode}話の生成に失敗: ${String(err)}`);
+        continue;
+      }
+
+      const id = `${series.key}-${String(nextEpisode).padStart(3, '0')}`;
+      const chapterFile = `${id}.${lang}.json`;
+      await fs.writeFile(
+        chapterPath(chapterFile),
+        `${JSON.stringify({ id, lang, pages: generated.pages }, null, 2)}\n`,
+        'utf8'
+      );
+
+      const item = {
+        id,
+        seriesKey: series.key,
+        episodeNumber: nextEpisode,
+        title: generated.title,
+        description: generated.description,
+        category: series.category,
+        chapterFile,
+        pageCount: generated.pages.length,
+        animationPreset: series.animationPreset,
+        keywords: generated.keywords.join(', '),
+        lang,
+        createdAt: targetDate,
+      };
+      novels.push(item);
+      created.push(item);
+      console.log(`[ok] ${series.category} [${lang}]: 第${nextEpisode}話を追加 (${id})`);
     }
-
-    const id = `${series.key}-${String(nextEpisode).padStart(3, '0')}`;
-    const chapterFile = `${id}.json`;
-
-    await fs.writeFile(
-      path.join(CHAPTERS_DIR, chapterFile),
-      `${JSON.stringify({ id, pages: generated.pages }, null, 2)}\n`,
-      'utf8'
-    );
-
-    const item = {
-      id,
-      seriesKey: series.key,
-      episodeNumber: nextEpisode,
-      title: generated.title,
-      description: generated.description,
-      category: series.category,
-      chapterFile,
-      pageCount: generated.pages.length,
-      animationPreset: series.animationPreset,
-      keywords: generated.keywords.join(', '),
-      lang: 'ja',
-      createdAt: targetDate,
-    };
-
-    novels.push(item);
-    created.push(item);
-    console.log(`[ok] ${series.category}: 第${nextEpisode}話を追加 (${id})`);
   }
 
   if (!created.length) {

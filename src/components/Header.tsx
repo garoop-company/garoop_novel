@@ -3,19 +3,18 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { locales, getDictionary, Locale } from '@/locales';
+import { getDictionary } from '@/locales';
 import LanguageSwitcher from './LanguageSwitcher';
+import { detectLocaleFromPathname, localizePath } from '@/lib/locale-path';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const pathname = usePathname();
 
-    // Extract current locale
-    const segments = pathname.split('/');
-    const currentLocale = (locales.includes(segments[1] as Locale) ? segments[1] : 'ja') as Locale;
+    const currentLocale = detectLocaleFromPathname(pathname);
     const dict = getDictionary(currentLocale);
 
-    const pg = (path: string) => `/${currentLocale}${path === '/' ? '' : path}`;
+    const pg = (path: string) => localizePath(path, currentLocale);
 
     return (
         <header className="bg-slate-950/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50 shadow-[0_1px_0_rgba(255,255,255,0.04)]">

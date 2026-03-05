@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next'
-import { locales } from '@/locales'
+import { locales, defaultLocale, isLocale } from '@/locales'
 import { promises as fs } from 'fs'
 import path from 'path'
+import { localizePath } from '@/lib/locale-path'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const siteUrl = 'https://www.ai-garoop-novel.com'
@@ -15,7 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     for (const lang of locales) {
         for (const page of basePages) {
             entries.push({
-                url: `${siteUrl}/${lang}${page}`,
+                url: `${siteUrl}${localizePath(page || '/', lang)}`,
                 lastModified: new Date(),
                 changeFrequency: 'weekly',
                 priority: page === '' ? 1.0 : 0.8,
@@ -30,9 +31,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const novels = JSON.parse(fileContents);
 
         for (const novel of novels) {
-            // novel.lang corresponds to the locale segment
+            const lang = isLocale(novel.lang) ? novel.lang : defaultLocale;
             entries.push({
-                url: `${siteUrl}/${novel.lang}/novels/${novel.id}`,
+                url: `${siteUrl}${localizePath(`/novels/${novel.id}`, lang)}`,
                 lastModified: new Date(),
                 changeFrequency: 'monthly',
                 priority: 0.6,

@@ -4,14 +4,13 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FaHome, FaNewspaper } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { locales, getDictionary, Locale } from '@/locales';
+import { getDictionary } from '@/locales';
+import { detectLocaleFromPathname, localizePath } from '@/lib/locale-path';
 
 export default function BottomNav() {
     const pathname = usePathname();
 
-    // Extract current locale
-    const segments = pathname.split('/');
-    const currentLocale = (locales.includes(segments[1] as Locale) ? segments[1] : 'ja') as Locale;
+    const currentLocale = detectLocaleFromPathname(pathname);
     const dict = getDictionary(currentLocale);
 
     const NAV_ITEMS = [
@@ -19,7 +18,7 @@ export default function BottomNav() {
         { href: '/novels', label: dict.common.news, icon: FaNewspaper, color: 'text-teal-300' },
     ];
 
-    const pg = (path: string) => `/${currentLocale}${path === '/' ? '' : path}`;
+    const pg = (path: string) => localizePath(path, currentLocale);
 
     return (
         <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-slate-950/90 backdrop-blur-xl border-t border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.4)] px-4 pb-safe-area pt-2">

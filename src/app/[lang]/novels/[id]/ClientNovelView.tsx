@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { defaultLocale, isLocale } from '@/locales';
+import { localizePath } from '@/lib/locale-path';
 
 type Props = {
     novelId: string;
@@ -46,6 +48,7 @@ export default function ClientNovelView({ novelId, title, category, content, pag
     const isFirst = page === 1;
     const isLast = page === totalPages;
     const preset = pickPreset(novelId, animationPreset);
+    const routeLocale = isLocale(lang) ? lang : defaultLocale;
 
     // 言語別メッセージ
     const firstMessage = lang === 'ja'
@@ -158,7 +161,7 @@ export default function ClientNovelView({ novelId, title, category, content, pag
                         {hasPrevPage ? (
                             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
                                 <Link
-                                    href={`/novels/${novelId}?page=${page - 1}`}
+                                    href={`${localizePath(`/novels/${novelId}`, routeLocale)}?page=${page - 1}`}
                                     className="px-4 py-2 sm:px-6 sm:py-2 bg-slate-800 rounded hover:bg-slate-700 transition-colors text-sm sm:text-base"
                                 >
                                     &larr; Previous
@@ -182,7 +185,7 @@ export default function ClientNovelView({ novelId, title, category, content, pag
                                 transition={isFirst ? { duration: 1.2, repeat: Infinity, ease: 'easeInOut', delay: 0.2 } : {}}
                             >
                                 <Link
-                                    href={`/novels/${novelId}?page=${page + 1}`}
+                                    href={`${localizePath(`/novels/${novelId}`, routeLocale)}?page=${page + 1}`}
                                     className="px-4 py-2 sm:px-6 sm:py-2 bg-slate-800 rounded hover:bg-slate-700 transition-colors text-sm sm:text-base"
                                 >
                                     Next &rarr;
@@ -211,7 +214,7 @@ export default function ClientNovelView({ novelId, title, category, content, pag
 
                         <div className="flex flex-col sm:flex-row gap-4">
                             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }} className="text-center">
-                                <Link href="/novels" className="inline-block px-5 py-2 rounded bg-slate-800 text-slate-200 hover:bg-slate-700 shadow">
+                                <Link href={localizePath('/novels', routeLocale)} className="inline-block px-5 py-2 rounded bg-slate-800 text-slate-200 hover:bg-slate-700 shadow">
                                     {lang === 'ja' ? 'ライブラリに戻る' : 'Back to Library'}
                                 </Link>
                             </motion.div>

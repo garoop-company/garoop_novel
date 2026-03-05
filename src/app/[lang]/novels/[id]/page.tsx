@@ -2,7 +2,8 @@ import { notFound } from 'next/navigation';
 import { promises as fs } from 'fs';
 import path from 'path';
 import ClientNovelView from './ClientNovelView';
-import { locales, Locale } from '@/locales';
+import { locales, Locale, localeMeta } from '@/locales';
+import { localizePath } from '@/lib/locale-path';
 
 type Novel = {
   id: string;
@@ -108,18 +109,18 @@ export default async function Page(props: Props) {
   if (isNaN(page) || page < 1) page = 1;
   if (page > content.length) page = content.length;
 
-  const canonical = `${SITE_URL}/${lang}/novels/${novel.id}${page > 1 ? `?page=${page}` : ''}`;
+  const canonical = `${SITE_URL}${localizePath(`/novels/${novel.id}`, lang)}${page > 1 ? `?page=${page}` : ''}`;
 
   // Prev / Next（複数ページ記事向け：クロール導線を明確化）
-  const prevHref = page > 1 ? `${SITE_URL}/${lang}/novels/${novel.id}?page=${page - 1}` : null;
-  const nextHref = page < content.length ? `${SITE_URL}/${lang}/novels/${novel.id}?page=${page + 1}` : null;
+  const prevHref = page > 1 ? `${SITE_URL}${localizePath(`/novels/${novel.id}`, lang)}?page=${page - 1}` : null;
+  const nextHref = page < content.length ? `${SITE_URL}${localizePath(`/novels/${novel.id}`, lang)}?page=${page + 1}` : null;
 
   // JSON-LD（Article + BreadcrumbList + WebSite/Organization）
   const jsonLdArticle = {
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": novel.title,
-    "inLanguage": novel.lang === "ja" ? "ja-JP" : "en-US",
+    "inLanguage": localeMeta[lang].i18nTag,
     "articleSection": novel.category,
     "keywords": novel.keywords,
     "description": novel.description,
@@ -151,7 +152,7 @@ export default async function Page(props: Props) {
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
-      { "@type": "ListItem", "position": 2, "name": "Novels", "item": `${SITE_URL}/${lang}/novels` },
+      { "@type": "ListItem", "position": 2, "name": "Novels", "item": `${SITE_URL}${localizePath('/novels', lang)}` },
       { "@type": "ListItem", "position": 3, "name": novel.title, "item": canonical }
     ]
   };
@@ -163,7 +164,7 @@ export default async function Page(props: Props) {
     "url": SITE_URL,
     "potentialAction": {
       "@type": "SearchAction",
-      "target": `${SITE_URL}/${lang}/novels/list?q={search_term_string}`,
+      "target": `${SITE_URL}${localizePath('/novels', lang)}?q={search_term_string}`,
       "query-input": "required name=search_term_string"
     }
   };
