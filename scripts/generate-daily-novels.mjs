@@ -5,6 +5,7 @@ const NOVELS_PATH = path.join(process.cwd(), 'src', 'data', 'novels.json');
 const CHAPTERS_DIR = path.join(process.cwd(), 'src', 'data', 'chapters');
 const SYSTEM_PROMPT_PATH = path.join(process.cwd(), 'prompts', 'garu-system-prompt.txt');
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const OLLAMA_API_URL = 'http://127.0.0.1:11434/api/chat';
 const SUPPORTED_LANGS = ['ja', 'en', 'zh', 'fr', 'id', 'it', 'ne'];
 
 const LOCALE_CONFIG = {
@@ -237,35 +238,15 @@ async function generateEpisode({ apiKey, model, systemPrompt, series, nextEpisod
   let lastError = null;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
-      const response = await fetch(GROQ_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model,
-          temperature: 0.9,
-          response_format: { type: 'json_object' },
-          messages: [
-            { role: 'system', content: systemPrompt },
-            {
-              role: 'user',
-              content: `${userPrompt}\n\n注意: title/description/pages/keywords を必ず埋めてください。`,
-            },
-          ],
-        }),
+      const content = await requestModel({
+        apiKey,
+        model,
+        temperature: 0.9,
+        systemPrompt,
+        userPrompt: `${userPrompt}\n\n注意: title/description/pages/keywords を必ず埋めてください。`,
       });
-
-      if (!response.ok) {
-        const err = await response.text();
-        throw new Error(`Groq APIエラー (${response.status}): ${err}`);
-      }
-
-      const payload = await response.json();
-      const content = payload?.choices?.[0]?.message?.content;
       if (typeof content !== 'string' || !content.trim()) {
-        throw new Error('Groqレスポンスに本文がありませんでした。');
+        throw new Error('モデルレスポンスに本文がありませんでした。');
       }
 
       const parsed = JSON.parse(extractJsonBlock(content));
@@ -335,32 +316,15 @@ async function translateEpisodeFromJapanese({
   let lastError = null;
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
-      const response = await fetch(GROQ_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model,
-          temperature: 0.3,
-          response_format: { type: 'json_object' },
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt },
-          ],
-        }),
+      const content = await requestModel({
+        apiKey,
+        model,
+        temperature: 0.3,
+        systemPrompt,
+        userPrompt,
       });
-
-      if (!response.ok) {
-        const err = await response.text();
-        throw new Error(`Groq APIエラー (${response.status}): ${err}`);
-      }
-
-      const payload = await response.json();
-      const content = payload?.choices?.[0]?.message?.content;
       if (typeof content !== 'string' || !content.trim()) {
-        throw new Error('Groqレスポンスに本文がありませんでした。');
+        throw new Error('モデルレスポンスに本文がありませんでした。');
       }
 
       const parsed = JSON.parse(extractJsonBlock(content));
@@ -387,14 +351,15 @@ async function translateEpisodeFromJapanese({
 }
 
 async function main() {
+  const provider = resolveProvider();
   const apiKey = process.env.GROQ_API_KEY;
-  const model = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+  const model = resolveModel(provider);
   const force = process.env.FORCE_GENERATION === 'true';
   const syncFromJa = process.env.SYNC_FROM_JA !== 'false';
   const targetDate = resolveTargetDate();
   const targetLangs = resolveTargetLangs();
 
-  if (!apiKey) {
+  if (provider === 'groq' && !apiKey) {
     throw new Error('GROQ_API_KEY が未設定です。');
   }
 
@@ -612,3 +577,85 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
+
+function resolveProvider() {
+  const raw = (process.env.LLM_PROVIDER || '').trim().toLowerCase();
+  if (!raw) {
+    return process.env.OLLAMA_MODEL ? 'ollama' : 'groq';
+  }
+  if (raw !== 'groq' && raw !== 'ollama') {
+    throw new Error(`LLM_PROVIDER が不正です: ${raw}`);
+  }
+  return raw;
+}
+
+function resolveModel(provider) {
+  if (provider === 'ollama') {
+    return process.env.OLLAMA_MODEL || 'qwen3.5:4b';
+  }
+  return process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+}
+
+async function requestModel({ apiKey, model, temperature, systemPrompt, userPrompt }) {
+  const provider = resolveProvider();
+  if (provider === 'ollama') {
+    return requestOllama({ model, temperature, systemPrompt, userPrompt });
+  }
+  return requestGroq({ apiKey, model, temperature, systemPrompt, userPrompt });
+}
+
+async function requestGroq({ apiKey, model, temperature, systemPrompt, userPrompt }) {
+  const response = await fetch(GROQ_API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      temperature,
+      response_format: { type: 'json_object' },
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`Groq APIエラー (${response.status}): ${err}`);
+  }
+
+  const payload = await response.json();
+  return payload?.choices?.[0]?.message?.content;
+}
+
+async function requestOllama({ model, temperature, systemPrompt, userPrompt }) {
+  const response = await fetch(process.env.OLLAMA_BASE_URL || OLLAMA_API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model,
+      stream: false,
+      format: 'json',
+      options: {
+        temperature,
+      },
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`Ollama APIエラー (${response.status}): ${err}`);
+  }
+
+  const payload = await response.json();
+  return payload?.message?.content;
+}

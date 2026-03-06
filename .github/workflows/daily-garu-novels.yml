@@ -1,4 +1,4 @@
-name: Groq Daily Garu Novel
+name: Ollama Daily Garu Novel
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: groq-daily-garu-novel
+  group: ollama-daily-garu-novel
   cancel-in-progress: true
 
 jobs:
@@ -44,12 +44,33 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Generate new episodes with Groq API
+      - name: Install Ollama
+        run: curl -fsSL https://ollama.com/install.sh | sh
+
+      - name: Start Ollama
+        run: |
+          ollama serve > /tmp/ollama.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:11434/api/tags >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Ollama failed to start"
+          cat /tmp/ollama.log
+          exit 1
+
+      - name: Pull model
         env:
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          GROQ_MODEL: ${{ vars.GROQ_MODEL || 'llama-3.3-70b-versatile' }}
+          OLLAMA_MODEL: ${{ vars.OLLAMA_MODEL || 'qwen3.5:4b' }}
+        run: ollama pull "$OLLAMA_MODEL"
+
+      - name: Generate new episodes with Ollama
+        env:
+          LLM_PROVIDER: ollama
+          OLLAMA_MODEL: ${{ vars.OLLAMA_MODEL || 'qwen3.5:4b' }}
           TARGET_DATE: ${{ steps.date.outputs.target_date }}
-          TARGET_LANGS: ${{ vars.GROQ_TARGET_LANGS || 'ja,en,zh,fr,id,it,ne' }}
+          TARGET_LANGS: ${{ vars.OLLAMA_TARGET_LANGS || 'ja,en,zh,fr,id,it,ne' }}
         run: node scripts/generate-daily-novels.mjs
 
       - name: Commit and push
@@ -63,7 +84,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           TARGET_DATE="${{ steps.date.outputs.target_date }}"
-          TARGET_LANGS="${{ vars.GROQ_TARGET_LANGS || 'ja,en,zh,fr,id,it,ne' }}"
+          TARGET_LANGS="${{ vars.OLLAMA_TARGET_LANGS || 'ja,en,zh,fr,id,it,ne' }}"
           git add src/data/novels.json src/data/chapters
-          git commit -m "chore(groq): generate daily Garu chapters (${TARGET_LANGS}) for ${TARGET_DATE}"
+          git commit -m "chore(ollama): generate daily Garu chapters (${TARGET_LANGS}) for ${TARGET_DATE}"
           git push
