@@ -22,11 +22,16 @@ export default function Header() {
 
     useEffect(() => {
         const checkLogin = async () => {
-            const loggedIn = sessionStorage.getItem('isLogin') === 'true';
-            setIsLogin(loggedIn);
-            if (loggedIn) {
-                const u = await getLoginUser();
+            const u = await getLoginUser();
+            if (u) {
+                sessionStorage.setItem('isLogin', 'true');
+                sessionStorage.setItem('garoopLoginUserId', u.id);
+                setIsLogin(true);
                 setUser(u);
+            } else {
+                sessionStorage.removeItem('isLogin');
+                setIsLogin(false);
+                setUser(null);
             }
         };
         checkLogin();

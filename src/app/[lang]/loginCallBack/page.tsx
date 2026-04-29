@@ -29,7 +29,7 @@ function LoginCallBackInner() {
     const providerFromQuery = searchParams.get("provider")
 
     const run = async () => {
-      const redirectUrl = process.env.NEXT_PUBLIC_URL ?? window.location.origin
+      const redirectUrl = window.location.origin
 
       // メール認証完了
       if (token) {

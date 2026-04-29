@@ -177,7 +177,7 @@ export function GaruLoginModal({ onClose, onLogin }: {
     setSocialError("")
     setPendingProvider(provider)
     try {
-      const redirectUrl = process.env.NEXT_PUBLIC_URL ?? window.location.origin
+      const redirectUrl = window.location.origin
       let authUrl = await getSocialAuthUrl(provider, redirectUrl)
       if (!authUrl) throw new Error("auth url not found")
 
