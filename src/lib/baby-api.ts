@@ -115,3 +115,10 @@ export async function socialLoginCallback(
 export async function logoutUser(): Promise<void> {
   await gql(`mutation { logout { success } }`)
 }
+
+// 別ドメインから受け取ったワンタイムトークンを使って sessionId Cookie を発行してもらう。
+export async function exchangeSessionTransferToken(token: string): Promise<{ id: string; success: boolean } | null> {
+  const query = `mutation { exchangeSessionTransferToken(token: ${JSON.stringify(token)}) { id success } }`
+  const data = await gql(query) as Record<string, unknown> | null
+  return (data as { data?: { exchangeSessionTransferToken?: { id: string; success: boolean } } })?.data?.exchangeSessionTransferToken ?? null
+}
