@@ -78,6 +78,14 @@ export default function Header() {
                         <Link href={pg('/novels')} className="hover:text-amber-200 transition-colors py-2">{dict.common.news}</Link>
                         <Link href={pg('/about')} className="hover:text-amber-200 transition-colors py-2">{dict.common.about}</Link>
                         <Link href={pg('/contact')} className="hover:text-amber-200 transition-colors py-2 text-sm">{dict.common.contact}</Link>
+                        <a
+                            href="https://baby.garoop.jp/"
+                            className="inline-flex items-center gap-1.5 bg-gradient-to-r from-pink-400 via-rose-400 to-fuchsia-400 hover:from-pink-500 hover:to-fuchsia-500 rounded-full px-3 py-1.5 text-xs font-black text-white shadow-md hover:scale-105 transition-all"
+                            aria-label="赤ちゃんを育てに行く"
+                        >
+                            <span aria-hidden="true">👶</span>
+                            育てる・調教・産む
+                        </a>
                         <div className="ml-2"><LanguageSwitcher /></div>
 
                         {isLogin && user && (
@@ -145,6 +153,15 @@ export default function Header() {
                 {isMenuOpen && (
                     <nav className="md:hidden bg-slate-950 border-t border-slate-800">
                         <div className="flex flex-col p-4 space-y-4 font-bold text-slate-200">
+                            <a
+                                href="https://baby.garoop.jp/"
+                                className="self-start inline-flex items-center gap-1.5 bg-gradient-to-r from-pink-400 via-rose-400 to-fuchsia-400 rounded-full px-3 py-1.5 text-xs font-black text-white shadow-md"
+                                onClick={() => setIsMenuOpen(false)}
+                                aria-label="赤ちゃんを育てに行く"
+                            >
+                                <span aria-hidden="true">👶</span>
+                                育てる・調教・産む
+                            </a>
                             <Link href={pg('/')} className="hover:text-amber-200 transition-colors" onClick={() => setIsMenuOpen(false)}>{dict.common.home}</Link>
                             <Link href={pg('/novels')} className="hover:text-amber-200 transition-colors" onClick={() => setIsMenuOpen(false)}>{dict.common.news}</Link>
                             <Link href={pg('/about')} className="hover:text-amber-200 transition-colors" onClick={() => setIsMenuOpen(false)}>{dict.common.about}</Link>
