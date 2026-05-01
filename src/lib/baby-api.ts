@@ -117,8 +117,24 @@ export async function logoutUser(): Promise<void> {
 }
 
 // 別ドメインから受け取ったワンタイムトークンを使って sessionId Cookie を発行してもらう。
+// DevTools Network で operationName を表示できるよう、無名 mutation ではなく named operation で送る。
 export async function exchangeSessionTransferToken(token: string): Promise<{ id: string; success: boolean } | null> {
-  const query = `mutation { exchangeSessionTransferToken(token: ${JSON.stringify(token)}) { id success } }`
-  const data = await gql(query) as Record<string, unknown> | null
-  return (data as { data?: { exchangeSessionTransferToken?: { id: string; success: boolean } } })?.data?.exchangeSessionTransferToken ?? null
+  try {
+    const res = await fetch(`${KIDS_API}/query`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        operationName: "ExchangeSessionTransferToken",
+        query: `mutation ExchangeSessionTransferToken($token: String!) {
+  exchangeSessionTransferToken(token: $token) { id success }
+}`,
+        variables: { token },
+      }),
+      credentials: "include",
+    })
+    const data = await res.json()
+    return data?.data?.exchangeSessionTransferToken ?? null
+  } catch {
+    return null
+  }
 }

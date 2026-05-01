@@ -14,12 +14,6 @@ function safeRedirect(raw: string | null): string {
   return raw
 }
 
-// 履歴・Referer 経由のトークン漏洩を防ぐため URL からクエリを除去する。
-function clearTokenFromUrl() {
-  if (typeof window === "undefined") return
-  window.history.replaceState({}, "", window.location.pathname)
-}
-
 function SsoInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -43,9 +37,7 @@ function SsoInner() {
             sessionStorage.setItem("isLogin", "true")
             sessionStorage.setItem("garoopLoginUserId", result.id)
           }
-          clearTokenFromUrl()
           router.replace(redirect)
-          router.refresh()
         } else {
           setError(true)
         }
