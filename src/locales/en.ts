@@ -1,27 +1,27 @@
 export const en = {
     common: {
         home: "Home",
-        news: "News",
+        news: "Library",
         about: "About",
         contact: "Contact",
         privacy: "Privacy Policy",
         terms: "Terms of Service",
         faq: "FAQ",
-        more: "More →",
-        all_news: "View All News →",
+        more: "Turn the page →",
+        all_news: "Browse the shelf →",
     },
     hero: {
-        welcome: "🚀 NEXT-GEN AI ENTERTAINMENT PORTAL",
+        welcome: "Garoop Bunko ― Welcome to the Night Shelf",
         title: "Garoop Novel",
-        subtitle: "Where Generative AI (LLM) meets digital fun. Welcome to our portal for AI-generated novels and AI-driven news!",
-        badges: "✨ AI-POWERED NOVELS & NEWS ✨",
-        cta_news: "📰 PARK NEWS",
+        subtitle: "Stories woven by generative AI. A small bunko for sloped streets, late-night desks, and fingers that turn the page.",
+        badges: "── From the night shelves of Kamakura & Nagasaki ──",
+        cta_news: "📖 Open the Library",
     },
     sections: {
         latest_news: {
-            title: "Park News",
-            subtitle: "Official Gazette",
-            read_more: "READ THE FLYER →",
+            title: "Tonight's Shelf",
+            subtitle: "Tonight's Shelf",
+            read_more: "Turn the page →",
         },
     },
     faq: {

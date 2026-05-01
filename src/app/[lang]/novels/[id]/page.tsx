@@ -22,6 +22,7 @@ type Novel = {
 type ChapterPayload = {
   id: string;
   pages: string[];
+  companionLines?: string[];
 };
 
 async function getNovels(): Promise<Novel[]> {
@@ -32,30 +33,36 @@ async function getNovels(): Promise<Novel[]> {
 
 async function getNovelById(id: string, lang: string): Promise<Novel | undefined> {
   const novels = await getNovels();
-  return novels.find((n) => n.id === id && n.lang === lang);
+  return (
+    novels.find((n) => n.id === id && n.lang === lang) ??
+    novels.find((n) => n.id === id && n.lang === 'ja') ??
+    novels.find((n) => n.id === id)
+  );
 }
 
-async function getNovelContent(novel: Novel): Promise<string[]> {
+async function getChapter(novel: Novel): Promise<{ pages: string[]; companionLines: string[] }> {
   if (Array.isArray(novel.content) && novel.content.length > 0) {
-    return novel.content;
+    return { pages: novel.content, companionLines: [] };
   }
 
-  if (!novel.chapterFile) return [];
+  if (!novel.chapterFile) return { pages: [], companionLines: [] };
   const chapterPath = path.join(process.cwd(), 'src', 'data', 'chapters', novel.chapterFile);
   const chapterRaw = await fs.readFile(chapterPath, 'utf8');
   const chapter = JSON.parse(chapterRaw) as ChapterPayload;
-  return Array.isArray(chapter.pages) ? chapter.pages : [];
+  return {
+    pages: Array.isArray(chapter.pages) ? chapter.pages : [],
+    companionLines: Array.isArray(chapter.companionLines) ? chapter.companionLines : [],
+  };
 }
 
 // 事前ビルド対象
 export async function generateStaticParams() {
   const novels = await getNovels();
-  const params = [];
+  const params: { lang: string; id: string }[] = [];
+  const ids = Array.from(new Set(novels.map((n) => n.id)));
   for (const lang of locales) {
-    for (const n of novels) {
-      if (n.lang === lang) {
-        params.push({ lang, id: n.id });
-      }
+    for (const id of ids) {
+      params.push({ lang, id });
     }
   }
   return params;
@@ -73,7 +80,7 @@ export async function generateMetadata(props: {
   const searchParams = await props.searchParams;
   const novel = await getNovelById(id, lang);
   if (!novel) return {};
-  const content = await getNovelContent(novel);
+  const { pages: content } = await getChapter(novel);
 
   const raw = searchParams.page ? parseInt(searchParams.page as string, 10) : 1;
   const page = Number.isNaN(raw) || raw < 1 ? 1 : Math.min(raw, content.length || 1);
@@ -102,7 +109,7 @@ export default async function Page(props: Props) {
   const searchParams = await props.searchParams;
   const novel = await getNovelById(id, lang);
   if (!novel) notFound();
-  const content = await getNovelContent(novel);
+  const { pages: content, companionLines } = await getChapter(novel);
   if (content.length === 0) notFound();
 
   let page = searchParams.page ? parseInt(searchParams.page as string, 10) : 1;
@@ -195,10 +202,11 @@ export default async function Page(props: Props) {
         title={novel.title}
         category={novel.category}
         content={content}
+        companionLines={companionLines}
         page={page}
         lang={novel.lang}
         animationPreset={novel.animationPreset}
-        sourceVideoUrl={(novel as any).sourceVideoUrl} // Add cast or update type definition
+        sourceVideoUrl={(novel as any).sourceVideoUrl}
       />
     </div>
   );

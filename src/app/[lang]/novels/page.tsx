@@ -16,7 +16,6 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 import Link from 'next/link';
 import { promises as fs } from 'fs';
 import path from 'path';
-import GaLink from '@/components/GaLink';
 
 type Novel = {
   id: string;
@@ -29,6 +28,8 @@ type Novel = {
   animationPreset?: string;
   keywords: string;
   lang: string;
+  episodeNumber?: number;
+  seriesKey?: string;
 };
 
 async function getNovels(): Promise<Novel[]> {
@@ -45,21 +46,28 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
+const SPINE_PALETTE = [
+  { bg: 'linear-gradient(180deg,#3b1f1a 0%,#2a1410 60%,#3b1f1a 100%)', accent: '#e6c98a' },
+  { bg: 'linear-gradient(180deg,#1f2a3b 0%,#0f1828 60%,#1f2a3b 100%)', accent: '#cfa86b' },
+  { bg: 'linear-gradient(180deg,#2c2419 0%,#1a140b 60%,#2c2419 100%)', accent: '#d6b573' },
+  { bg: 'linear-gradient(180deg,#3b2a1f 0%,#241710 60%,#3b2a1f 100%)', accent: '#c89d5e' },
+  { bg: 'linear-gradient(180deg,#1f3b33 0%,#0f1f1a 60%,#1f3b33 100%)', accent: '#dcb96f' },
+  { bg: 'linear-gradient(180deg,#2a1f3b 0%,#150f24 60%,#2a1f3b 100%)', accent: '#d8b264' },
+];
+
 const NovelsPage = async (props: Props) => {
   const { lang: rawLang } = await props.params;
   const routeLang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
+  const dict = getDictionary(routeLang);
   const searchParams = await props.searchParams;
   const novels = await getNovels();
 
-  // クエリ取得
   const lang = (searchParams.lang as string) || routeLang;
   const category = (searchParams.category as string) || 'all';
-  const q = ((searchParams.q as string) || '').trim(); // タイトル検索
+  const q = ((searchParams.q as string) || '').trim();
 
-  // 全カテゴリ一覧（表示用）
   const allCategories = Array.from(new Set(novels.map((n) => n.category))).sort();
 
-  // フィルタリング
   let filtered = novels;
   if (lang !== 'all') {
     filtered = filtered.filter((n) => n.lang === lang);
@@ -76,7 +84,17 @@ const NovelsPage = async (props: Props) => {
     );
   }
 
-  // 現在のクエリを保ったままパラメータを差し替えるユーティリティ
+  // Group by category for shelf-style display
+  const grouped = new Map<string, Novel[]>();
+  for (const n of filtered) {
+    if (!grouped.has(n.category)) grouped.set(n.category, []);
+    grouped.get(n.category)!.push(n);
+  }
+  // Sort within each group by episodeNumber
+  for (const [, list] of grouped) {
+    list.sort((a, b) => (a.episodeNumber ?? 0) - (b.episodeNumber ?? 0));
+  }
+
   const buildHref = (next: Partial<{ lang: string; category: string; q: string }>) => {
     const params = new URLSearchParams();
     const nextLang = next.lang ?? lang;
@@ -93,36 +111,52 @@ const NovelsPage = async (props: Props) => {
   };
 
   return (
-    <div className="bg-slate-950 min-h-screen text-slate-100 p-8">
-      <header className="text-center mb-10">
-        <Link href={localizePath('/', routeLang)}>
-          <h1 className="text-5xl font-bold font-serif cursor-pointer hover:text-amber-300 transition-colors">
-            Library of Whispers
-          </h1>
-        </Link>
-        <p className="text-lg text-slate-400 mt-2">Choose your poison.</p>
+    <main className="relative min-h-screen text-amber-50 overflow-x-hidden">
+      {/* Backdrop */}
+      <div className="fixed inset-0 z-[-1] overflow-hidden">
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(900px 600px at 50% 0%, rgba(217,164,97,0.12), transparent 70%), linear-gradient(180deg, #0a0807 0%, #100b0a 50%, #0a0807 100%)',
+          }}
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-[0.06] mix-blend-soft-light"
+          style={{
+            backgroundImage:
+              'radial-gradient(rgba(255,220,170,0.6) 1px, transparent 1px)',
+            backgroundSize: '3px 3px',
+          }}
+        />
+      </div>
 
-        {/* 新しいコンテンツへのリンク */}
-        <div className="mt-6 flex justify-center gap-4">
-          <GaLink
-            href={localizePath('/videos', routeLang)}
-            eventParams={{
-              cta_label: "watch_videos",
-              cta_location: "novels_header",
-              cta_target: "/videos",
-            }}
-            className="px-6 py-3 bg-amber-500 text-slate-950 font-bold rounded-lg hover:bg-amber-400 transition"
-          >
-            動画を見る
-          </GaLink>
+      <header className="px-4 pt-16 pb-12">
+        <div className="max-w-5xl mx-auto text-center">
+          <p className="font-serif tracking-[0.4em] text-amber-200/70 text-[11px] uppercase">
+            Garoop Bunko · 書架
+          </p>
+          <Link href={localizePath('/', routeLang)}>
+            <h1 className="mt-4 font-serif text-4xl sm:text-5xl text-amber-50 hover:text-amber-200 transition-colors">
+              {dict.sections.latest_news.title}
+            </h1>
+          </Link>
+          <div className="mx-auto my-5 flex items-center justify-center gap-3 text-amber-200/50">
+            <span className="block h-px w-16 bg-amber-200/30" />
+            <span className="text-sm">❦</span>
+            <span className="block h-px w-16 bg-amber-200/30" />
+          </div>
+          <p className="font-serif text-amber-50/70 max-w-xl mx-auto leading-loose text-sm">
+            人物列伝と長崎物語。坂と海と、誰かの机の灯りから生まれた小説たちを、夜の文庫に並べました。
+          </p>
         </div>
 
-        {/* タイトル検索フォーム（GETでクエリを保つ） */}
+        {/* Search */}
         <form
           method="GET"
-          className="mt-6 flex items-center justify-center gap-2 flex-wrap"
+          className="mt-10 max-w-2xl mx-auto flex items-center gap-2 flex-wrap justify-center"
         >
-          {/* 既存フィルタを保持 */}
           {lang !== 'all' && <input type="hidden" name="lang" value={lang} />}
           {category !== 'all' && <input type="hidden" name="category" value={category} />}
 
@@ -130,134 +164,190 @@ const NovelsPage = async (props: Props) => {
             type="text"
             name="q"
             defaultValue={q}
-            placeholder="Search by title..."
-            className="w-72 md:w-96 px-4 py-2 rounded bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400/70"
+            placeholder="作品名・キーワードで探す"
+            className="w-72 md:w-96 px-4 py-2.5 rounded-md bg-stone-900/60 border border-amber-200/20 text-amber-50 placeholder-amber-50/40 font-serif focus:outline-none focus:ring-1 focus:ring-amber-300/60 focus:border-amber-200/40"
             aria-label="Search by title"
           />
           <button
             type="submit"
-            className="px-4 py-2 rounded bg-amber-500 text-slate-950 hover:bg-amber-400 transition"
+            className="px-5 py-2.5 rounded-md bg-amber-300 text-stone-900 font-serif font-bold hover:bg-amber-200 transition"
           >
-            Search
+            探す
           </button>
           {q && (
             <Link
               href={buildHref({ q: '' })}
-              className="px-3 py-2 rounded bg-slate-800 hover:bg-slate-700"
-              aria-label="Clear title search"
+              className="px-3 py-2.5 rounded-md bg-stone-900/40 border border-amber-200/15 hover:bg-stone-900/60 text-amber-50/80 font-serif text-sm"
             >
-              Clear Title
+              クリア
             </Link>
           )}
         </form>
 
-        {/* 言語切り替え */}
-        <div className="mt-6 flex justify-center gap-3 flex-wrap">
-          {locales.map((locale) => (
-            <Link
-              key={locale}
-              href={buildHref({ lang: locale })}
-              className={`px-4 py-2 rounded ${lang === locale ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 hover:bg-slate-700'}`}
-            >
-              {localeMeta[locale].flag} {localeMeta[locale].label}
-            </Link>
-          ))}
-          <Link
-            href={buildHref({ lang: 'all' })}
-            className={`px-4 py-2 rounded ${lang === 'all' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 hover:bg-slate-700'
-              }`}
-          >
-            All Languages
-          </Link>
-        </div>
-
-        {/* カテゴリパネル */}
-        <div className="mt-5">
-          <div className="text-sm text-slate-400 mb-2">Categories</div>
+        {/* Filters */}
+        <div className="mt-6 max-w-5xl mx-auto">
           <div className="flex justify-center gap-2 flex-wrap">
             <Link
               href={buildHref({ category: 'all' })}
-              className={`px-3 py-1.5 rounded-full text-sm border ${category === 'all'
-                ? 'bg-teal-500 text-slate-950 border-teal-400'
-                : 'bg-slate-900 border-slate-700 hover:bg-slate-800'
+              className={`px-4 py-1.5 rounded-full text-xs font-serif tracking-wider border transition ${category === 'all'
+                ? 'bg-amber-300 text-stone-900 border-amber-200'
+                : 'bg-stone-900/40 border-amber-200/20 text-amber-50/80 hover:bg-stone-900/60'
                 }`}
             >
-              All
+              すべての書架
             </Link>
             {allCategories.map((cat) => (
               <Link
                 key={cat}
                 href={buildHref({ category: cat })}
-                className={`px-3 py-1.5 rounded-full text-sm border ${category === cat
-                  ? 'bg-teal-500 text-slate-950 border-teal-400'
-                  : 'bg-slate-900 border-slate-700 hover:bg-slate-800'
+                className={`px-4 py-1.5 rounded-full text-xs font-serif tracking-wider border transition ${category === cat
+                  ? 'bg-amber-300 text-stone-900 border-amber-200'
+                  : 'bg-stone-900/40 border-amber-200/20 text-amber-50/80 hover:bg-stone-900/60'
                   }`}
               >
                 {cat}
               </Link>
             ))}
           </div>
-        </div>
 
-        {/* 現在のフィルタ表示（クリア導線付き） */}
-        <div className="mt-4 text-sm text-slate-400">
-          <span>
-            Filter: <span className="text-slate-200">lang = {lang}</span>,{' '}
-            <span className="text-slate-200">category = {category}</span>
-            {q && (
-              <>
-                , <span className="text-slate-200">title ~ {q}</span>
-              </>
-            )}
-          </span>
-          <Link
-            href={localizePath('/novels', routeLang)}
-            className="ml-3 text-amber-300 hover:underline"
-            aria-label="Clear filters"
-          >
-            Clear All
-          </Link>
+          <div className="mt-4 flex justify-center gap-2 flex-wrap text-xs">
+            {locales.map((locale) => (
+              <Link
+                key={locale}
+                href={buildHref({ lang: locale })}
+                className={`px-3 py-1 rounded-md font-serif border transition ${lang === locale
+                  ? 'bg-stone-100/15 border-amber-200/40 text-amber-50'
+                  : 'bg-transparent border-amber-200/10 text-amber-50/60 hover:bg-stone-900/40'
+                  }`}
+              >
+                {localeMeta[locale].flag} {localeMeta[locale].label}
+              </Link>
+            ))}
+            <Link
+              href={buildHref({ lang: 'all' })}
+              className={`px-3 py-1 rounded-md font-serif border transition ${lang === 'all'
+                ? 'bg-stone-100/15 border-amber-200/40 text-amber-50'
+                : 'bg-transparent border-amber-200/10 text-amber-50/60 hover:bg-stone-900/40'
+                }`}
+            >
+              All
+            </Link>
+          </div>
         </div>
       </header>
 
-      {/* 小説リスト */}
-      <main className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      <section className="px-4 pb-24 max-w-7xl mx-auto">
         {filtered.length === 0 ? (
-          <div className="col-span-full text-center text-slate-400">
-            条件に一致する作品がありません。フィルタを変更してください。
+          <div className="text-center text-amber-50/60 font-serif py-20">
+            条件に一致する書物がまだありません。書架を別の角度から眺めてみてください。
           </div>
         ) : (
-          filtered.map((novel) => (
-            <Link
-              href={localizePath(`/novels/${novel.id}`, routeLang)}
-              key={`${novel.id}-${novel.lang}`}
-              className="p-6 bg-slate-900/70 rounded-lg border border-slate-800 hover:bg-slate-800 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-amber-900/30 h-full flex flex-col"
-            >
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`text-xs font-semibold px-2 py-0.5 rounded ${novel.category === 'Horror'
-                      ? 'bg-amber-500/15 text-amber-300'
-                      : 'bg-teal-500/15 text-teal-300'
-                      }`}
-                  >
-                    {novel.category}
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-200">
-                    {novel.lang.toUpperCase()}
-                  </span>
-                </div>
-                <h2 className="text-2xl font-bold font-serif text-white">
-                  {novel.title}
-                </h2>
-                <p className="text-slate-400 flex-grow">{novel.description}</p>
+          Array.from(grouped.entries()).map(([cat, list]) => (
+            <div key={cat} className="mb-16">
+              <div className="flex items-baseline justify-between mb-5 border-b border-amber-200/15 pb-3">
+                <h2 className="font-serif text-2xl text-amber-50 tracking-wider">{cat}</h2>
+                <span className="font-serif text-xs text-amber-200/60 tracking-[0.25em] uppercase">
+                  {list.length} 巻
+                </span>
               </div>
-            </Link>
+
+              {/* Shelf */}
+              <div
+                className="relative rounded-[10px] p-4 sm:p-6"
+                style={{
+                  background:
+                    'linear-gradient(180deg, rgba(60,38,22,0.5) 0%, rgba(34,21,12,0.65) 100%)',
+                  boxShadow:
+                    'inset 0 0 0 1px rgba(217,180,120,0.18), 0 25px 40px -20px rgba(0,0,0,0.6)',
+                }}
+              >
+                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
+                  {list.map((novel, i) => {
+                    const palette = SPINE_PALETTE[i % SPINE_PALETTE.length];
+                    return (
+                      <Link
+                        href={localizePath(`/novels/${novel.id}`, routeLang)}
+                        key={`${novel.id}-${novel.lang}`}
+                        className="group relative h-[260px] sm:h-[300px] rounded-[3px] overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:rotate-[-1deg]"
+                        style={{
+                          background: palette.bg,
+                          boxShadow:
+                            '0 16px 28px -12px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,220,170,0.08), inset 4px 0 8px rgba(0,0,0,0.4), inset -4px 0 8px rgba(0,0,0,0.4)',
+                        }}
+                      >
+                        <div className="absolute top-3 left-3 right-3 h-px" style={{ backgroundColor: palette.accent, opacity: 0.5 }} />
+                        <div className="absolute bottom-3 left-3 right-3 h-px" style={{ backgroundColor: palette.accent, opacity: 0.5 }} />
+
+                        <div
+                          className="absolute inset-0 flex flex-col items-center justify-between py-6 px-2 text-center"
+                          style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+                        >
+                          <span className="font-serif text-[9px] tracking-[0.25em] uppercase" style={{ color: palette.accent, opacity: 0.85 }}>
+                            {novel.episodeNumber ? `第${novel.episodeNumber}巻` : novel.lang.toUpperCase()}
+                          </span>
+                          <h3 className="font-serif text-[13px] sm:text-sm leading-tight px-1 line-clamp-[10]" style={{ color: '#f5e9c8' }}>
+                            {novel.title}
+                          </h3>
+                          <span className="font-serif text-[9px] tracking-widest" style={{ color: palette.accent, opacity: 0.7 }}>
+                            Garoop 文庫
+                          </span>
+                        </div>
+
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                          style={{ background: 'linear-gradient(135deg, rgba(255,235,180,0.10) 0%, transparent 50%)' }}
+                        />
+                      </Link>
+                    );
+                  })}
+                </div>
+                <div
+                  className="mt-4 h-3 rounded"
+                  style={{
+                    background: 'linear-gradient(180deg, #3b2418 0%, #1f140c 100%)',
+                    boxShadow: '0 6px 14px rgba(0,0,0,0.6)',
+                  }}
+                />
+              </div>
+
+              {/* Synopsis cards beneath each shelf */}
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                {list.map((novel) => (
+                  <Link
+                    href={localizePath(`/novels/${novel.id}`, routeLang)}
+                    key={`syn-${novel.id}-${novel.lang}`}
+                    className="group block"
+                  >
+                    <article
+                      className="relative h-full rounded-[6px] p-5 transition-all duration-300 hover:-translate-y-0.5"
+                      style={{
+                        background:
+                          'linear-gradient(180deg, rgba(245,228,191,0.04) 0%, rgba(245,228,191,0.01) 100%)',
+                        boxShadow:
+                          'inset 0 0 0 1px rgba(217,180,120,0.16)',
+                      }}
+                    >
+                      <div className="flex items-start gap-3">
+                        <span className="font-serif text-amber-200/70 text-[11px] tracking-[0.25em] uppercase mt-1">
+                          {novel.episodeNumber ? `Vol.${String(novel.episodeNumber).padStart(2, '0')}` : '—'}
+                        </span>
+                        <div className="flex-1">
+                          <h3 className="font-serif text-base sm:text-lg text-amber-50 leading-snug group-hover:text-amber-200 transition-colors">
+                            {novel.title}
+                          </h3>
+                          <p className="mt-2 font-serif text-sm leading-loose text-amber-50/70 line-clamp-3">
+                            {novel.description}
+                          </p>
+                        </div>
+                      </div>
+                    </article>
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))
         )}
-      </main>
-
-    </div>
+      </section>
+    </main>
   );
 };
 

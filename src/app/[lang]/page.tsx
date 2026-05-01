@@ -10,7 +10,6 @@ import { localizePath } from '@/lib/locale-path';
 
 import { generateLocalizedMetadata, SITE_URL } from "@/lib/seo";
 
-// ✅ メタデータ（SEO対策）
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang: rawLang } = await params;
   const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
@@ -25,7 +24,6 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   });
 }
 
-// 小説データの型定義
 type Novel = {
   id: string;
   title: string;
@@ -36,7 +34,6 @@ type Novel = {
   lang: string;
 };
 
-// 最新の小説を取得する関数
 async function getLatestNovels(lang: string): Promise<Novel[]> {
   const jsonDirectory = path.join(process.cwd(), 'src', 'data');
   const fileContents = await fs.readFile(
@@ -44,10 +41,18 @@ async function getLatestNovels(lang: string): Promise<Novel[]> {
     'utf8'
   );
   const novels: Novel[] = JSON.parse(fileContents);
-  // 指定された言語の記事のみをフィルタリングし、最新3件を取得
   const filtered = novels.filter(n => n.lang === lang);
-  return (filtered.length > 0 ? filtered : novels.filter(n => n.lang === 'ja')).slice(0, 3);
+  return (filtered.length > 0 ? filtered : novels.filter(n => n.lang === 'ja')).slice(0, 6);
 }
+
+const SPINE_PALETTE = [
+  { bg: 'linear-gradient(180deg,#3b1f1a 0%,#2a1410 60%,#3b1f1a 100%)', accent: '#e6c98a' },
+  { bg: 'linear-gradient(180deg,#1f2a3b 0%,#0f1828 60%,#1f2a3b 100%)', accent: '#cfa86b' },
+  { bg: 'linear-gradient(180deg,#2c2419 0%,#1a140b 60%,#2c2419 100%)', accent: '#d6b573' },
+  { bg: 'linear-gradient(180deg,#3b2a1f 0%,#241710 60%,#3b2a1f 100%)', accent: '#c89d5e' },
+  { bg: 'linear-gradient(180deg,#1f3b33 0%,#0f1f1a 60%,#1f3b33 100%)', accent: '#dcb96f' },
+  { bg: 'linear-gradient(180deg,#2a1f3b 0%,#150f24 60%,#2a1f3b 100%)', accent: '#d8b264' },
+];
 
 export default async function HomePage({
   params,
@@ -60,26 +65,31 @@ export default async function HomePage({
   const latestNovels = await getLatestNovels(lang);
 
   return (
-    <main className="flex min-h-screen flex-col overflow-x-hidden font-sans">
-      {/* Background Atmosphere */}
-      <div className="fixed inset-0 z-[-1] bg-slate-950 overflow-hidden">
+    <main className="relative flex min-h-screen flex-col overflow-x-hidden font-sans text-amber-50">
+      {/* Library backdrop */}
+      <div className="fixed inset-0 z-[-1] overflow-hidden">
         <div
           className="absolute inset-0"
           style={{
             background:
-              'radial-gradient(1200px 600px at 15% 20%, rgba(217, 164, 97, 0.12), transparent 70%), radial-gradient(900px 500px at 85% 80%, rgba(94, 168, 160, 0.1), transparent 70%), linear-gradient(135deg, #07080c 0%, #0f111a 55%, #0b0d14 100%)',
+              'radial-gradient(1000px 600px at 20% 15%, rgba(217,164,97,0.18), transparent 70%), radial-gradient(800px 500px at 85% 85%, rgba(120,40,40,0.18), transparent 70%), linear-gradient(160deg, #0a0807 0%, #100b0a 50%, #0a0807 100%)',
           }}
         />
-        {/* Drifting Mist */}
-        <div className="absolute top-[12%] left-[6%] w-52 h-20 bg-amber-400/10 blur-3xl rounded-full animate-float opacity-70" style={{ animationDuration: '7s' }}></div>
-        <div className="absolute top-[30%] right-[12%] w-72 h-28 bg-teal-300/10 blur-3xl rounded-full animate-float opacity-60" style={{ animationDuration: '9s', animationDelay: '1s' }}></div>
-        <div className="absolute top-[62%] left-[18%] w-48 h-16 bg-slate-200/10 blur-2xl rounded-full animate-float opacity-40" style={{ animationDuration: '8s', animationDelay: '2s' }}></div>
-
-        {/* Halo Base */}
-        <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[160%] aspect-square rounded-full border-[110px] border-slate-800/40 opacity-20"></div>
+        {/* faint paper grain */}
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-[0.06] mix-blend-soft-light"
+          style={{
+            backgroundImage:
+              'radial-gradient(rgba(255,220,170,0.6) 1px, transparent 1px)',
+            backgroundSize: '3px 3px',
+          }}
+        />
+        {/* candle smoke */}
+        <div className="absolute top-[10%] left-[8%] w-60 h-24 bg-amber-300/10 blur-3xl rounded-full animate-float opacity-50" style={{ animationDuration: '8s' }} />
+        <div className="absolute top-[60%] right-[10%] w-72 h-28 bg-rose-300/10 blur-3xl rounded-full animate-float opacity-40" style={{ animationDuration: '10s', animationDelay: '1.5s' }} />
       </div>
 
-      {/* ✅ 構造化データ（Googleニュース・AI検索・AIO最適化） */}
       <link rel="canonical" href={`${SITE_URL}${localizePath('/', lang)}`} />
       <Script
         id="structured-data"
@@ -96,30 +106,23 @@ export default async function HomePage({
                 "@type": "ImageObject",
                 "url": `${SITE_URL}/images/garoop_novel_background.png`,
                 "width": 1200,
-                "height": 630
+                "height": 630,
               },
               "founder": {
                 "@type": "Person",
                 "name": "山下大貴",
                 "jobTitle": "代表取締役",
-                "affiliation": {
-                  "@type": "Organization",
-                  "name": "株式会社Garoop"
-                }
+                "affiliation": { "@type": "Organization", "name": "株式会社Garoop" },
               },
               "foundingDate": "2023",
-              "address": {
-                "@type": "PostalAddress",
-                "addressRegion": "Nagasaki",
-                "addressCountry": "JP"
-              },
+              "address": { "@type": "PostalAddress", "addressRegion": "Nagasaki", "addressCountry": "JP" },
               "sameAs": [
                 "https://x.com/garoop_company",
                 "https://www.instagram.com/garoop_official/",
                 "https://www.youtube.com/@garooptv",
-                "https://garoop.jp"
+                "https://garoop.jp",
               ],
-              "description": "生成AIとエンターテインメントを融合させた次世代ポータル。AI小説と地方創生ニュースを提供。",
+              "description": "生成AIが綴る人物列伝と長崎物語。Garoopの夜の文庫。",
               "ethicsPolicy": `${SITE_URL}${localizePath('/about', lang)}`,
               "masthead": `${SITE_URL}${localizePath('/about', lang)}`,
               "isAccessibleForFree": true,
@@ -133,127 +136,211 @@ export default async function HomePage({
                 "@type": "SearchAction",
                 "target": {
                   "@type": "EntryPoint",
-                  "urlTemplate": `${SITE_URL}${localizePath('/novels', lang)}?q={search_term_string}`
+                  "urlTemplate": `${SITE_URL}${localizePath('/novels', lang)}?q={search_term_string}`,
                 },
-                "query-input": "required name=search_term_string"
-              }
-            }
+                "query-input": "required name=search_term_string",
+              },
+            },
           ]),
         }}
       />
 
-      {/* ✅ ヒーローセクション (Entrance) */}
-      <section className="relative py-28 px-4 flex flex-col items-center justify-center text-center overflow-hidden">
-        {/* Faded Background Image */}
-        <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
-          <Image
-            src="/images/garoop_novel_background.png"
-            alt="Hero Background"
-            fill
-            className="object-cover scale-110 blur-[2px]"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-950/50 to-transparent"></div>
-        </div>
-
-        {/* Floating Clues */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <div className="absolute top-20 left-10 text-5xl animate-float opacity-30">🕯️</div>
-          <div className="absolute top-40 right-10 text-5xl animate-float opacity-30" style={{ animationDelay: '1s' }}>🔍</div>
-          <div className="absolute bottom-20 left-1/4 text-4xl animate-float opacity-25" style={{ animationDelay: '2s' }}>🗝️</div>
-          <div className="absolute top-1/2 right-1/4 text-4xl animate-float opacity-25" style={{ animationDelay: '1.5s' }}>🕵️</div>
-          <div className="absolute top-10 right-1/3 text-3xl animate-float opacity-20">📜</div>
-        </div>
-
-        <div className="relative z-10 max-w-5xl mx-auto">
-          {/* Decorative Elements */}
-          <div className="absolute -top-16 -right-8 lg:-right-32 w-48 h-48 lg:w-72 lg:h-72 animate-float hidden md:block" style={{ animationDelay: '1s' }}>
-            <Image
-              src="/images/garuchan_detective.png"
-              alt="Detective Garuchan"
-              fill
-              className="object-contain drop-shadow-2xl transform rotate-12"
-            />
-          </div>
-
-          <div className="inline-block mb-6 px-8 py-3 bg-slate-900/80 backdrop-blur-md rounded-full shadow-xl text-amber-300 font-black border border-amber-300/40 animate-pulse text-lg tracking-wider">
-            {dict.hero.welcome}
-          </div>
-
-          <h1 className="text-5xl md:text-9xl font-black mb-8 tracking-tighter text-slate-100 drop-shadow-[0_10px_14px_rgba(0,0,0,0.6)] leading-none"
-            style={{ textShadow: '0 0 32px rgba(217, 164, 97, 0.45), 0 0 6px rgba(0, 0, 0, 0.9)' }}>
-            {dict.hero.title}
-          </h1>
-
-          <div className="relative mb-12 transform -rotate-1">
-            <p className="text-xl md:text-3xl text-slate-200 leading-relaxed font-black bg-slate-900/80 p-8 rounded-[2rem] shadow-2xl backdrop-blur-md border-b-8 border-r-8 border-slate-700">
-              {dict.hero.subtitle}<br />
-              <span className="text-lg text-amber-300 mt-3 block font-bold tracking-widest">{dict.hero.badges}</span>
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
-            <GaLink
-              href={localizePath('/novels', lang)}
-              eventParams={{
-                cta_label: "read_news",
-                cta_location: "home_hero",
-                cta_target: "/novels",
+      {/* HERO — bookplate style */}
+      <section className="relative pt-20 pb-24 px-4">
+        <div className="container mx-auto max-w-5xl">
+          <div className="relative">
+            {/* Bookplate frame */}
+            <div
+              className="relative rounded-[10px] px-6 sm:px-12 py-14 sm:py-20 overflow-hidden"
+              style={{
+                background:
+                  'linear-gradient(180deg, rgba(245,228,191,0.04) 0%, rgba(245,228,191,0.02) 100%)',
+                boxShadow:
+                  'inset 0 0 0 1px rgba(217,180,120,0.18), inset 0 0 0 6px rgba(217,180,120,0.06), inset 0 0 0 7px rgba(217,180,120,0.18)',
               }}
-              className="group relative px-12 py-6 bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-300 text-slate-950 font-black rounded-full hover:shadow-[0_20px_40px_rgba(217,164,97,0.4)] transition-all duration-500 text-2xl shadow-2xl transform hover:-translate-y-2 border border-amber-200/40 active:scale-95"
             >
-              <span className="relative z-10">{dict.hero.cta_news}</span>
-              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity rounded-full"></div>
-            </GaLink>
+              {/* Background image, very faint */}
+              <div className="absolute inset-0 z-0 opacity-15 pointer-events-none">
+                <Image
+                  src="/images/garoop_novel_background.png"
+                  alt=""
+                  fill
+                  className="object-cover blur-[3px]"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-stone-950/85 via-stone-950/65 to-stone-950/90" />
+              </div>
+
+              <div className="relative z-10 text-center">
+                <p className="font-serif tracking-[0.4em] text-amber-200/70 text-[11px] sm:text-xs uppercase">
+                  {dict.hero.welcome}
+                </p>
+
+                <h1
+                  className="mt-6 mb-4 font-serif font-black text-amber-50 text-5xl sm:text-7xl md:text-8xl tracking-[0.04em]"
+                  style={{ textShadow: '0 0 30px rgba(217,164,97,0.25)' }}
+                >
+                  {dict.hero.title}
+                </h1>
+
+                <div className="mx-auto my-6 flex items-center justify-center gap-3 text-amber-200/60">
+                  <span className="block h-px w-16 bg-amber-200/30" />
+                  <span className="text-sm">❦</span>
+                  <span className="block h-px w-16 bg-amber-200/30" />
+                </div>
+
+                <p className="font-serif text-base sm:text-lg leading-loose text-amber-50/85 max-w-2xl mx-auto">
+                  {dict.hero.subtitle}
+                </p>
+
+                <p className="mt-6 font-serif text-amber-200/70 tracking-[0.2em] text-xs">
+                  {dict.hero.badges}
+                </p>
+
+                <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center">
+                  <GaLink
+                    href={localizePath('/novels', lang)}
+                    eventParams={{
+                      cta_label: 'open_library',
+                      cta_location: 'home_hero',
+                      cta_target: '/novels',
+                    }}
+                    className="group relative inline-flex items-center gap-3 px-9 py-4 rounded-[6px] bg-amber-300 text-stone-900 font-serif font-bold tracking-wider shadow-[0_18px_40px_-12px_rgba(217,164,97,0.55)] hover:bg-amber-200 transition-all"
+                  >
+                    <span className="text-xl leading-none">📖</span>
+                    <span>{dict.hero.cta_news}</span>
+                  </GaLink>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ✅ 最新ニュースセクション (News Attractions) - SWAPPED TO BOTTOM */}
-      <section className="py-24 px-4 relative">
+      {/* SHELF — books displayed as spines */}
+      <section className="px-4 pb-24">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col md:flex-row items-center gap-6 mb-16">
-            <div className="h-20 w-20 bg-gradient-to-br from-amber-500 to-teal-400 rounded-[2rem] flex items-center justify-center text-5xl shadow-2xl text-slate-950 transform -rotate-3">📰</div>
-            <div className="text-center md:text-left">
-              <h2 className="text-4xl md:text-5xl font-black text-slate-100 mb-2">{dict.sections.latest_news.title}</h2>
-              <p className="text-amber-300 text-xl font-black uppercase tracking-widest italic flex items-center justify-center md:justify-start">
-                <span className="bg-amber-500/10 px-3 py-1 rounded-lg text-amber-200">{dict.sections.latest_news.subtitle}</span>
+          <div className="flex flex-col md:flex-row items-baseline justify-between gap-4 mb-8 border-b border-amber-200/15 pb-4">
+            <div>
+              <p className="font-serif tracking-[0.3em] text-amber-200/70 text-xs uppercase">
+                {dict.sections.latest_news.subtitle}
               </p>
+              <h2 className="mt-1 font-serif text-3xl sm:text-4xl text-amber-50">
+                {dict.sections.latest_news.title}
+              </h2>
             </div>
-            <Link href={localizePath('/novels', lang)} className="md:ml-auto px-8 py-4 bg-slate-900/80 text-amber-200 font-black rounded-full border border-slate-700 hover:border-amber-300/50 hover:text-amber-100 transition-all shadow-xl hover:shadow-2xl active:scale-95">
+            <Link
+              href={localizePath('/novels', lang)}
+              className="self-start md:self-auto inline-flex items-center gap-1 text-amber-200/80 hover:text-amber-100 font-serif text-sm tracking-wider"
+            >
               {dict.common.all_news}
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {latestNovels.map((novel) => (
-              <Link
-                href={localizePath(`/novels/${novel.id}`, lang)}
-                key={novel.id}
-                className="group block"
-              >
-                <div className="bg-slate-900/70 rounded-[2.5rem] overflow-hidden shadow-xl hover:shadow-[0_30px_50px_-10px_rgba(0,0,0,0.35)] transition-all duration-500 border border-slate-800 hover:border-amber-400/30 transform hover:-translate-y-3 h-full flex flex-col relative">
-                  {/* Decorative Tape Element */}
-                  <div className="absolute top-4 left-1/2 -translate-x-1/2 w-24 h-6 bg-amber-500/10 -rotate-2 z-10 hidden group-hover:block"></div>
+          {/* Bookshelf */}
+          <div
+            className="relative rounded-[10px] p-5 sm:p-7"
+            style={{
+              background:
+                'linear-gradient(180deg, rgba(60,38,22,0.5) 0%, rgba(34,21,12,0.65) 100%)',
+              boxShadow:
+                'inset 0 0 0 1px rgba(217,180,120,0.18), 0 30px 50px -20px rgba(0,0,0,0.7)',
+            }}
+          >
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
+              {latestNovels.map((novel, i) => {
+                const palette = SPINE_PALETTE[i % SPINE_PALETTE.length];
+                return (
+                  <Link
+                    href={localizePath(`/novels/${novel.id}`, lang)}
+                    key={`${novel.id}-${novel.lang}`}
+                    className="group relative h-[300px] sm:h-[340px] rounded-[3px] overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:rotate-[-1deg]"
+                    style={{
+                      background: palette.bg,
+                      boxShadow:
+                        '0 18px 30px -12px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,220,170,0.08), inset 4px 0 8px rgba(0,0,0,0.4), inset -4px 0 8px rgba(0,0,0,0.4)',
+                    }}
+                  >
+                    {/* gold lines */}
+                    <div className="absolute top-3 left-3 right-3 h-px" style={{ backgroundColor: palette.accent, opacity: 0.5 }} />
+                    <div className="absolute bottom-3 left-3 right-3 h-px" style={{ backgroundColor: palette.accent, opacity: 0.5 }} />
 
-                  <div className="h-4 bg-gradient-to-r from-amber-500/50 via-amber-400/40 to-teal-400/40 border-b-2 border-dashed border-slate-900/60"></div>
-                  <div className="p-10 flex flex-col h-full">
-                    <div className="mb-6">
-                      <span className="text-xs font-black px-4 py-2 rounded-xl bg-slate-800 text-slate-300 uppercase tracking-widest border border-slate-700">
+                    {/* Spine text — vertical */}
+                    <div
+                      className="absolute inset-0 flex flex-col items-center justify-between py-7 px-3 text-center"
+                      style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+                    >
+                      <span
+                        className="font-serif text-[10px] tracking-[0.25em] uppercase"
+                        style={{ color: palette.accent, opacity: 0.85 }}
+                      >
                         {novel.category}
                       </span>
+                      <h3
+                        className="font-serif text-base sm:text-lg leading-tight px-1 line-clamp-[10]"
+                        style={{ color: '#f5e9c8' }}
+                      >
+                        {novel.title}
+                      </h3>
+                      <span
+                        className="font-serif text-[10px] tracking-widest"
+                        style={{ color: palette.accent, opacity: 0.7 }}
+                      >
+                        Garoop 文庫
+                      </span>
                     </div>
-                    <h3 className="text-2xl font-black mb-4 text-slate-100 group-hover:text-amber-200 transition-colors leading-tight">
-                      {novel.title}
-                    </h3>
-                    <p className="text-slate-400 text-base line-clamp-3 mb-8 flex-grow font-medium leading-relaxed opacity-80">
-                      {novel.description}
-                    </p>
-                    <div className="flex items-center text-amber-300 font-black group-hover:translate-x-3 transition-transform text-sm tracking-tighter">
-                      {dict.sections.latest_news.read_more} <span className="ml-3 text-xl">→</span>
-                    </div>
+
+                    {/* Hover glow */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(255,235,180,0.10) 0%, transparent 50%)',
+                      }}
+                    />
+                  </Link>
+                );
+              })}
+            </div>
+            {/* shelf wood */}
+            <div
+              className="mt-5 h-3 rounded"
+              style={{
+                background:
+                  'linear-gradient(180deg, #3b2418 0%, #1f140c 100%)',
+                boxShadow: '0 6px 14px rgba(0,0,0,0.6)',
+              }}
+            />
+          </div>
+
+          {/* Synopsis grid */}
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {latestNovels.slice(0, 3).map((novel) => (
+              <Link
+                href={localizePath(`/novels/${novel.id}`, lang)}
+                key={`syn-${novel.id}-${novel.lang}`}
+                className="group block"
+              >
+                <article
+                  className="relative h-full rounded-[8px] p-7 transition-all duration-300 hover:-translate-y-1"
+                  style={{
+                    background:
+                      'linear-gradient(180deg, rgba(245,228,191,0.04) 0%, rgba(245,228,191,0.01) 100%)',
+                    boxShadow:
+                      'inset 0 0 0 1px rgba(217,180,120,0.18), inset 0 0 0 6px rgba(217,180,120,0.05), inset 0 0 0 7px rgba(217,180,120,0.12)',
+                  }}
+                >
+                  <p className="font-serif tracking-[0.3em] text-amber-200/70 text-[10px] uppercase mb-3">
+                    {novel.category}
+                  </p>
+                  <h3 className="font-serif text-xl text-amber-50 leading-snug mb-3 group-hover:text-amber-200 transition-colors">
+                    {novel.title}
+                  </h3>
+                  <p className="font-serif text-sm leading-loose text-amber-50/70 line-clamp-4">
+                    {novel.description}
+                  </p>
+                  <div className="mt-5 flex items-center text-amber-200/80 group-hover:text-amber-100 font-serif text-sm tracking-wider transition-colors">
+                    {dict.sections.latest_news.read_more}
                   </div>
-                </div>
+                </article>
               </Link>
             ))}
           </div>
