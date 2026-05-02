@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { defaultLocale, isLocale } from '@/locales';
+import { defaultLocale, isLocale, localeMeta, type Locale } from '@/locales';
 import { localizePath } from '@/lib/locale-path';
+import { getLoginUser, getMyBabies, type GaruLoginUser, type PublicBaby } from '@/lib/baby-api';
 
 type Props = {
     novelId: string;
@@ -19,6 +21,22 @@ type Props = {
 };
 
 const COMPANION_IMG = 'https://d3ez7mat4qd439.cloudfront.net/garoo_kawaii.webp';
+
+const ANIMAL_EMOJI: Record<string, string> = {
+    cat: '🐱', dog: '🐶', rabbit: '🐰', fox: '🦊', bear: '🐻',
+    panda: '🐼', wolf: '🐺', lion: '🦁', tiger: '🐯', penguin: '🐧',
+    owl: '🦉', dragon: '🐲', unicorn: '🦄', bird: '🐦', hamster: '🐹',
+    kangaroo: '🦘', mouse: '🐭', cow: '🐮', pig: '🐷', frog: '🐸',
+    monkey: '🐵', sheep: '🐑',
+};
+
+function babyEmoji(animalType: string): string {
+    const lower = (animalType ?? '').toLowerCase();
+    for (const [k, v] of Object.entries(ANIMAL_EMOJI)) {
+        if (lower.includes(k)) return v;
+    }
+    return '🐣';
+}
 
 const DEFAULT_COMPANION_LINES_JA = [
     'いっしょに読も?',
@@ -48,6 +66,23 @@ function pickCompanionLine(lines: string[] | undefined, page: number, lang: stri
     return arr[(page - 1) % arr.length];
 }
 
+type TtsState = 'idle' | 'speaking' | 'paused';
+
+function langToBcp47(lang: string): string {
+    if (isLocale(lang)) return localeMeta[lang as Locale].i18nTag;
+    return 'ja-JP';
+}
+
+function pickVoice(voices: SpeechSynthesisVoice[], bcp47: string): SpeechSynthesisVoice | null {
+    if (!voices.length) return null;
+    const prefix = bcp47.split('-')[0];
+    return (
+        voices.find((v) => v.lang === bcp47) ??
+        voices.find((v) => v.lang.startsWith(prefix)) ??
+        null
+    );
+}
+
 export default function ClientNovelView({
     novelId,
     title,
@@ -67,6 +102,104 @@ export default function ClientNovelView({
     const routeLocale = isLocale(lang) ? lang : defaultLocale;
     const companionLine = pickCompanionLine(companionLines, page, lang);
 
+    // Auth + babies
+    const [user, setUser] = useState<GaruLoginUser | null>(null);
+    const [myBabies, setMyBabies] = useState<PublicBaby[]>([]);
+    const [authLoaded, setAuthLoaded] = useState(false);
+
+    const loadAuth = useCallback(async () => {
+        const isLogin = typeof window !== 'undefined' && sessionStorage.getItem('isLogin') === 'true';
+        if (!isLogin) {
+            setUser(null);
+            setMyBabies([]);
+            setAuthLoaded(true);
+            return;
+        }
+        const [u, babies] = await Promise.all([getLoginUser(), getMyBabies()]);
+        setUser(u);
+        setMyBabies(babies ?? []);
+        setAuthLoaded(true);
+    }, []);
+
+    useEffect(() => {
+        loadAuth();
+        const handler = () => { loadAuth(); };
+        window.addEventListener('garu-login', handler);
+        return () => window.removeEventListener('garu-login', handler);
+    }, [loadAuth]);
+
+    const activeBaby = useMemo<PublicBaby | null>(() => {
+        if (!myBabies.length) return null;
+        // pick the highest-growth baby as the reader
+        return [...myBabies].sort((a, b) => b.growthLevel - a.growthLevel)[0];
+    }, [myBabies]);
+
+    // TTS
+    const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+    const [ttsState, setTtsState] = useState<TtsState>('idle');
+    const ttsSupported = typeof window !== 'undefined' && 'speechSynthesis' in window;
+
+    useEffect(() => {
+        if (!ttsSupported) return;
+        const populate = () => setVoices(window.speechSynthesis.getVoices());
+        populate();
+        window.speechSynthesis.addEventListener('voiceschanged', populate);
+        return () => window.speechSynthesis.removeEventListener('voiceschanged', populate);
+    }, [ttsSupported]);
+
+    // Stop any speech when page changes or component unmounts
+    useEffect(() => {
+        return () => {
+            if (ttsSupported) {
+                window.speechSynthesis.cancel();
+            }
+        };
+    }, [page, ttsSupported]);
+
+    useEffect(() => {
+        // also reset state on page change
+        if (ttsSupported) {
+            window.speechSynthesis.cancel();
+            setTtsState('idle');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page]);
+
+    const speak = useCallback(() => {
+        if (!ttsSupported) return;
+        if (!currentPageContent) return;
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(currentPageContent);
+        utter.lang = langToBcp47(lang);
+        utter.pitch = 1.4; // baby-ish
+        utter.rate = 0.95;
+        utter.volume = 1;
+        const v = pickVoice(voices, utter.lang);
+        if (v) utter.voice = v;
+        utter.onend = () => setTtsState('idle');
+        utter.onerror = () => setTtsState('idle');
+        window.speechSynthesis.speak(utter);
+        setTtsState('speaking');
+    }, [currentPageContent, lang, voices, ttsSupported]);
+
+    const pause = useCallback(() => {
+        if (!ttsSupported) return;
+        window.speechSynthesis.pause();
+        setTtsState('paused');
+    }, [ttsSupported]);
+
+    const resume = useCallback(() => {
+        if (!ttsSupported) return;
+        window.speechSynthesis.resume();
+        setTtsState('speaking');
+    }, [ttsSupported]);
+
+    const stop = useCallback(() => {
+        if (!ttsSupported) return;
+        window.speechSynthesis.cancel();
+        setTtsState('idle');
+    }, [ttsSupported]);
+
     const lastMessage = lang === 'ja'
         ? '🎉 最後まで読んでくれてありがとう!'
         : '🎉 Thanks for reading to the end!';
@@ -75,6 +208,17 @@ export default function ClientNovelView({
     const nextLabel = lang === 'ja' ? '次のページ' : 'Next';
     const pageLabel = lang === 'ja' ? `${page} / ${totalPages} ページ` : `Page ${page} of ${totalPages}`;
     const backToLibrary = lang === 'ja' ? '本棚にもどる' : 'Back to Library';
+
+    const readerName = activeBaby?.name ?? (lang === 'ja' ? 'ガルちゃん' : 'Garu-chan');
+    const readerLabel = lang === 'ja' ? `${readerName} と読書中` : `Reading with ${readerName}`;
+
+    // TTS button labels
+    const playLabel = lang === 'ja'
+        ? (activeBaby ? `${readerName}に読んでもらう` : 'ガルちゃんに読んでもらう')
+        : `Have ${readerName} read aloud`;
+    const pauseLabel = lang === 'ja' ? '一時停止' : 'Pause';
+    const resumeLabel = lang === 'ja' ? '再開' : 'Resume';
+    const stopLabel = lang === 'ja' ? '停止' : 'Stop';
 
     return (
         <>
@@ -249,26 +393,139 @@ export default function ClientNovelView({
 
                     {/* Reading Companion */}
                     <aside className="lg:w-72 flex-shrink-0 flex lg:flex-col items-center lg:items-stretch gap-4 lg:sticky lg:top-6 self-start">
-                        <div className="relative w-28 sm:w-32 lg:w-full flex-shrink-0">
+                        <div className="relative w-32 sm:w-36 lg:w-full flex-shrink-0">
                             <motion.div
-                                animate={{ y: [0, -6, 0] }}
-                                transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut' }}
+                                animate={ttsState === 'speaking'
+                                    ? { y: [0, -3, 0], scale: [1, 1.02, 1] }
+                                    : { y: [0, -6, 0] }
+                                }
+                                transition={{
+                                    duration: ttsState === 'speaking' ? 0.6 : 3.4,
+                                    repeat: Infinity,
+                                    ease: 'easeInOut',
+                                }}
                                 className="relative"
                             >
-                                <Image
-                                    src={COMPANION_IMG}
-                                    alt="Reading companion"
-                                    width={240}
-                                    height={240}
-                                    className="rounded-[28px] border border-amber-200/30 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.6)] bg-slate-900/40"
-                                    priority
-                                />
+                                {activeBaby ? (
+                                    // User's baby as reader
+                                    <div
+                                        className="relative w-full aspect-square rounded-[28px] flex items-center justify-center text-7xl sm:text-8xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.6)] overflow-hidden"
+                                        style={{
+                                            background:
+                                                'linear-gradient(160deg, rgba(245,228,191,0.12) 0%, rgba(245,228,191,0.04) 100%)',
+                                            boxShadow:
+                                                '0 20px 40px -10px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(217,180,120,0.30), inset 0 0 0 6px rgba(217,180,120,0.08)',
+                                        }}
+                                    >
+                                        <span aria-hidden>{babyEmoji(activeBaby.animalType)}</span>
+                                        {/* sound waves when speaking */}
+                                        {ttsState === 'speaking' && (
+                                            <>
+                                                <motion.span
+                                                    aria-hidden
+                                                    className="absolute inset-0 rounded-[28px] border-2 border-amber-300/40"
+                                                    initial={{ scale: 1, opacity: 0.6 }}
+                                                    animate={{ scale: 1.15, opacity: 0 }}
+                                                    transition={{ duration: 1.4, repeat: Infinity, ease: 'easeOut' }}
+                                                />
+                                                <motion.span
+                                                    aria-hidden
+                                                    className="absolute inset-0 rounded-[28px] border-2 border-amber-300/40"
+                                                    initial={{ scale: 1, opacity: 0.6 }}
+                                                    animate={{ scale: 1.15, opacity: 0 }}
+                                                    transition={{ duration: 1.4, repeat: Infinity, ease: 'easeOut', delay: 0.7 }}
+                                                />
+                                            </>
+                                        )}
+                                    </div>
+                                ) : (
+                                    // Default ガルちゃん image (logged out / no babies)
+                                    <Image
+                                        src={COMPANION_IMG}
+                                        alt="Reading companion"
+                                        width={240}
+                                        height={240}
+                                        className="rounded-[28px] border border-amber-200/30 shadow-[0_20px_40px_-10px_rgba(0,0,0,0.6)] bg-slate-900/40"
+                                        priority
+                                    />
+                                )}
                                 {/* tiny book icon at companion's hands */}
                                 <div className="absolute -bottom-2 -right-2 bg-stone-100 text-stone-700 rounded-md px-2 py-1 text-[11px] font-serif shadow-md rotate-[-6deg] border border-stone-300">
                                     📖 一緒に読書中
                                 </div>
                             </motion.div>
+
+                            {/* Baby info badge */}
+                            {activeBaby && (
+                                <div className="mt-3 px-3 py-2 rounded-xl bg-stone-900/60 border border-amber-200/15 text-center">
+                                    <p className="font-serif text-amber-50 text-sm leading-tight">
+                                        {activeBaby.name}
+                                    </p>
+                                    <p className="mt-0.5 font-serif text-amber-200/70 text-[10px] tracking-widest uppercase">
+                                        {activeBaby.animalType} · Lv.{Math.floor(activeBaby.growthLevel / 10) + 1}
+                                    </p>
+                                </div>
+                            )}
                         </div>
+
+                        {/* Read aloud controls */}
+                        {ttsSupported && (
+                            <div className="w-full flex flex-col gap-2">
+                                {ttsState === 'idle' && (
+                                    <button
+                                        onClick={speak}
+                                        className="group inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-amber-300 hover:bg-amber-200 text-stone-900 font-serif text-sm shadow-md transition"
+                                    >
+                                        <span className="text-base leading-none">🔊</span>
+                                        <span>{playLabel}</span>
+                                    </button>
+                                )}
+                                {ttsState === 'speaking' && (
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={pause}
+                                            className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 rounded-full bg-amber-300 hover:bg-amber-200 text-stone-900 font-serif text-xs"
+                                        >
+                                            <span>⏸</span><span>{pauseLabel}</span>
+                                        </button>
+                                        <button
+                                            onClick={stop}
+                                            className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 rounded-full bg-stone-200/15 hover:bg-stone-200/25 text-amber-100 border border-amber-100/15 font-serif text-xs"
+                                        >
+                                            <span>⏹</span><span>{stopLabel}</span>
+                                        </button>
+                                    </div>
+                                )}
+                                {ttsState === 'paused' && (
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={resume}
+                                            className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 rounded-full bg-amber-300 hover:bg-amber-200 text-stone-900 font-serif text-xs"
+                                        >
+                                            <span>▶︎</span><span>{resumeLabel}</span>
+                                        </button>
+                                        <button
+                                            onClick={stop}
+                                            className="flex-1 inline-flex items-center justify-center gap-1 px-3 py-2 rounded-full bg-stone-200/15 hover:bg-stone-200/25 text-amber-100 border border-amber-100/15 font-serif text-xs"
+                                        >
+                                            <span>⏹</span><span>{stopLabel}</span>
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* Login hint when not logged in */}
+                                {authLoaded && !user && lang === 'ja' && (
+                                    <p className="text-amber-100/55 text-[11px] leading-relaxed text-center lg:text-left font-serif">
+                                        ※ ログインすると、自分のマイベイビーが読んでくれます
+                                    </p>
+                                )}
+                                {authLoaded && user && !activeBaby && lang === 'ja' && (
+                                    <p className="text-amber-100/55 text-[11px] leading-relaxed text-center lg:text-left font-serif">
+                                        ※ マイベイビーを作ると、その子が読んでくれます
+                                    </p>
+                                )}
+                            </div>
+                        )}
 
                         {/* Speech bubble with per-page companion line */}
                         <div className="relative flex-1 lg:flex-none">
@@ -296,8 +553,8 @@ export default function ClientNovelView({
                                 </motion.div>
                             </AnimatePresence>
 
-                            <p className="mt-2 text-amber-100/60 text-[11px] text-center lg:text-left tracking-wider">
-                                {lang === 'ja' ? 'ガルちゃんと読書中' : 'Reading with Garu-chan'}
+                            <p className="mt-2 text-amber-100/60 text-[11px] text-center lg:text-left tracking-wider font-serif">
+                                {readerLabel}
                             </p>
                         </div>
                     </aside>

@@ -25,7 +25,6 @@ import GaPageView from "@/components/GaPageView";
 import { GA_MEASUREMENT_ID } from "@/lib/ga";
 import { Suspense } from "react";
 import { BabyCompanion } from "@/components/BabyCompanion";
-import { BackToBabyButton } from "./BackToBabyButton";
 
 export default async function RootLayout({
   children,
@@ -73,7 +72,6 @@ export default async function RootLayout({
         </div>
         <Footer lang={lang} />
         <BottomNav />
-        <BackToBabyButton />
       </body>
     </html>
   );
