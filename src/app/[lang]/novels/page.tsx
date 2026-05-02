@@ -14,8 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   });
 }
 import Link from 'next/link';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { fetchJson, NOVELS_INDEX_PATH } from '@/lib/data-source';
 
 type Novel = {
   id: string;
@@ -33,12 +32,7 @@ type Novel = {
 };
 
 async function getNovels(): Promise<Novel[]> {
-  const jsonDirectory = path.join(process.cwd(), 'src', 'data');
-  const fileContents = await fs.readFile(
-    path.join(jsonDirectory, 'novels.json'),
-    'utf8'
-  );
-  return JSON.parse(fileContents);
+  return fetchJson<Novel[]>(NOVELS_INDEX_PATH);
 }
 
 type Props = {

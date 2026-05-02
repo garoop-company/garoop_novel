@@ -1,7 +1,6 @@
 import Link from 'next/link';
-import { promises as fs } from 'fs';
-import path from 'path';
 import GaLink from '@/components/GaLink';
+import { fetchJson, VIDEOS_INDEX_PATH } from '@/lib/data-source';
 
 type Video = {
   id: string;
@@ -11,12 +10,7 @@ type Video = {
 };
 
 async function getVideos(): Promise<Video[]> {
-  const jsonDirectory = path.join(process.cwd(), 'src', 'data');
-  const fileContents = await fs.readFile(
-    path.join(jsonDirectory, 'videos.json'),
-    'utf8'
-  );
-  return JSON.parse(fileContents);
+  return fetchJson<Video[]>(VIDEOS_INDEX_PATH);
 }
 
 const VideosPage = async () => {

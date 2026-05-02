@@ -1,9 +1,8 @@
 import { notFound } from 'next/navigation';
-import { promises as fs } from 'fs';
-import path from 'path';
 import ClientNovelView from './ClientNovelView';
 import { locales, Locale, localeMeta } from '@/locales';
 import { localizePath } from '@/lib/locale-path';
+import { fetchJson, NOVELS_INDEX_PATH, chapterPath } from '@/lib/data-source';
 
 type Novel = {
   id: string;
@@ -26,9 +25,7 @@ type ChapterPayload = {
 };
 
 async function getNovels(): Promise<Novel[]> {
-  const jsonDirectory = path.join(process.cwd(), 'src', 'data');
-  const fileContents = await fs.readFile(path.join(jsonDirectory, 'novels.json'), 'utf8');
-  return JSON.parse(fileContents);
+  return fetchJson<Novel[]>(NOVELS_INDEX_PATH);
 }
 
 async function getNovelById(id: string, lang: string): Promise<Novel | undefined> {
@@ -46,9 +43,7 @@ async function getChapter(novel: Novel): Promise<{ pages: string[]; companionLin
   }
 
   if (!novel.chapterFile) return { pages: [], companionLines: [] };
-  const chapterPath = path.join(process.cwd(), 'src', 'data', 'chapters', novel.chapterFile);
-  const chapterRaw = await fs.readFile(chapterPath, 'utf8');
-  const chapter = JSON.parse(chapterRaw) as ChapterPayload;
+  const chapter = await fetchJson<ChapterPayload>(chapterPath(novel.chapterFile));
   return {
     pages: Array.isArray(chapter.pages) ? chapter.pages : [],
     companionLines: Array.isArray(chapter.companionLines) ? chapter.companionLines : [],

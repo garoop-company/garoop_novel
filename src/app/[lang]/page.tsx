@@ -1,11 +1,10 @@
 import Link from 'next/link';
 import Script from 'next/script';
-import { promises as fs } from 'fs';
-import path from 'path';
 import Image from 'next/image';
 import GaLink from '@/components/GaLink';
 import { locales, getDictionary, Locale } from '@/locales';
 import { localizePath } from '@/lib/locale-path';
+import { fetchJson, NOVELS_INDEX_PATH } from '@/lib/data-source';
 
 
 import { generateLocalizedMetadata, SITE_URL } from "@/lib/seo";
@@ -35,12 +34,7 @@ type Novel = {
 };
 
 async function getLatestNovels(lang: string): Promise<Novel[]> {
-  const jsonDirectory = path.join(process.cwd(), 'src', 'data');
-  const fileContents = await fs.readFile(
-    path.join(jsonDirectory, 'novels.json'),
-    'utf8'
-  );
-  const novels: Novel[] = JSON.parse(fileContents);
+  const novels = await fetchJson<Novel[]>(NOVELS_INDEX_PATH);
   const filtered = novels.filter(n => n.lang === lang);
   return (filtered.length > 0 ? filtered : novels.filter(n => n.lang === 'ja')).slice(0, 6);
 }
@@ -171,7 +165,31 @@ export default async function HomePage({
                 <div className="absolute inset-0 bg-gradient-to-b from-stone-950/85 via-stone-950/65 to-stone-950/90" />
               </div>
 
-              <div className="relative z-10 text-center">
+              {/* ガルちゃん character (decorative, floating) */}
+              <div
+                aria-hidden
+                className="absolute z-10 right-2 sm:right-6 md:right-10 -bottom-6 sm:-bottom-10 md:bottom-6 w-28 sm:w-40 md:w-52 lg:w-60 pointer-events-none animate-float"
+                style={{ animationDuration: '6s' }}
+              >
+                <div className="relative aspect-square">
+                  {/* halo */}
+                  <div className="absolute inset-0 rounded-full bg-amber-300/20 blur-2xl" />
+                  <Image
+                    src="https://d3ez7mat4qd439.cloudfront.net/garoo_kawaii.webp"
+                    alt="ガルちゃん"
+                    fill
+                    sizes="(max-width: 640px) 7rem, (max-width: 768px) 10rem, (max-width: 1024px) 13rem, 15rem"
+                    className="object-contain drop-shadow-[0_18px_30px_rgba(0,0,0,0.6)]"
+                    priority
+                  />
+                </div>
+                {/* speech bookmark */}
+                <div className="absolute -top-2 -left-3 sm:-left-4 md:-left-6 rotate-[-8deg] bg-amber-50 text-stone-800 rounded-md px-2.5 py-1 text-[10px] sm:text-[11px] font-serif shadow-md border border-amber-200">
+                  📖 一緒に読も?
+                </div>
+              </div>
+
+              <div className="relative z-20 text-center">
                 <p className="font-serif tracking-[0.4em] text-amber-200/70 text-[11px] sm:text-xs uppercase">
                   {dict.hero.welcome}
                 </p>
