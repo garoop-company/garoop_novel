@@ -5,6 +5,8 @@ description: Garoop Novel に新しい文庫体裁の小説（人物列伝・長
 
 # Garoop Bunko ― 文庫小説の執筆と追加
 
+> ⚠ **データの本拠地は移動済み**: 小説の JSON は `garoop_novel/src/data/` から **`garoop-data/public/novel/`** に移動しました。新刊を追加する時は **garoop-data リポジトリの `garoop-novel-content` スキル**（`/Users/yamashitadaiki/git_work/garoop-data/.claude/skills/garoop-novel-content/SKILL.md`）を使ってください。本ファイルは旧仕様の参考として残しています。garoop_novel 側で執筆作業を続けないこと。
+
 このスキルは、Garoop Novel リポジトリに、文庫小説 1 巻（章）を追加するための手順とお作法をまとめたもの。短編ではなく、**読み応えのある長編 1 話**を 1 巻として扱う。
 
 ## 起動条件

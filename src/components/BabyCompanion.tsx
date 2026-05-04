@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { getPublicBabies, getMyBabies, type PublicBaby } from "@/lib/baby-api"
+import { BabyChatDialog } from "./BabyChatDialog"
 
 const ANIMAL_EMOJI: Record<string, string> = {
   cat: "🐱", dog: "🐶", rabbit: "🐰", fox: "🦊", bear: "🐻",
@@ -16,7 +17,7 @@ function babyEmoji(animalType: string) {
   return "🐣"
 }
 
-function BabyCard({ baby, isOwn = false }: { baby: PublicBaby; isOwn?: boolean }) {
+function BabyCard({ baby, isOwn = false, onChat }: { baby: PublicBaby; isOwn?: boolean; onChat: (baby: PublicBaby) => void }) {
   const [open, setOpen] = useState(false)
   return (
     <div className="relative">
@@ -47,6 +48,15 @@ function BabyCard({ baby, isOwn = false }: { baby: PublicBaby; isOwn?: boolean }
             <span className="text-amber-400 font-black">Lv.{Math.floor(baby.growthLevel / 10) + 1}</span>
             <span className="text-slate-500 text-[9px] ml-1">成長度 {baby.growthLevel}%</span>
           </div>
+          {isOwn && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); setOpen(false); onChat(baby) }}
+              className="mt-2 w-full py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-fuchsia-500 text-white text-[11px] font-black shadow active:scale-95 transition-transform"
+            >
+              💬 はなしかける
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -57,6 +67,7 @@ export function BabyCompanion() {
   const [myBabies, setMyBabies] = useState<PublicBaby[]>([])
   const [publicBabies, setPublicBabies] = useState<PublicBaby[]>([])
   const [loading, setLoading] = useState(true)
+  const [chatBaby, setChatBaby] = useState<PublicBaby | null>(null)
 
   const load = useCallback(async () => {
     const isLogin = typeof window !== "undefined" && sessionStorage.getItem("isLogin") === "true"
@@ -88,13 +99,17 @@ export function BabyCompanion() {
 
         <div className="flex flex-col gap-3 overflow-y-auto max-h-[60vh] scrollbar-none pb-2">
           {allBabies.map(b => (
-            <BabyCard key={b.id} baby={b} isOwn={myBabyIds.has(b.id)} />
+            <BabyCard key={b.id} baby={b} isOwn={myBabyIds.has(b.id)} onChat={setChatBaby} />
           ))}
           {allBabies.length === 0 && !loading && (
             <div className="text-[9px] text-slate-600 text-center w-12">赤ちゃん{"\n"}まだいないよ</div>
           )}
         </div>
       </div>
+
+      {chatBaby && (
+        <BabyChatDialog baby={chatBaby} onClose={() => setChatBaby(null)} />
+      )}
     </>
   )
 }

@@ -5,6 +5,8 @@ description: 実在の人物・企業・地域・出来事を題材に Garoop No
 
 # Garoop Bunko ― リサーチ先行型の執筆ワークフロー
 
+> ⚠ **データの本拠地は移動済み**: 小説の JSON は `garoop_novel/src/data/` から **`garoop-data/public/novel/`** に移動しました。新刊の執筆と登録は **garoop-data リポジトリの `garoop-novel-content` スキル**（`/Users/yamashitadaiki/git_work/garoop-data/.claude/skills/garoop-novel-content/SKILL.md`）に統合されており、リサーチ手順もそちらに含まれています。本ファイルはリサーチの一般論として参照価値があるため残していますが、実際の章追加作業は garoop-data 側で行ってください。
+
 このスキルは、`garoop-bunko` スキルの上位互換。執筆対象が**実在する人物・企業・地域・出来事**で、ユーザーが**ネット情報の収集を含めた取材**を期待している時に使う。
 
 ## 起動条件
