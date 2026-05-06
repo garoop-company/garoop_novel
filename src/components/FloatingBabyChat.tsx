@@ -5,12 +5,11 @@ import { getMyBabies, type PublicBaby } from "@/lib/baby-api"
 import { BabyChatDialog } from "./BabyChatDialog"
 
 // ─────────────────────────────────────────────────────────────────────
-// Floating baby companion
-//   - 常時画面に表示 (ぴょんぴょんアイドル & ゆっくりお散歩)
-//   - 短いタップ → BabyChatDialog でチャット
-//   - 長押し (LONG_PRESS_MS) → "つかまえた" 状態 → ドラッグで自由に移動
-//   - 位置は sessionStorage に保存 (ページ遷移をまたいで保持)
-//   - 未ログインなら表示しない (赤ちゃんが居ないので)
+// Floating baby companion (v2)
+//   - 単一モード: アクティブな1人を表示 / 切替トグルで「みんな表示モード」
+//   - クリック (or タップ) ですぐドラッグ移動 (長押し不要)
+//   - 動かさずにポインタを離した = チャットダイアログを開く
+//   - 位置は赤ちゃんごとに sessionStorage に保存
 // ─────────────────────────────────────────────────────────────────────
 
 const ANIMAL_EMOJI: Record<string, string> = {
@@ -18,7 +17,6 @@ const ANIMAL_EMOJI: Record<string, string> = {
   panda: "🐼", wolf: "🐺", lion: "🦁", tiger: "🐯", penguin: "🐧",
   owl: "🦉", dragon: "🐲", unicorn: "🦄", bird: "🐦", hamster: "🐹",
 }
-
 function babyEmoji(animalType?: string | null) {
   const lower = (animalType ?? "").toLowerCase()
   for (const [k, v] of Object.entries(ANIMAL_EMOJI)) {
@@ -27,84 +25,208 @@ function babyEmoji(animalType?: string | null) {
   return "🐣"
 }
 
-const POS_KEY = "garu-baby-pos-v1"
-const SIZE = 64
+const POS_KEY = "garu-baby-positions-v2"
+const ACTIVE_KEY = "garu-baby-active-v2"
+const MULTI_KEY = "garu-baby-multi-v2"
+const SIZE = 56
 const MARGIN = 12
-const LONG_PRESS_MS = 380
-const TAP_MOVE_TOLERANCE = 8
-const WANDER_INTERVAL_MS = 4500
+const TAP_MOVE_TOLERANCE = 6
+const WANDER_INTERVAL_MS = 5000
 
-function clamp(x: number, y: number) {
-  if (typeof window === "undefined") return { x, y }
+type Pos = { x: number; y: number }
+
+function clamp(p: Pos): Pos {
+  if (typeof window === "undefined") return p
   const maxX = Math.max(MARGIN, window.innerWidth - SIZE - MARGIN)
   const maxY = Math.max(MARGIN, window.innerHeight - SIZE - MARGIN)
   return {
-    x: Math.min(maxX, Math.max(MARGIN, x)),
-    y: Math.min(maxY, Math.max(MARGIN, y)),
+    x: Math.min(maxX, Math.max(MARGIN, p.x)),
+    y: Math.min(maxY, Math.max(MARGIN, p.y)),
   }
 }
 
-function readPos() {
-  if (typeof sessionStorage === "undefined") return null
+function readPositions(): Record<string, Pos> {
+  if (typeof sessionStorage === "undefined") return {}
   try {
     const raw = sessionStorage.getItem(POS_KEY)
-    if (!raw) return null
-    const p = JSON.parse(raw)
-    if (typeof p?.x !== "number" || typeof p?.y !== "number") return null
-    return p as { x: number; y: number }
-  } catch { return null }
+    if (!raw) return {}
+    const obj = JSON.parse(raw)
+    return obj && typeof obj === "object" ? (obj as Record<string, Pos>) : {}
+  } catch { return {} }
 }
-
-function writePos(p: { x: number; y: number }) {
+function writePositions(p: Record<string, Pos>) {
   if (typeof sessionStorage === "undefined") return
   try { sessionStorage.setItem(POS_KEY, JSON.stringify(p)) } catch { /* quota */ }
+}
+function readActiveId() {
+  if (typeof sessionStorage === "undefined") return null
+  return sessionStorage.getItem(ACTIVE_KEY)
+}
+function writeActiveId(id: string | null) {
+  if (typeof sessionStorage === "undefined") return
+  if (id) sessionStorage.setItem(ACTIVE_KEY, id)
+  else sessionStorage.removeItem(ACTIVE_KEY)
+}
+function readMulti() {
+  if (typeof sessionStorage === "undefined") return false
+  return sessionStorage.getItem(MULTI_KEY) === "true"
+}
+function writeMulti(v: boolean) {
+  if (typeof sessionStorage === "undefined") return
+  sessionStorage.setItem(MULTI_KEY, v ? "true" : "false")
+}
+
+function defaultPosFor(index: number): Pos {
+  if (typeof window === "undefined") return { x: 24, y: 24 }
+  const cellW = 76
+  const cellH = 76
+  const cols = Math.max(1, Math.floor((window.innerWidth - 48) / cellW))
+  const col = index % cols
+  const row = Math.floor(index / cols)
+  const x = window.innerWidth - SIZE - 24 - col * cellW
+  const y = window.innerHeight - SIZE - 24 - row * cellH
+  return clamp({ x, y })
 }
 
 const COMPANION_CSS = `
 @keyframes garu-baby-hop {
   0%, 60%, 100% { transform: translateY(0) scale(1, 1); }
-  65% { transform: translateY(0) scale(1.12, 0.88); }
-  78% { transform: translateY(-14px) scale(0.94, 1.06); }
+  65% { transform: translateY(0) scale(1.1, 0.9); }
+  78% { transform: translateY(-12px) scale(0.94, 1.06); }
   88% { transform: translateY(-2px) scale(1.04, 0.96); }
   95% { transform: translateY(0) scale(1, 1); }
 }
 .garu-baby-hop { animation: garu-baby-hop 2.6s ease-in-out infinite; transform-origin: 50% 100%; }
-.garu-baby-grabbed { transform: scale(1.18); transform-origin: 50% 50%; }
-@keyframes garu-baby-pulse {
+.garu-baby-dragging { transform: scale(1.18); transform-origin: 50% 50%; }
+@keyframes garu-baby-glow {
   0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
-  50% { box-shadow: 0 0 0 16px rgba(251, 191, 36, 0); }
+  50% { box-shadow: 0 0 0 14px rgba(251, 191, 36, 0); }
 }
-.garu-baby-grabbed-glow { animation: garu-baby-pulse 1s ease-out infinite; }
-@keyframes garu-baby-wiggle {
-  0%, 100% { transform: rotate(0); }
-  25% { transform: rotate(-6deg); }
-  75% { transform: rotate(6deg); }
-}
-.garu-baby-wiggle { animation: garu-baby-wiggle 0.45s ease-in-out infinite; }
+.garu-baby-dragging-glow { animation: garu-baby-glow 1s ease-out infinite; }
 `
+
+interface BabyDotProps {
+  baby: PublicBaby
+  pos: Pos
+  hopDelay: number
+  isActive: boolean
+  isDragging: boolean
+  onUpdatePos: (p: Pos) => void
+  onTap: () => void
+  onDragStart: () => void
+  onDragEnd: () => void
+}
+
+function BabyDot({ baby, pos, hopDelay, isActive, isDragging, onUpdatePos, onTap, onDragStart, onDragEnd }: BabyDotProps) {
+  const pointerStart = useRef<{ sx: number; sy: number; ox: number; oy: number; moved: boolean } | null>(null)
+  const draggingRef = useRef(false)
+  draggingRef.current = isDragging
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    pointerStart.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y, moved: false }
+    try { (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId) } catch { /* ignore */ }
+  }
+  const onPointerMove = (e: React.PointerEvent) => {
+    const start = pointerStart.current
+    if (!start) return
+    const dx = e.clientX - start.sx
+    const dy = e.clientY - start.sy
+    if (!start.moved && Math.hypot(dx, dy) > TAP_MOVE_TOLERANCE) {
+      start.moved = true
+      onDragStart()
+    }
+    if (start.moved || draggingRef.current) {
+      onUpdatePos(clamp({ x: start.ox + dx, y: start.oy + dy }))
+    }
+  }
+  const finishPointer = (e: React.PointerEvent) => {
+    const start = pointerStart.current
+    pointerStart.current = null
+    try { (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId) } catch { /* ignore */ }
+    if (draggingRef.current) {
+      onDragEnd()
+      return
+    }
+    if (start && !start.moved) onTap()
+  }
+
+  const transition = isDragging
+    ? "none"
+    : "left 1.4s cubic-bezier(0.34,1.56,0.64,1), top 1.4s cubic-bezier(0.34,1.56,0.64,1)"
+
+  return (
+    <div
+      role="button"
+      aria-label={`${baby.name}に話しかける`}
+      tabIndex={0}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={finishPointer}
+      onPointerCancel={finishPointer}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          onTap()
+        }
+      }}
+      style={{
+        position: "fixed",
+        left: pos.x,
+        top: pos.y,
+        width: SIZE,
+        height: SIZE,
+        touchAction: "none",
+        transition,
+        zIndex: 60,
+        cursor: isDragging ? "grabbing" : "grab",
+        userSelect: "none",
+        WebkitUserSelect: "none",
+        WebkitTapHighlightColor: "transparent",
+      }}
+      className="select-none"
+    >
+      <div
+        className={`relative w-full h-full ${isDragging ? "garu-baby-dragging" : "garu-baby-hop"}`}
+        style={{ animationDelay: isDragging ? undefined : `${hopDelay}ms` }}
+      >
+        <div
+          className={`w-full h-full rounded-full bg-gradient-to-br ${
+            isActive
+              ? "from-pink-300 via-pink-400 to-purple-500"
+              : "from-violet-200 via-pink-200 to-purple-300"
+          } shadow-2xl flex items-center justify-center text-2xl ring-4 ${
+            isActive ? "ring-white/85" : "ring-white/55"
+          } ${isDragging ? "garu-baby-dragging-glow" : ""}`}
+        >
+          <span className="drop-shadow">{babyEmoji(baby.animalType)}</span>
+        </div>
+        <span
+          className={`absolute -top-1 left-1/2 -translate-x-1/2 -translate-y-full px-2 py-0.5 rounded-full text-[10px] font-black shadow whitespace-nowrap pointer-events-none ${
+            isDragging
+              ? "bg-amber-400 text-white"
+              : "bg-white/95 text-pink-600 border border-pink-100"
+          }`}
+        >
+          {isDragging ? "つかまえた!" : baby.name}
+        </span>
+      </div>
+    </div>
+  )
+}
 
 export function FloatingBabyChat() {
   const [babies, setBabies] = useState<PublicBaby[]>([])
-  const [activeBaby, setActiveBaby] = useState<PublicBaby | null>(null)
-  const [chatOpen, setChatOpen] = useState(false)
-  const [pickerOpen, setPickerOpen] = useState(false)
-  const [pos, setPos] = useState<{ x: number; y: number }>({ x: 24, y: 24 })
-  const [grabbed, setGrabbed] = useState(false)
-  const [pressing, setPressing] = useState(false)
-  const grabbedRef = useRef(false)
-  grabbedRef.current = grabbed
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const [chatBaby, setChatBaby] = useState<PublicBaby | null>(null)
+  const [multiMode, setMultiMode] = useState(false)
+  const [positions, setPositions] = useState<Record<string, Pos>>({})
+  const [draggingId, setDraggingId] = useState<string | null>(null)
 
-  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const pointerStart = useRef<
-    { sx: number; sy: number; ox: number; oy: number; moved: boolean } | null
-  >(null)
-
-  // 初回マウント: 保存位置 or 右下デフォルト
+  // 初回ロード: localStorage 復元
   useEffect(() => {
-    const saved = readPos()
-    setPos(saved
-      ? clamp(saved.x, saved.y)
-      : clamp(window.innerWidth - SIZE - 24, window.innerHeight - SIZE - 24))
+    setPositions(readPositions())
+    setActiveId(readActiveId())
+    setMultiMode(readMulti())
   }, [])
 
   const load = useCallback(async () => {
@@ -112,7 +234,7 @@ export function FloatingBabyChat() {
     if (!isLogin) return
     const list = await getMyBabies()
     setBabies(list)
-    setActiveBaby((prev) => prev ?? list[0] ?? null)
+    setActiveId((prev) => (prev && list.find((b) => b.id === prev) ? prev : list[0]?.id ?? null))
   }, [])
 
   useEffect(() => {
@@ -122,169 +244,109 @@ export function FloatingBabyChat() {
     return () => window.removeEventListener("garu-login", onLogin)
   }, [load])
 
-  // アイドルお散歩 (掴まれて居る間 / チャット中は止める)
+  // 新しい赤ちゃんが居たら初期位置を割り当てる
   useEffect(() => {
-    if (grabbed || chatOpen || pickerOpen) return
+    if (babies.length === 0) return
+    setPositions((prev) => {
+      const next = { ...prev }
+      let changed = false
+      babies.forEach((b, i) => {
+        if (!next[b.id]) {
+          next[b.id] = defaultPosFor(i)
+          changed = true
+        }
+      })
+      return changed ? next : prev
+    })
+  }, [babies])
+
+  useEffect(() => { writePositions(positions) }, [positions])
+  useEffect(() => { writeActiveId(activeId) }, [activeId])
+  useEffect(() => { writeMulti(multiMode) }, [multiMode])
+
+  // 表示中の赤ちゃん (ID リスト)
+  const visibleBabies = multiMode ? babies : babies.filter((b) => b.id === activeId)
+  const visibleIds = visibleBabies.map((b) => b.id).join(",")
+
+  // ゆっくりお散歩
+  useEffect(() => {
+    if (chatBaby) return
+    if (visibleIds.length === 0) return
     const id = setInterval(() => {
-      setPos((prev) => {
-        const dx = (Math.random() - 0.5) * 220
-        const dy = (Math.random() - 0.5) * 120
-        return clamp(prev.x + dx, prev.y + dy)
+      setPositions((prev) => {
+        const next = { ...prev }
+        let changed = false
+        visibleIds.split(",").forEach((bid) => {
+          if (!bid || bid === draggingId) return
+          const cur = next[bid]
+          if (!cur) return
+          const dx = (Math.random() - 0.5) * 220
+          const dy = (Math.random() - 0.5) * 120
+          const newPos = clamp({ x: cur.x + dx, y: cur.y + dy })
+          if (newPos.x !== cur.x || newPos.y !== cur.y) {
+            next[bid] = newPos
+            changed = true
+          }
+        })
+        return changed ? next : prev
       })
     }, WANDER_INTERVAL_MS)
     return () => clearInterval(id)
-  }, [grabbed, chatOpen, pickerOpen])
+  }, [visibleIds, chatBaby, draggingId])
 
-  useEffect(() => { writePos(pos) }, [pos])
-
+  // ウィンドウリサイズで画面外に出ないように clamp
   useEffect(() => {
-    const handle = () => setPos((p) => clamp(p.x, p.y))
+    const handle = () => {
+      setPositions((prev) => {
+        const next: Record<string, Pos> = {}
+        for (const k in prev) next[k] = clamp(prev[k])
+        return next
+      })
+    }
     window.addEventListener("resize", handle)
     return () => window.removeEventListener("resize", handle)
   }, [])
 
-  const onPointerDown = (e: React.PointerEvent) => {
-    pointerStart.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y, moved: false }
-    setPressing(true)
-    longPressTimer.current = setTimeout(() => {
-      setGrabbed(true)
-      // 触覚フィードバック (対応端末のみ)
-      if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-        try { navigator.vibrate?.(15) } catch { /* ignore */ }
-      }
-    }, LONG_PRESS_MS)
-    try { (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId) } catch { /* ignore */ }
-  }
+  if (babies.length === 0) return null
 
-  const onPointerMove = (e: React.PointerEvent) => {
-    const start = pointerStart.current
-    if (!start) return
-    const dx = e.clientX - start.sx
-    const dy = e.clientY - start.sy
-    if (!start.moved && Math.hypot(dx, dy) > TAP_MOVE_TOLERANCE) {
-      start.moved = true
-      // 長押し前に動いたらタップとして扱うため、長押しタイマーを止める
-      if (!grabbedRef.current && longPressTimer.current) {
-        clearTimeout(longPressTimer.current)
-        longPressTimer.current = null
-      }
-    }
-    if (grabbedRef.current) {
-      setPos(clamp(start.ox + dx, start.oy + dy))
-    }
-  }
-
-  const finishPointer = (e: React.PointerEvent) => {
-    const start = pointerStart.current
-    pointerStart.current = null
-    setPressing(false)
-    if (longPressTimer.current) { clearTimeout(longPressTimer.current); longPressTimer.current = null }
-    try { (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId) } catch { /* ignore */ }
-
-    if (grabbedRef.current) {
-      setGrabbed(false)
-      return
-    }
-    if (start && !start.moved) {
-      if (babies.length > 1) setPickerOpen(true)
-      else setChatOpen(true)
-    }
-  }
-
-  if (!activeBaby) return null
-
-  const wrapperTransition = grabbed
-    ? "none"
-    : "left 1.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 1.4s cubic-bezier(0.34, 1.56, 0.64, 1)"
-
-  const animClass = grabbed
-    ? "garu-baby-grabbed"
-    : pressing
-      ? "garu-baby-wiggle"
-      : "garu-baby-hop"
+  const updatePos = (id: string, p: Pos) =>
+    setPositions((prev) => ({ ...prev, [id]: p }))
 
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: COMPANION_CSS }} />
-      <div
-        role="button"
-        aria-label={`${activeBaby.name}に話しかける`}
-        tabIndex={0}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={finishPointer}
-        onPointerCancel={finishPointer}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault()
-            if (babies.length > 1) setPickerOpen(true)
-            else setChatOpen(true)
-          }
-        }}
-        style={{
-          position: "fixed",
-          left: pos.x,
-          top: pos.y,
-          width: SIZE,
-          height: SIZE,
-          touchAction: "none",
-          transition: wrapperTransition,
-          zIndex: 60,
-          cursor: grabbed ? "grabbing" : "grab",
-          userSelect: "none",
-          WebkitUserSelect: "none",
-          WebkitTapHighlightColor: "transparent",
-        }}
-        className="select-none"
-      >
-        <div className={`relative w-full h-full ${animClass}`}>
-          <div
-            className={`w-full h-full rounded-full bg-gradient-to-br from-pink-300 via-pink-400 to-purple-500 shadow-2xl flex items-center justify-center text-3xl ring-4 ring-white/80 ${
-              grabbed ? "garu-baby-grabbed-glow" : ""
-            }`}
-          >
-            <span className="drop-shadow">{babyEmoji(activeBaby.animalType)}</span>
-          </div>
-          <span
-            className={`absolute -top-1 left-1/2 -translate-x-1/2 -translate-y-full px-2 py-0.5 rounded-full text-[10px] font-black shadow whitespace-nowrap pointer-events-none ${
-              grabbed
-                ? "bg-amber-400 text-white"
-                : "bg-white/95 text-pink-600 border border-pink-100"
-            }`}
-          >
-            {grabbed ? "つかまえた!" : activeBaby.name}
-          </span>
-        </div>
-      </div>
 
-      {pickerOpen && (
-        <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setPickerOpen(false)} />
-          <div className="relative z-10 w-full sm:max-w-xs bg-white rounded-3xl shadow-2xl p-4">
-            <div className="text-xs font-black text-pink-500 uppercase tracking-widest text-center mb-3">どの子に話す?</div>
-            <div className="flex flex-col gap-2 max-h-[60dvh] overflow-y-auto">
-              {babies.map((b) => (
-                <button
-                  key={b.id}
-                  onClick={() => { setActiveBaby(b); setPickerOpen(false); setChatOpen(true) }}
-                  className="flex items-center gap-3 p-2 rounded-2xl hover:bg-pink-50 active:scale-[0.98] transition-all border border-pink-100"
-                >
-                  <span className="w-9 h-9 rounded-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center text-xl flex-shrink-0">
-                    {babyEmoji(b.animalType)}
-                  </span>
-                  <span className="flex flex-col items-start min-w-0">
-                    <span className="text-sm font-black text-pink-700 truncate max-w-[180px]">{b.name}</span>
-                    <span className="text-[10px] text-pink-400 font-bold truncate max-w-[180px]">{b.animalType}</span>
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {visibleBabies.map((b, i) => (
+        <BabyDot
+          key={b.id}
+          baby={b}
+          pos={positions[b.id] ?? defaultPosFor(i)}
+          hopDelay={(i * 230) % 1300}
+          isActive={b.id === activeId}
+          isDragging={draggingId === b.id}
+          onUpdatePos={(p) => updatePos(b.id, p)}
+          onDragStart={() => setDraggingId(b.id)}
+          onDragEnd={() => setDraggingId(null)}
+          onTap={() => {
+            setActiveId(b.id)
+            setChatBaby(b)
+          }}
+        />
+      ))}
 
-      {chatOpen && activeBaby && (
-        <BabyChatDialog baby={activeBaby} onClose={() => setChatOpen(false)} />
+      {chatBaby && (
+        <BabyChatDialog
+          baby={chatBaby}
+          onClose={() => setChatBaby(null)}
+          babies={babies}
+          activeBabyId={activeId}
+          onSelectBaby={(b) => {
+            setActiveId(b.id)
+            setChatBaby(b)
+          }}
+          multiMode={multiMode}
+          onToggleMultiMode={() => setMultiMode((m) => !m)}
+        />
       )}
     </>
   )
