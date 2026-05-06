@@ -25,6 +25,7 @@ import GaPageView from "@/components/GaPageView";
 import { GA_MEASUREMENT_ID } from "@/lib/ga";
 import { Suspense } from "react";
 import { BabyCompanion } from "@/components/BabyCompanion";
+import { FloatingBabyChat } from "@/components/FloatingBabyChat";
 
 export default async function RootLayout({
   children,
@@ -67,6 +68,7 @@ export default async function RootLayout({
         </Suspense>
         <Header />
         <BabyCompanion />
+        <FloatingBabyChat />
         <div className="flex-grow pb-20 md:pb-0">
           {children}
         </div>
