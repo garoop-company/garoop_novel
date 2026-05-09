@@ -30,15 +30,24 @@ const ACTIVE_KEY = "garu-baby-active-v2"
 const MULTI_KEY = "garu-baby-multi-v2"
 const SIZE = 56
 const MARGIN = 12
+const MOBILE_BOTTOM_RESERVE = 100
 const TAP_MOVE_TOLERANCE = 6
 const WANDER_INTERVAL_MS = 5000
 
 type Pos = { x: number; y: number }
 
+function isMobileViewport(): boolean {
+  return typeof window !== "undefined" && window.innerWidth < 768
+}
+
+function bottomReserve(): number {
+  return isMobileViewport() ? MOBILE_BOTTOM_RESERVE : MARGIN
+}
+
 function clamp(p: Pos): Pos {
   if (typeof window === "undefined") return p
   const maxX = Math.max(MARGIN, window.innerWidth - SIZE - MARGIN)
-  const maxY = Math.max(MARGIN, window.innerHeight - SIZE - MARGIN)
+  const maxY = Math.max(MARGIN, window.innerHeight - SIZE - bottomReserve())
   return {
     x: Math.min(maxX, Math.max(MARGIN, p.x)),
     y: Math.min(maxY, Math.max(MARGIN, p.y)),
@@ -84,7 +93,7 @@ function defaultPosFor(index: number): Pos {
   const col = index % cols
   const row = Math.floor(index / cols)
   const x = window.innerWidth - SIZE - 24 - col * cellW
-  const y = window.innerHeight - SIZE - 24 - row * cellH
+  const y = window.innerHeight - SIZE - bottomReserve() - row * cellH
   return clamp({ x, y })
 }
 

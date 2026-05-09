@@ -93,8 +93,8 @@ export function BabyCompanion() {
 
   return (
     <>
-      {/* 右サイド赤ちゃんパネル (sticky) */}
-      <div className="fixed right-3 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-3 max-h-[80vh]">
+      {/* 右サイド赤ちゃんパネル (sticky) — 画面が狭いスマホでは邪魔なので非表示 */}
+      <div className="hidden md:flex fixed right-3 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-3 max-h-[80vh]">
         <div className="w-px h-3 bg-amber-400/20" />
 
         <div className="flex flex-col gap-3 overflow-y-auto max-h-[60vh] scrollbar-none pb-2">

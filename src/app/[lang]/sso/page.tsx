@@ -36,8 +36,10 @@ function SsoInner() {
           if (typeof window !== "undefined") {
             sessionStorage.setItem("isLogin", "true")
             sessionStorage.setItem("garoopLoginUserId", result.id)
+            window.dispatchEvent(new CustomEvent("garu-login"))
           }
           router.replace(redirect)
+          router.refresh()
         } else {
           setError(true)
         }
