@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git diff *)"
+      "Bash(git diff *)",
+      "Bash(python3 -c \"import json;d=json.load\\(open\\('/Users/yamashitadaiki/Downloads/hatch-pet-garuchan/imagegen-jobs.json'\\)\\);[print\\(j.get\\('state'\\), j.get\\('status'\\), j.get\\('selected_source',''\\)[:60]\\) for j in \\(d if isinstance\\(d,list\\) else d.get\\('jobs',[]\\)\\)]\")",
+      "Bash(python3 -c \"import PIL; print\\('Pillow', PIL.__version__\\)\")",
+      "Bash(python3 /Users/yamashitadaiki/.codex/skills/hatch-pet/scripts/extract_strip_frames.py --help)",
+      "Bash(sips -g pixelWidth -g pixelHeight -g hasAlpha idle/00.png)",
+      "Bash(awk '/pixel|hasAlpha/{print $0}')",
+      "Bash(python3 -c \"import json;d=json.load\\(open\\('frames-manifest.json'\\)\\);print\\(json.dumps\\(d,ensure_ascii=False\\)[:800]\\)\")",
+      "Bash(node ./_shot_drama.mjs)"
     ]
   }
 }

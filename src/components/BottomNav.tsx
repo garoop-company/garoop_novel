@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FaHome, FaNewspaper } from 'react-icons/fa';
+import { FaHome, FaNewspaper, FaFilm } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { getDictionary } from '@/locales';
 import { detectLocaleFromPathname, localizePath } from '@/lib/locale-path';
@@ -16,6 +16,7 @@ export default function BottomNav() {
     const NAV_ITEMS = [
         { href: '/', label: dict.common.home, icon: FaHome, color: 'text-amber-300' },
         { href: '/novels', label: dict.common.news, icon: FaNewspaper, color: 'text-teal-300' },
+        { href: '/dramas', label: currentLocale === 'ja' ? 'ドラマ' : 'Drama', icon: FaFilm, color: 'text-rose-300' },
     ];
 
     const pg = (path: string) => localizePath(path, currentLocale);

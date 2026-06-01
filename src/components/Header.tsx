@@ -70,6 +70,7 @@ export default function Header() {
     const navItems: { href: string; label: string; icon: string }[] = [
         { href: pg('/'), label: dict.common.home, icon: '🏠' },
         { href: pg('/novels'), label: dict.common.news, icon: '📚' },
+        { href: pg('/dramas'), label: currentLocale === 'ja' ? 'ドラマ劇場' : 'Drama', icon: '🎬' },
         { href: pg('/about'), label: dict.common.about, icon: '🪶' },
         { href: pg('/contact'), label: dict.common.contact, icon: '✉️' },
     ];
