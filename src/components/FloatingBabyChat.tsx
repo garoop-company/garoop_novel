@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import { getMyBabies, type PublicBaby } from "@/lib/baby-api"
 import { BabyChatDialog } from "./BabyChatDialog"
+import BabyHatchPet, { hatchPetIdFromUrl } from "@/components/BabyHatchPet"
 
 // ─────────────────────────────────────────────────────────────────────
 // Floating baby companion (v2)
@@ -131,8 +132,15 @@ function BabyDot({ baby, pos, hopDelay, isActive, isDragging, onUpdatePos, onTap
   const draggingRef = useRef(false)
   draggingRef.current = isDragging
 
+  const [runDir, setRunDir] = useState<"idle" | "running-right" | "running-left">("idle")
+  const lastXRef = useRef<number | null>(null)
+  const dirTimerRef = useRef<number | null>(null)
+
+  useEffect(() => () => { if (dirTimerRef.current) window.clearTimeout(dirTimerRef.current) }, [])
+
   const onPointerDown = (e: React.PointerEvent) => {
     pointerStart.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y, moved: false }
+    lastXRef.current = e.clientX
     try { (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId) } catch { /* ignore */ }
   }
   const onPointerMove = (e: React.PointerEvent) => {
@@ -145,12 +153,24 @@ function BabyDot({ baby, pos, hopDelay, isActive, isDragging, onUpdatePos, onTap
       onDragStart()
     }
     if (start.moved || draggingRef.current) {
+      const prevX = lastXRef.current
+      if (prevX != null) {
+        const mdx = e.clientX - prevX
+        if (mdx > 1) setRunDir("running-right")
+        else if (mdx < -1) setRunDir("running-left")
+      }
+      lastXRef.current = e.clientX
+      if (dirTimerRef.current) window.clearTimeout(dirTimerRef.current)
+      dirTimerRef.current = window.setTimeout(() => setRunDir("idle"), 140)
       onUpdatePos(clamp({ x: start.ox + dx, y: start.oy + dy }))
     }
   }
   const finishPointer = (e: React.PointerEvent) => {
     const start = pointerStart.current
     pointerStart.current = null
+    lastXRef.current = null
+    setRunDir("idle")
+    if (dirTimerRef.current) window.clearTimeout(dirTimerRef.current)
     try { (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId) } catch { /* ignore */ }
     if (draggingRef.current) {
       onDragEnd()
@@ -200,14 +220,22 @@ function BabyDot({ baby, pos, hopDelay, isActive, isDragging, onUpdatePos, onTap
       >
         <div
           className={`w-full h-full rounded-full bg-gradient-to-br ${
-            isActive
-              ? "from-pink-300 via-pink-400 to-purple-500"
-              : "from-violet-200 via-pink-200 to-purple-300"
+            hatchPetIdFromUrl(baby.avatarUrl)
+              ? "from-white via-pink-50 to-purple-100"
+              : isActive
+                ? "from-pink-300 via-pink-400 to-purple-500"
+                : "from-violet-200 via-pink-200 to-purple-300"
           } shadow-2xl flex items-center justify-center text-2xl ring-4 ${
-            isActive ? "ring-white/85" : "ring-white/55"
+            hatchPetIdFromUrl(baby.avatarUrl)
+              ? (isActive ? "ring-pink-400/80" : "ring-pink-200/70")
+              : (isActive ? "ring-white/85" : "ring-white/55")
           } ${isDragging ? "garu-baby-dragging-glow" : ""}`}
         >
-          <span className="drop-shadow">{babyEmoji(baby.animalType)}</span>
+          {hatchPetIdFromUrl(baby.avatarUrl) ? (
+            <BabyHatchPet petId={hatchPetIdFromUrl(baby.avatarUrl)!} state={isDragging ? runDir : "idle"} size={SIZE - 6} />
+          ) : (
+            <span className="text-2xl drop-shadow">{babyEmoji(baby.animalType)}</span>
+          )}
         </div>
         <span
           className={`absolute -top-1 left-1/2 -translate-x-1/2 -translate-y-full px-2 py-0.5 rounded-full text-[10px] font-black shadow whitespace-nowrap pointer-events-none ${

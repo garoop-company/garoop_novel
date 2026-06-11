@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { getPublicBabies, getMyBabies, type PublicBaby } from "@/lib/baby-api"
 import { BabyChatDialog } from "./BabyChatDialog"
+import BabyHatchPet, { hatchPetIdFromUrl } from "@/components/BabyHatchPet"
 
 const ANIMAL_EMOJI: Record<string, string> = {
   cat: "🐱", dog: "🐶", rabbit: "🐰", fox: "🦊", bear: "🐻",
@@ -25,9 +26,13 @@ function BabyCard({ baby, isOwn = false, onChat }: { baby: PublicBaby; isOwn?: b
         onClick={() => setOpen(v => !v)}
         className={`relative flex flex-col items-center gap-1 group ${isOwn ? "scale-110" : ""}`}
       >
-        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-lg border-2 transition-all group-hover:scale-110
+        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-lg border-2 transition-all group-hover:scale-110 overflow-hidden
           ${isOwn ? "border-amber-400 bg-amber-400/20 animate-pulse" : "border-amber-700/40 bg-slate-800/80"}`}>
-          {babyEmoji(baby.animalType)}
+          {hatchPetIdFromUrl(baby.avatarUrl) ? (
+            <BabyHatchPet petId={hatchPetIdFromUrl(baby.avatarUrl)!} state="idle" size={46} />
+          ) : (
+            <>{babyEmoji(baby.animalType)}</>
+          )}
         </div>
         {isOwn && (
           <span className="absolute -top-1 -right-1 text-[9px] bg-amber-400 text-slate-900 font-black px-1 rounded-full">YOU</span>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import type { PublicBaby } from "@/lib/baby-api"
+import BabyHatchPet, { hatchPetIdFromUrl } from "@/components/BabyHatchPet"
 
 const PAGE_TEXT_LIMIT = 4000
 const HISTORY_KEEP = 8
@@ -163,8 +164,12 @@ export function BabyChatDialog({
               hasSwitcher ? "active:bg-amber-400/20 hover:bg-amber-400/10 cursor-pointer" : ""
             }`}
           >
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400/30 to-fuchsia-500/30 flex items-center justify-center text-2xl shadow-inner flex-shrink-0">
-              {emoji}
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400/30 to-fuchsia-500/30 flex items-center justify-center text-2xl shadow-inner flex-shrink-0 overflow-hidden">
+              {hatchPetIdFromUrl(baby.avatarUrl) ? (
+                <BabyHatchPet petId={hatchPetIdFromUrl(baby.avatarUrl)!} state="idle" size={38} />
+              ) : (
+                emoji
+              )}
             </div>
             <div className="flex flex-col min-w-0 flex-1">
               <span className="text-amber-200 font-black text-sm truncate">{baby.name}</span>
