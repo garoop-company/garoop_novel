@@ -4,6 +4,8 @@
 @theme {
   --font-sans: "Noto Sans JP", "Noto Sans", sans-serif;
   --font-serif: "Cormorant Garamond", "Noto Serif JP", serif;
+  /* 本文(最大1280px)の左右に赤ちゃんパネル分の余白が出る幅。`wide:` バリアントで利用 */
+  --breakpoint-wide: 1440px;
 }
 
 @layer base {

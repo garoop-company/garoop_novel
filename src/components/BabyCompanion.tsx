@@ -41,7 +41,8 @@ function BabyCard({ baby, isOwn = false, onChat }: { baby: PublicBaby; isOwn?: b
       </button>
 
       {open && (
-        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-48 bg-slate-900 border border-amber-400/30 rounded-2xl p-3 shadow-2xl text-xs">
+        // 右端パネル内なので、左側（画面中央寄り）に開く＝画面外へはみ出さない
+        <div className="absolute right-full top-1/2 -translate-y-1/2 mr-2 z-50 w-48 bg-slate-900 border border-amber-400/30 rounded-2xl p-3 shadow-2xl text-xs">
           <button onClick={() => setOpen(false)} className="absolute top-2 right-2 text-slate-500 hover:text-white">✕</button>
           <div className="text-lg text-center mb-1">{babyEmoji(baby.animalType)}</div>
           <div className="text-amber-200 font-black text-center mb-1">{baby.name}</div>
@@ -98,8 +99,9 @@ export function BabyCompanion() {
 
   return (
     <>
-      {/* 右サイド赤ちゃんパネル (sticky) — 画面が狭いスマホでは邪魔なので非表示 */}
-      <div className="hidden md:flex fixed right-3 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-3 max-h-[80vh]">
+      {/* 右サイド赤ちゃんパネル (sticky) — 本文(最大1280px)に重ならないよう、左右に
+          余白が出る wide(1440px〜) でのみ表示。狭い画面では FloatingBabyChat で代替。 */}
+      <div className="hidden wide:flex fixed right-3 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-3 max-h-[80vh]">
         <div className="w-px h-3 bg-amber-400/20" />
 
         <div className="flex flex-col gap-3 overflow-y-auto max-h-[60vh] scrollbar-none pb-2">
