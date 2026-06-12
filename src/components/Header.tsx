@@ -8,11 +8,13 @@ import { getDictionary } from '@/locales';
 import LanguageSwitcher from './LanguageSwitcher';
 import { detectLocaleFromPathname, localizePath } from '@/lib/locale-path';
 import { GaruLoginModal } from './GaruLoginModal';
+import { PlanInfoModal } from './PlanInfoModal';
 import { getLoginUser, getPlanUi, logoutUser, type GaruLoginUser } from '@/lib/baby-api';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
+    const [showPlan, setShowPlan] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
     const [user, setUser] = useState<GaruLoginUser | null>(null);
     const pathname = usePathname();
@@ -84,6 +86,10 @@ export default function Header() {
                 />
             )}
 
+            {showPlan && (
+                <PlanInfoModal planType={user?.planType} onClose={() => setShowPlan(false)} />
+            )}
+
             <header
                 className="sticky top-0 z-40 border-b border-amber-200/15 backdrop-blur-md"
                 style={{ background: 'linear-gradient(180deg, rgba(10,8,7,0.92) 0%, rgba(10,8,7,0.78) 100%)' }}
@@ -117,14 +123,14 @@ export default function Header() {
 
                     <div className="ml-auto flex items-center gap-2 sm:gap-3">
                         {isLogin && user && (
-                            <a
-                                href="https://www.ai-garoop-interactive.com/plan"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`hidden sm:inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-black tracking-[0.2em] ${planUi.className}`}
+                            <button
+                                type="button"
+                                onClick={() => setShowPlan(true)}
+                                aria-label={currentLocale === 'ja' ? 'プランの説明を見る' : 'View plan details'}
+                                className={`hidden sm:inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-black tracking-[0.2em] hover:brightness-110 transition ${planUi.className}`}
                             >
                                 <span>{planUi.emoji}</span>{planUi.label}
-                            </a>
+                            </button>
                         )}
                         {isLogin ? (
                             <span className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-900/60 border border-amber-200/15 text-amber-50/80 text-xs font-serif">
@@ -248,14 +254,13 @@ export default function Header() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="font-serif text-amber-50 text-sm truncate">{user.name}</p>
-                                        <a
-                                            href="https://www.ai-garoop-interactive.com/plan"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className={`mt-1 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black tracking-[0.2em] ${planUi.className}`}
+                                        <button
+                                            type="button"
+                                            onClick={() => { setShowPlan(true); closeMenu(); }}
+                                            className={`mt-1 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black tracking-[0.2em] hover:brightness-110 transition ${planUi.className}`}
                                         >
                                             <span>{planUi.emoji}</span>{planUi.label}
-                                        </a>
+                                        </button>
                                     </div>
                                 </div>
                             )}

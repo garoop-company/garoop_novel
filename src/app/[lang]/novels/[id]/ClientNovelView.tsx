@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { defaultLocale, isLocale, localeMeta, type Locale } from '@/locales';
 import { localizePath } from '@/lib/locale-path';
 import { getLoginUser, getMyBabies, type GaruLoginUser, type PublicBaby } from '@/lib/baby-api';
+import BabyHatchPet, { hatchPetIdFromUrl } from '@/components/BabyHatchPet';
 
 type Props = {
     novelId: string;
@@ -133,6 +134,22 @@ export default function ClientNovelView({
         // pick the highest-growth baby as the reader
         return [...myBabies].sort((a, b) => b.growthLevel - a.growthLevel)[0];
     }, [myBabies]);
+
+    // 選択中の赤ちゃんが hatch-pet なら、その動くスプライトで表示する
+    const hatchPetId = useMemo(
+        () => (activeBaby ? hatchPetIdFromUrl(activeBaby.avatarUrl) : null),
+        [activeBaby]
+    );
+    // companion スプライトの表示サイズ（lg 以上で大きく）
+    const [companionLg, setCompanionLg] = useState(false);
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const mq = window.matchMedia('(min-width: 1024px)');
+        const apply = () => setCompanionLg(mq.matches);
+        apply();
+        mq.addEventListener('change', apply);
+        return () => mq.removeEventListener('change', apply);
+    }, []);
 
     // TTS
     const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -417,7 +434,15 @@ export default function ClientNovelView({
                                                 '0 20px 40px -10px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(217,180,120,0.30), inset 0 0 0 6px rgba(217,180,120,0.08)',
                                         }}
                                     >
-                                        <span aria-hidden>{babyEmoji(activeBaby.animalType)}</span>
+                                        {hatchPetId ? (
+                                            <BabyHatchPet
+                                                petId={hatchPetId}
+                                                state={ttsState === 'speaking' ? 'waving' : 'idle'}
+                                                size={companionLg ? 188 : 116}
+                                            />
+                                        ) : (
+                                            <span aria-hidden>{babyEmoji(activeBaby.animalType)}</span>
+                                        )}
                                         {/* sound waves when speaking */}
                                         {ttsState === 'speaking' && (
                                             <>
