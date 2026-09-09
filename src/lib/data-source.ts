@@ -1,9 +1,9 @@
 // garoop-data 公開 JSON への参照ヘルパ。
 // データ本体は別リポジトリ（garoop-data）の public/ 以下にあり、
-// Vercel ホスティング `https://garoop-data.vercel.app/` から配信される。
+// Vercel ホスティング `https://data.garoop.jp/` から配信される。
 // 環境変数 GAROOP_DATA_BASE_URL で上書き可能（ローカル開発で別ホストを向ける用途）。
 
-const BASE = (process.env.GAROOP_DATA_BASE_URL ?? 'https://garoop-data.vercel.app').replace(/\/$/, '');
+const BASE = (process.env.GAROOP_DATA_BASE_URL ?? 'https://data.garoop.jp').replace(/\/$/, '');
 
 export function dataUrl(path: string): string {
   const p = path.startsWith('/') ? path : `/${path}`;

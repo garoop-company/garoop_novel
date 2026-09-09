@@ -6,7 +6,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react"
 
-const HATCH_BASE = "https://garoop-data.vercel.app"
+const HATCH_BASE = "https://data.garoop.jp"
 
 export type HatchPetState =
   | "idle" | "running-right" | "running-left" | "waving" | "jumping"

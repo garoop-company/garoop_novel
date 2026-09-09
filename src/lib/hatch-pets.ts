@@ -1,5 +1,5 @@
 // Hatch Pet（Codex互換アニメーション・ペット）一覧データへのアクセス。
-// 公開データは garoop-data（https://garoop-data.vercel.app, CORS全開放）配信:
+// 公開データは garoop-data（https://data.garoop.jp, CORS全開放）配信:
 //   一覧:   /hatch-pets/index.json
 //   ペット: /hatch-pets/<id>/pet.json
 //   画像:   /hatch-pets/<id>/spritesheet.webp  （8列 x 9行 / 基本セル 192x208）
