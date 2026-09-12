@@ -593,7 +593,7 @@ function resolveModel(provider) {
   if (provider === 'ollama') {
     return process.env.OLLAMA_MODEL || 'qwen3.5:4b';
   }
-  return process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+  return process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
 }
 
 async function requestModel({ apiKey, model, temperature, systemPrompt, userPrompt }) {

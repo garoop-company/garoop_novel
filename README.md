@@ -46,7 +46,7 @@ npm run dev
 
 1. GitHub Repository Secrets に `GROQ_API_KEY` を追加
 2. 任意で Repository Variables に `GROQ_MODEL` を追加
-   - 未設定時は `llama-3.3-70b-versatile` を使用
+   - 未設定時は `openai/gpt-oss-120b` を使用
 3. 任意で Repository Variables に `GROQ_TARGET_LANGS` を追加
    - 例: `ja,en,zh,fr,id,it,ne`
    - 未設定時は `ja,en,zh,fr,id,it,ne` を使用
