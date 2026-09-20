@@ -24,7 +24,10 @@ export function middleware(request: NextRequest) {
 export const config = {
     matcher: [
         // Skip all internal paths (_next)
-        '/((?!_next|images|api|favicon.ico|icon.svg|icon.png|sitemap.xml|robots.txt).*)',
+        // アイコンをここに列挙し忘れると、/apple-icon.png が
+        // /<locale>/apple-icon.png に書き換えられて 404 になる。
+        // Next.js がファイル規約で配るものは、すべて除外しておくこと。
+        '/((?!_next|images|api|favicon.ico|icon.png|apple-icon.png|sitemap.xml|robots.txt).*)',
         // Optional: only run on root (/)
         '/'
     ],
