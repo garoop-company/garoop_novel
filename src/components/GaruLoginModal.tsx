@@ -219,7 +219,7 @@ export function GaruLoginModal({ onClose, onLogin }: {
             {/* ブランド */}
             <div className="flex items-center justify-center gap-3 min-h-[58px]">
               <img
-                src="https://d3ez7mat4qd439.cloudfront.net/garuchan.webp"
+                src="/garuchan.webp"
                 width={62} height={62} alt="garuchan"
                 style={{ filter: "drop-shadow(0 8px 16px rgba(251, 113, 133, 0.24))" }}
               />

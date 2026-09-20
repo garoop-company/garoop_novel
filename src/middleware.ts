@@ -27,7 +27,7 @@ export const config = {
         // アイコンをここに列挙し忘れると、/apple-icon.png が
         // /<locale>/apple-icon.png に書き換えられて 404 になる。
         // Next.js がファイル規約で配るものは、すべて除外しておくこと。
-        '/((?!_next|images|api|favicon.ico|icon.png|apple-icon.png|sitemap.xml|robots.txt).*)',
+        '/((?!_next|images|api|.*\\..*).*)',
         // Optional: only run on root (/)
         '/'
     ],

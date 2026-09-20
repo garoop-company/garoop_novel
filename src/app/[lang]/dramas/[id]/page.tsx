@@ -29,7 +29,7 @@ export async function generateMetadata(props: {
     lang,
     path: `/dramas/${drama.id}`,
     type: 'article',
-    image: '/images/dramas/garuchan/portrait.png',
+    image: '/images/dramas/garuchan/portrait.webp',
   });
 }
 

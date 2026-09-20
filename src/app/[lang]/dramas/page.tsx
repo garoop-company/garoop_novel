@@ -87,7 +87,7 @@ export default async function DramasPage(props: Props) {
                   }}
                 >
                   <Image
-                    src="/images/dramas/garuchan/portrait.png"
+                    src="/images/dramas/garuchan/portrait.webp"
                     alt={d.seriesTitle}
                     width={260}
                     height={300}

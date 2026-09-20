@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       'ガルちゃんたち Hatch Pet が動き出す。好きなペットを選んで、待機・ジャンプ・手をふる・おしごと…いろんな動きを楽しめるアニメーション図鑑。',
     lang,
     path: '/hatch-pets',
-    image: '/images/dramas/garuchan/portrait.png',
+    image: '/images/dramas/garuchan/portrait.webp',
   });
 }
 
