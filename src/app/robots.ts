@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
             userAgent: '*',
             allow: '/',
         },
-        sitemap: 'https://www.ai-garoop-novel.com/sitemap.xml',
+        sitemap: 'https://novel.garoop.jp/sitemap.xml',
     }
 }

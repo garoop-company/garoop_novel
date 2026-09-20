@@ -5,7 +5,7 @@ import path from 'path'
 import { localizePath } from '@/lib/locale-path'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const siteUrl = 'https://www.ai-garoop-novel.com'
+    const siteUrl = 'https://novel.garoop.jp'
 
     // Base pages
     const basePages = ['', '/novels', '/about', '/contact', '/privacy', '/terms']

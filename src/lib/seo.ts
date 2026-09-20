@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { locales, Locale, defaultLocale, localeMeta } from '@/locales';
 import { localizePath } from './locale-path';
 
-export const SITE_URL = 'https://www.ai-garoop-novel.com';
+export const SITE_URL = 'https://novel.garoop.jp';
 
 interface SEOOptions {
     title: string;
