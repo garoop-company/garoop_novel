@@ -9,7 +9,7 @@ import LanguageSwitcher from './LanguageSwitcher';
 import { detectLocaleFromPathname, localizePath } from '@/lib/locale-path';
 import { GaruLoginModal } from './GaruLoginModal';
 import { PlanInfoModal } from './PlanInfoModal';
-import { getLoginUser, getPlanUi, logoutUser, type GaruLoginUser } from '@/lib/baby-api';
+import { clearClientAuthSession, getLoginUser, getPlanUi, logoutUser, type GaruLoginUser } from '@/lib/baby-api';
 
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,7 +32,8 @@ export default function Header() {
                 setIsLogin(true);
                 setUser(u);
             } else {
-                sessionStorage.removeItem('isLogin');
+                // kids_api のセッションが切れていたら、ブラウザ側のログイン状態も消す
+                clearClientAuthSession();
                 setIsLogin(false);
                 setUser(null);
             }

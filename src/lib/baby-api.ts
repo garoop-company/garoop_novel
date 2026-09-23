@@ -31,6 +31,23 @@ export function getPlanUi(planType?: string | null): PlanUi {
   return { label: "Free", emoji: "🌱", className: "border-white/15 bg-white/10 text-white/85" }
 }
 
+// ブラウザ側のログイン状態 (sessionStorage) を消す。
+// ログイン中扱いだった場合は "garu-login" を投げてヘッダーなどに表示を更新させる。
+export function clearClientAuthSession(): void {
+  if (typeof window === "undefined") return
+  const wasLogin = sessionStorage.getItem("isLogin") === "true"
+  sessionStorage.removeItem("isLogin")
+  sessionStorage.removeItem("garoopLoginUserId")
+  if (wasLogin) window.dispatchEvent(new CustomEvent("garu-login"))
+}
+
+// kids_api のセッションが切れている (24時間で失効し、使っても延長されない) と
+// 保護されたクエリは message が "unauthenticated" のエラーを返す。
+function isUnauthenticated(data: unknown): boolean {
+  const errors = (data as { errors?: { message?: string }[] } | null)?.errors
+  return Array.isArray(errors) && errors.some((e) => e?.message === "unauthenticated")
+}
+
 async function gql(query: string): Promise<unknown> {
   try {
     const res = await fetch(`${KIDS_API}/query`, {
@@ -39,7 +56,10 @@ async function gql(query: string): Promise<unknown> {
       body: JSON.stringify({ query }),
       credentials: "include",
     })
-    return res.json()
+    const data = await res.json()
+    // セッション切れなのにログイン中の表示のまま残らないよう、ブラウザ側の状態も消す
+    if (isUnauthenticated(data)) clearClientAuthSession()
+    return data
   } catch {
     return null
   }
