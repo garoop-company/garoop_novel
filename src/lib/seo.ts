@@ -20,7 +20,7 @@ export function generateLocalizedMetadata({
     description,
     lang,
     path,
-    image = '/images/garo_kawaii.webp',
+    image = 'https://data.garoop.jp/garoop-asset/resized/1200x630/garoop-novel-1200x630.png',
     type = 'website',
     novelId,
     page,

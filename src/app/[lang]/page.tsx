@@ -19,7 +19,6 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     description: dict.hero.subtitle,
     lang,
     path: '/',
-    image: 'https://d3ez7mat4qd439.cloudfront.net/summary_image/garoop_ai_land.webp',
   });
 }
 
