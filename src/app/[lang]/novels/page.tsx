@@ -142,7 +142,7 @@ const NovelsPage = async (props: Props) => {
             <span className="block h-px w-16 bg-amber-200/30" />
           </div>
           <p className="font-serif text-amber-50/70 max-w-xl mx-auto leading-loose text-sm">
-            人物列伝と長崎物語。坂と海と、誰かの机の灯りから生まれた小説たちを、夜の文庫に並べました。
+            十歳の起業家、軍隊式の合宿、緊迫の十分間、そしてカンガルーのガルちゃん。正しいことを、正しく行う人たちの小説を、夜の文庫に並べました。
           </p>
         </div>
 

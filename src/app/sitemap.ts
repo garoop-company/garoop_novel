@@ -1,8 +1,7 @@
 import { MetadataRoute } from 'next'
 import { locales, defaultLocale, isLocale } from '@/locales'
-import { promises as fs } from 'fs'
-import path from 'path'
 import { localizePath } from '@/lib/locale-path'
+import { fetchJson, NOVELS_INDEX_PATH } from '@/lib/data-source'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const siteUrl = 'https://novel.garoop.jp'
@@ -26,12 +25,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Novels
     try {
-        const jsonDirectory = path.join(process.cwd(), 'src', 'data');
-        const fileContents = await fs.readFile(path.join(jsonDirectory, 'novels.json'), 'utf8');
-        const novels = JSON.parse(fileContents);
+        const novels = await fetchJson<{ id: string; lang?: string }[]>(NOVELS_INDEX_PATH);
 
         for (const novel of novels) {
-            const lang = isLocale(novel.lang) ? novel.lang : defaultLocale;
+            const lang = novel.lang && isLocale(novel.lang) ? novel.lang : defaultLocale;
             entries.push({
                 url: `${siteUrl}${localizePath(`/novels/${novel.id}`, lang)}`,
                 lastModified: new Date(),

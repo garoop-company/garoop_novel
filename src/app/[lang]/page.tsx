@@ -115,7 +115,7 @@ export default async function HomePage({
                 "https://www.youtube.com/@garooptv",
                 "https://garoop.jp",
               ],
-              "description": "生成AIが綴る人物列伝と長崎物語。Garoopの夜の文庫。",
+              "description": "生成AIが綴る、判断と勇気の物語。Garoopの夜の文庫。",
               "ethicsPolicy": `${SITE_URL}${localizePath('/about', lang)}`,
               "masthead": `${SITE_URL}${localizePath('/about', lang)}`,
               "isAccessibleForFree": true,
