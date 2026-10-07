@@ -17,6 +17,12 @@ function removeStorage(key: string) {
   localStorage.removeItem(key)
 }
 
+function providerFromState(state: string | null) {
+  if (state?.startsWith("line.")) return "line"
+  if (state?.startsWith("chatgpt.")) return "chatgpt"
+  return null
+}
+
 function LoginCallBackInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -48,7 +54,10 @@ function LoginCallBackInner() {
 
       // SNS/Googleログイン
       if (!code) return
-      const provider = (providerFromQuery || getStorage("login_provider") || "google") as "google" | "x" | "facebook" | "line" | "tiktok"
+      // スマホでは LINE アプリへの受け渡し後に別のブラウザで戻ってくることがあり、
+      // localStorage が空のため Google 扱いになって失敗していた。
+      // state の接頭辞（"line." / "chatgpt."）からもプロバイダーを判定する。
+      const provider = (providerFromQuery || providerFromState(state) || getStorage("login_provider") || "google") as "google" | "x" | "facebook" | "line" | "tiktok" | "chatgpt"
       const lockKey = `${LOCK_PREFIX}${provider}_${code}`
       if (getStorage(lockKey)) return
       sessionStorage.setItem(lockKey, code)

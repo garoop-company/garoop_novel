@@ -100,22 +100,23 @@ export async function forgotPassword(mailAddress: string): Promise<boolean> {
   return !!(data as { data?: { mailForget?: { success: boolean } } })?.data?.mailForget?.success
 }
 
-export async function getSocialAuthUrl(provider: "google" | "x" | "facebook" | "line", redirectUrl: string): Promise<string | null> {
+export async function getSocialAuthUrl(provider: "google" | "x" | "facebook" | "line" | "chatgpt", redirectUrl: string): Promise<string | null> {
   const queryMap: Record<string, string> = {
     google: `query { getGoogleAuthUrl(redirectUrl: ${JSON.stringify(redirectUrl)}) }`,
     x: `query { getXAuthUrl(redirectUrl: ${JSON.stringify(redirectUrl)}) }`,
     facebook: `query { getFacebookAuthUrl(redirectUrl: ${JSON.stringify(redirectUrl)}) }`,
     line: `query { getLineAuthUrl(redirectUrl: ${JSON.stringify(redirectUrl)}) }`,
+    chatgpt: `query { getChatgptAuthUrl(redirectUrl: ${JSON.stringify(redirectUrl)}) }`,
   }
   const fieldMap: Record<string, string> = {
-    google: "getGoogleAuthUrl", x: "getXAuthUrl", facebook: "getFacebookAuthUrl", line: "getLineAuthUrl",
+    google: "getGoogleAuthUrl", x: "getXAuthUrl", facebook: "getFacebookAuthUrl", line: "getLineAuthUrl", chatgpt: "getChatgptAuthUrl",
   }
   const data = await gql(queryMap[provider]) as Record<string, unknown> | null
   return (data as { data?: Record<string, string> })?.data?.[fieldMap[provider]] ?? null
 }
 
 export async function socialLoginCallback(
-  provider: "google" | "x" | "facebook" | "line" | "tiktok",
+  provider: "google" | "x" | "facebook" | "line" | "tiktok" | "chatgpt",
   code: string,
   state: string | null,
   redirectUrl: string,
@@ -124,10 +125,10 @@ export async function socialLoginCallback(
   if (provider === "google") {
     query = `query { googleLogin(code: ${JSON.stringify(code)}, redirectUrl: ${JSON.stringify(redirectUrl)}) { id success } }`
   } else {
-    const fieldName = provider === "x" ? "xLogin" : provider === "facebook" ? "facebookLogin" : provider === "line" ? "lineLogin" : "tiktokLogin"
+    const fieldName = provider === "x" ? "xLogin" : provider === "facebook" ? "facebookLogin" : provider === "line" ? "lineLogin" : provider === "chatgpt" ? "chatgptLogin" : "tiktokLogin"
     query = `query { ${fieldName}(code: ${JSON.stringify(code)}, state: ${JSON.stringify(state ?? "")}, redirectUrl: ${JSON.stringify(redirectUrl)}) { id success } }`
   }
-  const fieldName = provider === "google" ? "googleLogin" : provider === "x" ? "xLogin" : provider === "facebook" ? "facebookLogin" : provider === "line" ? "lineLogin" : "tiktokLogin"
+  const fieldName = provider === "google" ? "googleLogin" : provider === "x" ? "xLogin" : provider === "facebook" ? "facebookLogin" : provider === "line" ? "lineLogin" : provider === "chatgpt" ? "chatgptLogin" : "tiktokLogin"
   const data = await gql(query) as Record<string, unknown> | null
   return (data as { data?: Record<string, { id: string; success: boolean }> })?.data?.[fieldName] ?? null
 }
