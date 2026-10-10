@@ -1,3 +1,5 @@
+import { recaptchaHeaders, isRecaptchaFailure, RECAPTCHA_FAILED } from "@/lib/recaptcha"
+
 const KIDS_API = process.env.NEXT_PUBLIC_SERVER_URL ?? "https://api.garoop.jp"
 
 export interface PublicBaby {
@@ -48,11 +50,12 @@ function isUnauthenticated(data: unknown): boolean {
   return Array.isArray(errors) && errors.some((e) => e?.message === "unauthenticated")
 }
 
-async function gql(query: string): Promise<unknown> {
+// headers: 追加で送るヘッダー（ログイン・登録などで reCAPTCHA のトークンを載せる）
+async function gql(query: string, headers?: Record<string, string>): Promise<unknown> {
   try {
     const res = await fetch(`${KIDS_API}/query`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...headers },
       body: JSON.stringify({ query }),
       credentials: "include",
     })
@@ -80,14 +83,37 @@ export async function getMyBabies(): Promise<PublicBaby[]> {
   return (data as { data?: { getMyBabies?: PublicBaby[] } })?.data?.getMyBabies ?? []
 }
 
-export async function mailLogin(mailAddress: string, password: string): Promise<{ id: string; success: boolean } | null> {
-  const data = await gql(`mutation { mailLogin(input: { mailAddress: ${JSON.stringify(mailAddress)}, password: ${JSON.stringify(password)} }) { id success } }`) as Record<string, unknown> | null
-  return (data as { data?: { mailLogin?: { id: string; success: boolean } } })?.data?.mailLogin ?? null
+// errorCode: reCAPTCHA で止められたときだけ RECAPTCHA_FAILED が入る
+export interface MailLoginResult {
+  id: string
+  success: boolean
+  errorCode?: string | null
 }
 
-export async function registerUser(mailAddress: string, password: string): Promise<boolean> {
-  const data = await gql(`mutation { mailTemporaryRegister(input: { mailAddress: ${JSON.stringify(mailAddress)}, password: ${JSON.stringify(password)} }) { success } }`) as Record<string, unknown> | null
-  return !!(data as { data?: { mailTemporaryRegister?: { success: boolean } } })?.data?.mailTemporaryRegister?.success
+// 登録・パスワード再設定メールの結果。errorCode は kids_api の値
+// （DUPLICATE_EMAIL / INVALID_EMAIL / EMPTY_PASSWORD / PASSWORD_TOO_LONG / SYSTEM_ERROR / RECAPTCHA_FAILED）。
+// 通信できなかったときは success: false, errorCode: null。
+export interface MailResult {
+  success: boolean
+  errorCode: string | null
+}
+
+export async function mailLogin(mailAddress: string, password: string): Promise<MailLoginResult | null> {
+  const query = `mutation { mailLogin(input: { mailAddress: ${JSON.stringify(mailAddress)}, password: ${JSON.stringify(password)} }) { id success } }`
+  const data = await gql(query, await recaptchaHeaders("login")) as { data?: { mailLogin?: MailLoginResult | null }; errors?: { message?: string }[] } | null
+  // mailLogin の結果には理由を載せる欄がないので、reCAPTCHA で止めたときは GraphQL のエラーで返ってくる
+  if (data?.errors?.some(e => isRecaptchaFailure(e))) return { id: "", success: false, errorCode: RECAPTCHA_FAILED }
+  return data?.data?.mailLogin ?? null
+}
+
+// redirectUrl は kids_api が確認メールのリンク（redirectUrl + "/loginCallBack?token=..."）を作るのに使う。
+// このサイトの /loginCallBack が registerUserDone で本登録を済ませる。
+export async function registerUser(mailAddress: string, password: string): Promise<MailResult> {
+  const redirectUrl = typeof window === "undefined" ? "" : window.location.origin
+  const query = `mutation { mailTemporaryRegister(input: { mailAddress: ${JSON.stringify(mailAddress)}, password: ${JSON.stringify(password)}, redirectUrl: ${JSON.stringify(redirectUrl)} }) { success errorCode } }`
+  const data = await gql(query, await recaptchaHeaders("signup")) as { data?: { mailTemporaryRegister?: MailResult | null } } | null
+  const result = data?.data?.mailTemporaryRegister
+  return { success: !!result?.success, errorCode: result?.errorCode ?? null }
 }
 
 export async function registerUserDone(token: string): Promise<boolean> {
@@ -95,9 +121,16 @@ export async function registerUserDone(token: string): Promise<boolean> {
   return !!(data as { data?: { registerUserDone?: { success: boolean } } })?.data?.registerUserDone?.success
 }
 
-export async function forgotPassword(mailAddress: string): Promise<boolean> {
-  const data = await gql(`mutation { mailForget(input: { mailAddress: ${JSON.stringify(mailAddress)} }) { success } }`) as Record<string, unknown> | null
-  return !!(data as { data?: { mailForget?: { success: boolean } } })?.data?.mailForget?.success
+// パスワード再設定メールのリンクは kids_api が redirectUrl + "/registerNewPassword?token=..." で作る。
+// このサイトには新しいパスワードを決めるページ（registerNewPassword）がないので、
+// そのページを持つ create.garoop.jp（kids_web）に送る。アカウントは共通なので、そこで決めたパスワードでここにもログインできる。
+const PASSWORD_RESET_SITE_URL = "https://create.garoop.jp"
+
+export async function forgotPassword(mailAddress: string): Promise<MailResult> {
+  const query = `mutation { mailForget(mailAddress: ${JSON.stringify(mailAddress)}, redirectUrl: ${JSON.stringify(PASSWORD_RESET_SITE_URL)}) { success errorCode } }`
+  const data = await gql(query, await recaptchaHeaders("forgot_password")) as { data?: { mailForget?: MailResult | null } } | null
+  const result = data?.data?.mailForget
+  return { success: !!result?.success, errorCode: result?.errorCode ?? null }
 }
 
 export async function getSocialAuthUrl(provider: "google" | "x" | "facebook" | "line" | "chatgpt", redirectUrl: string): Promise<string | null> {

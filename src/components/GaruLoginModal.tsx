@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
   mailLogin, registerUser, forgotPassword, getSocialAuthUrl, getLoginUser,
   type GaruLoginUser,
 } from "@/lib/baby-api"
+import { preloadRecaptcha, RECAPTCHA_FAILED, RECAPTCHA_FAILED_MESSAGE } from "@/lib/recaptcha"
 
 type View = "login" | "register" | "forgotPassword"
 
@@ -27,6 +28,30 @@ const primaryBtn =
   "w-full mt-2 py-2.5 px-5 rounded-full text-white font-black text-lg shadow-lg transition-all hover:brightness-110 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
 const primaryBg = { background: "linear-gradient(135deg, #fb7185 0%, #f9a8d4 52%, #93c5fd 100%)" }
 
+// 新規登録が通らなかったときの文言（errorCode は kids_api の query/temporaryRegister.go）
+function registerErrorMessage(errorCode: string | null): string {
+  switch (errorCode) {
+    case "DUPLICATE_EMAIL":
+      return "このメールアドレスはすでに登録されています。ログインするか、パスワードを再設定してください。"
+    case "INVALID_EMAIL":
+      return "メールアドレスの形式が正しくありません。"
+    case "EMPTY_PASSWORD":
+      return "パスワードを入力してください。"
+    case "PASSWORD_TOO_LONG":
+      return "パスワードが長すぎます。半角72文字以内にしてください。"
+    case RECAPTCHA_FAILED:
+      return RECAPTCHA_FAILED_MESSAGE
+    default:
+      return "登録に失敗しました。時間をおいて再度お試しください。"
+  }
+}
+
+// パスワード再設定メールが送れなかったときの文言
+function forgotPasswordErrorMessage(errorCode: string | null): string {
+  if (errorCode === RECAPTCHA_FAILED) return RECAPTCHA_FAILED_MESSAGE
+  return "送信に失敗しました。時間をおいて再度お試しください。"
+}
+
 function LoginForm({ onForgotPassword, onLogin }: { onForgotPassword: () => void; onLogin: (user: GaruLoginUser) => void }) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -47,6 +72,8 @@ function LoginForm({ onForgotPassword, onLogin }: { onForgotPassword: () => void
           window.dispatchEvent(new CustomEvent("garu-login"))
           onLogin(user)
         }
+      } else if (res?.errorCode === RECAPTCHA_FAILED) {
+        setError(RECAPTCHA_FAILED_MESSAGE)
       } else {
         setError("ログインに失敗しました。パスワードが間違っているか、システムエラーです。")
       }
@@ -99,9 +126,9 @@ function RegisterForm({ onBack }: { onBack: () => void }) {
     if (password !== password2) { setError("パスワードが一致しません"); return }
     setLoading(true)
     setError("")
-    const ok = await registerUser(email, password)
-    if (ok) setDone(true)
-    else setError("登録に失敗しました。すでに登録済みか、システムエラーです。")
+    const res = await registerUser(email, password)
+    if (res.success) setDone(true)
+    else setError(registerErrorMessage(res.errorCode))
     setLoading(false)
   }
 
@@ -145,9 +172,9 @@ function ForgotPasswordForm({ onBack }: { onBack: () => void }) {
     e.preventDefault()
     setLoading(true)
     setError("")
-    const ok = await forgotPassword(email)
-    if (ok) setDone(true)
-    else setError("送信に失敗しました。時間をおいて再度お試しください。")
+    const res = await forgotPassword(email)
+    if (res.success) setDone(true)
+    else setError(forgotPasswordErrorMessage(res.errorCode))
     setLoading(false)
   }
 
@@ -184,6 +211,11 @@ export function GaruLoginModal({ onClose, onLogin }: {
   const [view, setView] = useState<View>("login")
   const [pendingProvider, setPendingProvider] = useState<string | null>(null)
   const [socialError, setSocialError] = useState("")
+
+  // reCAPTCHA は送信のときに使う。開いた時点で読み始めておくと送信が待たされにくい
+  useEffect(() => {
+    preloadRecaptcha()
+  }, [])
 
   const startSocialLogin = async (provider: "google" | "x" | "line" | "chatgpt") => {
     setSocialError("")
