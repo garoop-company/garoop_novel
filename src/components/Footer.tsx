@@ -39,6 +39,11 @@ export default function Footer({ lang = 'ja' }: FooterProps) {
                         <Link href={pg('/contact')} className="hover:text-amber-200 transition-colors">
                             {dict.common.contact}
                         </Link>
+                        {lang === 'ja' && (
+                            <Link href="/area" className="hover:text-amber-200 transition-colors">
+                                地域から探す
+                            </Link>
+                        )}
                     </div>
                 </div>
 

@@ -2,6 +2,8 @@ import { MetadataRoute } from 'next'
 import { locales, defaultLocale, isLocale } from '@/locales'
 import { localizePath } from '@/lib/locale-path'
 import { fetchJson, NOVELS_INDEX_PATH } from '@/lib/data-source'
+import { PREFECTURES } from '@/lib/area/prefectures'
+import { CITIES } from '@/lib/area/cities'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const siteUrl = 'https://novel.garoop.jp'
@@ -21,6 +23,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 priority: page === '' ? 1.0 : 0.8,
             })
         }
+    }
+
+    // 地域別ページ（日本語のみ）
+    entries.push({
+        url: `${siteUrl}/area`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly',
+        priority: 0.6,
+    })
+    for (const pref of PREFECTURES) {
+        entries.push({
+            url: `${siteUrl}/area/${pref.slug}`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.5,
+        })
+    }
+    for (const city of CITIES) {
+        entries.push({
+            url: `${siteUrl}/area/${city.pref}/${city.slug}`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.4,
+        })
     }
 
     // Novels

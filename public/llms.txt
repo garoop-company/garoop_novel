@@ -1,0 +1,18 @@
+# Garoop Novel
+
+> Garoop Novel（ガループ ノベル）は、生成AIが綴る小説を読める文庫サイトです。アニメで観るドラマ劇場「スパイ・ガルーン」や、動くなかま「ハッチペット」のアニメーション図鑑もあります。スマホやパソコンのブラウザでオンラインで使え、AI小説は無料で読めます。運営は株式会社Garoop（https://garoop.jp）。
+
+## 主なページ
+
+- [トップ](https://novel.garoop.jp/): 今宵の書架（新着のAI小説）
+- [書架](https://novel.garoop.jp/novels): AI小説の一覧と検索
+- [ドラマ劇場](https://novel.garoop.jp/dramas): ガルちゃん主演のアニメのスパイ・ドラマ
+- [ハッチペット](https://novel.garoop.jp/hatch-pets): 動くなかまたちのアニメーション図鑑
+- [よくある質問](https://novel.garoop.jp/faq)
+- [運営者情報](https://novel.garoop.jp/about)
+
+## 地域から探す
+
+- [地域から探す](https://novel.garoop.jp/area): 47都道府県ごとの案内ページの一覧。どの都道府県からもオンラインで使えます。
+- 各都道府県のページは https://novel.garoop.jp/area/{slug} （例: [東京都](https://novel.garoop.jp/area/tokyo)、[大阪府](https://novel.garoop.jp/area/osaka)、[長崎県](https://novel.garoop.jp/area/nagasaki)）
+- 主な市区（政令指定都市・県庁所在地・東京23区など）のページは https://novel.garoop.jp/area/{県のslug}/{市区のslug} （例: [横浜市](https://novel.garoop.jp/area/kanagawa/yokohama)、[世田谷区](https://novel.garoop.jp/area/tokyo/setagaya)）。各都道府県のページから市区のページへたどれます。
