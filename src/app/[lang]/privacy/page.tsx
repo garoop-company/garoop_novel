@@ -7,7 +7,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 
     return generateLocalizedMetadata({
         title: 'プライバシーポリシー | Garoop Novel',
-        description: 'Garoop Novelのプライバシーポリシー。個人情報の取り扱い、Cookie、広告配信について説明します。',
+        description: 'Garoop Novelのプライバシーポリシー。個人情報の取り扱い、Cookie、アクセス解析について説明します。',
         lang,
         path: '/privacy',
     });
@@ -28,25 +28,14 @@ export default function PrivacyPage() {
                 </section>
 
                 <section className="mb-8">
-                    <h2 className="text-xl font-bold mb-4 text-slate-100">2. 広告について</h2>
-                    <p className="mb-4">
-                        当ブログでは、第三者配信の広告サービス（Googleアドセンス、A8.net）を利用しており、ユーザーの興味に応じた商品やサービスの広告を表示するため、クッキー（Cookie）を使用しております。<br />
-                        クッキーを使用することで当サイトはお客様のコンピュータを識別できるようになりますが、お客様個人を特定できるものではありません。
-                    </p>
-                    <p className="mb-4">
-                        Cookieを無効にする方法やGoogleアドセンスに関する詳細は<a href="https://policies.google.com/technologies/ads?hl=ja" target="_blank" rel="noopener noreferrer" className="text-amber-300 hover:underline">「広告 – ポリシーと規約 – Google」</a>をご確認ください。
-                    </p>
-                </section>
-
-                <section className="mb-8">
-                    <h2 className="text-xl font-bold mb-4 text-slate-100">3. アクセス解析ツールについて</h2>
+                    <h2 className="text-xl font-bold mb-4 text-slate-100">2. アクセス解析ツールについて</h2>
                     <p className="mb-4">
                         当ブログでは、Googleによるアクセス解析ツール「Googleアナリティクス」を利用しています。このGoogleアナリティクスはトラフィックデータの収集のためにクッキー（Cookie）を使用しております。トラフィックデータは匿名で収集されており、個人を特定するものではありません。
                     </p>
                 </section>
 
                 <section className="mb-8">
-                    <h2 className="text-xl font-bold mb-4 text-slate-100">4. 免責事項</h2>
+                    <h2 className="text-xl font-bold mb-4 text-slate-100">3. 免責事項</h2>
                     <p className="mb-4">
                         当ブログからのリンクやバナーなどで移動したサイトで提供される情報、サービス等について一切の責任を負いません。<br />
                         また当ブログのコンテンツ・情報について、できる限り正確な情報を掲載するよう努めておりますが、正確性や安全性を保証するものではありません。情報が古くなっていることもございます。<br />

@@ -143,7 +143,7 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
 
-  // 他サイト（api.garoop.jp、広告、解析、画像 CDN など）には触らない。
+  // 他サイト（api.garoop.jp、解析、画像 CDN など）には触らない。
   if (url.origin !== self.location.origin) return;
 
   // API は溜めない。そのままネットワークへ。

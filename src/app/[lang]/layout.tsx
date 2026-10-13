@@ -60,8 +60,6 @@ export default async function RootLayout({
   return (
     <html lang={lang}>
       <head>
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7714651880162273"
-          crossOrigin="anonymous"></script>
         <meta name="icon" content="/favicon.ico" />
         {GA_MEASUREMENT_ID ? (
           <>
