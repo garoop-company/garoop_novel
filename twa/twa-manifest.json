@@ -1,0 +1,45 @@
+{
+  "packageId": "jp.garoop.novel.twa",
+  "host": "novel.garoop.jp",
+  "name": "Garoop Novel",
+  "launcherName": "Garoop Novel",
+  "display": "standalone",
+  "themeColor": "#0a0807",
+  "themeColorDark": "#0a0807",
+  "navigationColor": "#0a0807",
+  "navigationColorDark": "#0a0807",
+  "navigationDividerColor": "#0a0807",
+  "navigationDividerColorDark": "#0a0807",
+  "backgroundColor": "#07080c",
+  "enableNotifications": false,
+  "startUrl": "/",
+  "iconUrl": "https://novel.garoop.jp/icon-512.png",
+  "maskableIconUrl": "https://novel.garoop.jp/icon-maskable-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://novel.garoop.jp/manifest.webmanifest",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://novel.garoop.jp/",
+  "minSdkVersion": 21,
+  "orientation": "default",
+  "fingerprints": [
+    {
+      "name": "upload",
+      "value": "11:5D:D2:A5:24:96:01:A7:BB:83:F5:96:AB:99:7E:D1:F8:4A:D1:3C:45:69:15:CB:93:45:A2:22:80:9F:6D:53"
+    }
+  ]
+}

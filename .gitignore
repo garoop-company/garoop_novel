@@ -39,3 +39,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# PWA: next-pwa / workbox を使っていないので生成物は出ないが、念のため
+/public/workbox-*.js
+/public/worker-*.js
+
+# TWA の署名鍵とパスワード。絶対にコミットしない。
+# 鍵が漏れると、他人が同じ署名のアプリを配れる。
+twa/android.keystore
+twa/*.keystore
+twa/*.jks
+twa/keystore.properties
+twa/local.properties
+twa/.gradle/
+twa/build/
+twa/app/build/
+twa/**/*.aab
+twa/**/*.apk
+twa/**/*.idsig
+twa/.idea/
+twa/**/*.iml

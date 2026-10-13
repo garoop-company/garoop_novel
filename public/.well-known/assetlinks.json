@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "jp.garoop.novel.twa",
+      "sha256_cert_fingerprints": [
+        "11:5D:D2:A5:24:96:01:A7:BB:83:F5:96:AB:99:7E:D1:F8:4A:D1:3C:45:69:15:CB:93:45:A2:22:80:9F:6D:53"
+      ]
+    }
+  }
+]

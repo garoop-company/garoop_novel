@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { locales, Locale } from "@/locales";
 import Script from "next/script";
 import "./globals.css";
@@ -9,13 +9,34 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const { lang: rawLang } = await params;
   const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
 
-  return generateLocalizedMetadata({
+  const metadata: Metadata = generateLocalizedMetadata({
     title: 'Garoop Novel | 生成AIと赤ちゃんランド',
     description: 'Garoop Novelは、生成AIと赤ちゃんが大暴れする新感覚エンタメテーマパーク。AI、アニメ、小説など、ワクワクするコンテンツを発信中。',
     lang,
     path: '/',
   });
+
+  return {
+    ...metadata,
+    applicationName: 'Garoop Novel',
+    // iOS で「ホーム画面に追加」したときの表示。
+    // manifest（src/app/manifest.ts）は iOS では一部しか読まれないので、こちらでも指定する。
+    appleWebApp: {
+      capable: true,
+      title: 'Garoop Novel',
+      statusBarStyle: 'black-translucent',
+    },
+    // apple-touch-icon と favicon は src/app/apple-icon.png・icon.png・favicon.ico から
+    // Next.js が自動で <link> を出す（ファイル規約）。ここで icons を書くと二重になる。
+  };
 }
+
+// アドレスバー・ステータスバーの色。ヘッダーの背景（rgba(10,8,7,...)）に合わせる。
+// manifest の theme_color と同じ値にしておくこと。
+export const viewport: Viewport = {
+  themeColor: '#0a0807',
+  colorScheme: 'dark',
+};
 
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -25,6 +46,7 @@ import { GA_MEASUREMENT_ID } from "@/lib/ga";
 import { Suspense } from "react";
 import { BabyCompanion } from "@/components/BabyCompanion";
 import { FloatingBabyChat } from "@/components/FloatingBabyChat";
+import { RegisterServiceWorker } from "@/components/RegisterServiceWorker";
 
 export default async function RootLayout({
   children,
@@ -73,6 +95,7 @@ export default async function RootLayout({
         </div>
         <Footer lang={lang} />
         <BottomNav />
+        <RegisterServiceWorker />
       </body>
     </html>
   );
