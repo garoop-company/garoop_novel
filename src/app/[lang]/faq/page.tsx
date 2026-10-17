@@ -1,5 +1,5 @@
 import { locales, Locale, getDictionary } from '@/locales';
-import { generateLocalizedMetadata, SITE_URL } from '@/lib/seo';
+import { generateLocalizedMetadata } from '@/lib/seo';
 import Script from 'next/script';
 import { localizePath } from '@/lib/locale-path';
 

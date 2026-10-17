@@ -201,7 +201,7 @@ export default async function Page(props: Props) {
         page={page}
         lang={novel.lang}
         animationPreset={novel.animationPreset}
-        sourceVideoUrl={(novel as any).sourceVideoUrl}
+        sourceVideoUrl={novel.sourceVideoUrl}
       />
     </div>
   );

@@ -10,6 +10,11 @@ export const zh = {
         more: "翻到下一页 →",
         all_news: "浏览整个书架 →",
     },
+    motion: {
+        on: "动起来",
+        off: "停止",
+        label: "切换角色动画",
+    },
     hero: {
         welcome: "Garoop 文库 ― 欢迎来到夜晚的书架",
         title: "Garoop Novel",

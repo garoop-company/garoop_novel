@@ -2,10 +2,12 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { defaultLocale, isLocale, localeMeta, type Locale } from '@/locales';
 import { localizePath } from '@/lib/locale-path';
+import { useSpriteAnimation } from '@/lib/sprite-motion';
+import SpriteMotionToggle from '@/components/SpriteMotionToggle';
 import {
   SPRITE_FRAMES,
   type DramaSeries,
@@ -44,31 +46,57 @@ function SpritePet({
   size?: number;
 }) {
   const frames = SPRITE_FRAMES[pose] ?? 1;
-  const [frame, setFrame] = useState(0);
   const cellW = (size * 192) / 208;
 
-  useEffect(() => {
-    setFrame(0);
-    const fps = POSE_FPS[pose] ?? 6;
-    const id = setInterval(() => setFrame((f) => (f + 1) % frames), 1000 / fps);
-    return () => clearInterval(id);
-  }, [pose, frames]);
+  // フレーム送りは DOM を直接更新（再レンダーなし）。画面外・タブ非表示・「うごかす」OFF では止まり、
+  // OFF の時はタップした時だけ数秒動く。
+  const { ref, activate } = useSpriteAnimation({
+    frames,
+    fps: POSE_FPS[pose] ?? 6,
+    resetKey: `${sprite}:${pose}:${size}`,
+    position: (f) => `${-f * cellW}px 0px`,
+  });
 
   return (
     <div
+      ref={ref}
       aria-hidden
+      onClick={activate}
       style={{
         width: cellW,
         height: size,
         backgroundImage: `url(/images/dramas/${sprite}/${pose}.png)`,
         backgroundRepeat: 'no-repeat',
         backgroundSize: `${cellW * frames}px ${size}px`,
-        backgroundPosition: `${-frame * cellW}px 0px`,
+        backgroundPosition: '0px 0px',
         imageRendering: 'auto',
         filter: 'drop-shadow(0 12px 18px rgba(0,0,0,0.45))',
       }}
     />
   );
+}
+
+/* タイプライター演出。1文字ごとの更新をこの小さなコンポーネント内に閉じ込め、
+   プレイヤー全体（ステージ・コントロール・キャスト一覧）が毎フレーム再レンダーされないようにする。 */
+function TypewriterText({ text }: { text: string }) {
+  const reduced = useReducedMotion();
+  const [shown, setShown] = useState({ text, n: 0 });
+  // text が変わったらレンダー中に 0 文字からやり直す（effect 内で同期 setState しない）
+  if (shown.text !== text) setShown({ text, n: 0 });
+
+  useEffect(() => {
+    if (!text || reduced) return;
+    let i = 0;
+    const step = Math.max(12, Math.min(38, 900 / text.length));
+    const id = setInterval(() => {
+      i += 1;
+      setShown({ text, n: i });
+      if (i >= text.length) clearInterval(id);
+    }, step);
+    return () => clearInterval(id);
+  }, [text, reduced]);
+
+  return <>{reduced ? text : text.slice(0, shown.text === text ? shown.n : 0)}</>;
 }
 
 /* ── Beats: 1エピソードをシーン見出し＋セリフの連なりに平坦化 ── */
@@ -79,6 +107,8 @@ type Beat = {
   kind: 'heading' | 'line';
   line?: DramaLine;
 };
+
+const noopSubscribe = () => () => {};
 
 function langToBcp47(lang: string): string {
   if (isLocale(lang)) return localeMeta[lang as Locale].i18nTag;
@@ -130,7 +160,12 @@ export default function DramaPlayer({ drama, lang, initialEp }: Props) {
   const [speed, setSpeed] = useState(1);
   const [showCast, setShowCast] = useState(false);
 
-  const ttsSupported = typeof window !== 'undefined' && 'speechSynthesis' in window;
+  // SSR では false、ハイドレーション後にブラウザの対応状況へ切り替える（描画差分による hydration エラーを防ぐ）
+  const ttsSupported = useSyncExternalStore(
+    noopSubscribe,
+    () => 'speechSynthesis' in window,
+    () => false
+  );
   const voicesRef = useRef<SpeechSynthesisVoice[]>([]);
 
   useEffect(() => {
@@ -225,19 +260,6 @@ export default function DramaPlayer({ drama, lang, initialEp }: Props) {
 
   // タイプライター演出
   const fullText = beat?.kind === 'line' ? beat.line?.text ?? '' : '';
-  const [typed, setTyped] = useState('');
-  useEffect(() => {
-    if (!fullText) { setTyped(''); return; }
-    setTyped('');
-    let i = 0;
-    const step = Math.max(12, Math.min(38, 900 / fullText.length));
-    const id = setInterval(() => {
-      i += 1;
-      setTyped(fullText.slice(0, i));
-      if (i >= fullText.length) clearInterval(id);
-    }, step);
-    return () => clearInterval(id);
-  }, [fullText, cursor]);
 
   const goPrev = useCallback(() => {
     if (ttsSupported) window.speechSynthesis.cancel();
@@ -455,7 +477,7 @@ export default function DramaPlayer({ drama, lang, initialEp }: Props) {
             </div>
 
             {/* 字幕（セリフ／ト書き本文） */}
-            <div className="relative z-10 w-full max-w-2xl min-h-[92px] mt-2">
+            <div className="relative z-10 w-full max-w-2xl min-h-[92px] mt-2" data-testid="drama-subtitle">
               {beat?.kind === 'line' && (
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -482,13 +504,13 @@ export default function DramaPlayer({ drama, lang, initialEp }: Props) {
                             <span className="text-stone-500 text-[13px]">（{beat.line.paren}）</span>
                           )}
                           {beat.line.paren ? ' ' : ''}
-                          {typed}
+                          <TypewriterText key={cursor} text={fullText} />
                           <span className="inline-block w-[2px] h-[1.1em] align-middle bg-stone-500 ml-0.5 animate-pulse" />
                         </p>
                       </div>
                     ) : (
                       <p className="text-center font-serif italic text-amber-100/85 text-[14px] sm:text-[15px] leading-loose px-2">
-                        {typed}
+                        <TypewriterText key={cursor} text={fullText} />
                       </p>
                     )}
                   </motion.div>
@@ -592,6 +614,7 @@ export default function DramaPlayer({ drama, lang, initialEp }: Props) {
                 </button>
               ))}
             </div>
+            <SpriteMotionToggle />
             <span className="px-2 py-1.5 font-mono text-amber-200/50">
               {cursor + 1}/{beats.length}
             </span>

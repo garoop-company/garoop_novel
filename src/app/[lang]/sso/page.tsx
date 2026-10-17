@@ -19,15 +19,13 @@ function SsoInner() {
   const searchParams = useSearchParams()
   const [error, setError] = useState(false)
   const consumed = useRef(false)
+  const missingToken = !searchParams.get("token")
 
   useEffect(() => {
     if (consumed.current) return
     const token = searchParams.get("token")
     const redirect = safeRedirect(searchParams.get("redirect"))
-    if (!token) {
-      setError(true)
-      return
-    }
+    if (!token) return
     consumed.current = true
 
     exchangeSessionTransferToken(token)
@@ -47,10 +45,10 @@ function SsoInner() {
       .catch(() => setError(true))
   }, [searchParams, router])
 
-  if (error) {
+  if (error || missingToken) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
-        <p style={{ color: "#DC2626", fontWeight: "bold" }}>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh", padding: "0 16px" }}>
+        <p style={{ color: "#DC2626", fontWeight: "bold", textAlign: "center" }}>
           ログイン引き継ぎに失敗しました。もう一度お試しください。
         </p>
       </div>

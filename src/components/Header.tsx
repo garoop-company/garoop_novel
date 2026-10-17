@@ -197,7 +197,7 @@ export default function Header() {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.2 }}
                             onClick={closeMenu}
-                            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+                            className="fixed inset-0 z-[105] bg-black/60 backdrop-blur-sm"
                             aria-hidden
                         />
 
@@ -211,7 +211,7 @@ export default function Header() {
                             animate={{ x: 0 }}
                             exit={{ x: '-100%' }}
                             transition={{ type: 'tween', duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-                            className="fixed top-0 left-0 z-60 h-full w-[88%] max-w-[320px] flex flex-col"
+                            className="fixed top-0 left-0 z-[110] h-full w-[88%] max-w-[320px] flex flex-col"
                             style={{
                                 background:
                                     'linear-gradient(180deg, #100b0a 0%, #0a0807 60%, #100b0a 100%)',
@@ -258,6 +258,7 @@ export default function Header() {
                                         <button
                                             type="button"
                                             onClick={() => { setShowPlan(true); closeMenu(); }}
+                                            aria-label={currentLocale === 'ja' ? 'プランの説明を見る' : 'View plan details'}
                                             className={`mt-1 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black tracking-[0.2em] hover:brightness-110 transition ${planUi.className}`}
                                         >
                                             <span>{planUi.emoji}</span>{planUi.label}

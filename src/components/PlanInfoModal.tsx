@@ -83,7 +83,7 @@ export function PlanInfoModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[95] flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-0 sm:p-4">
         <motion.div
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           initial={{ opacity: 0 }}

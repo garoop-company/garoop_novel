@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { HatchPet } from '@/components/BabyHatchPet';
+import SpriteMotionToggle from '@/components/SpriteMotionToggle';
 import { useHatchPetIndex } from './useHatchPets';
 import {
   HATCH_PET_STATES,
@@ -41,16 +42,12 @@ export default function HatchPetSelector({
   defaultPetId?: string;
 }) {
   const { pets, error, loading } = useHatchPetIndex(initialPets);
-  const [selectedId, setSelectedId] = useState<string | null>(defaultPetId ?? null);
+  const [pickedId, setSelectedId] = useState<string | null>(defaultPetId ?? null);
   const [state, setState] = useState<HatchPetState>('idle');
 
-  // 一覧が来たら、未選択なら defaultPetId（無ければ先頭）を選ぶ
-  useEffect(() => {
-    if (!selectedId && pets && pets.length) {
-      const fallback = pets.find((p) => p.id === defaultPetId)?.id ?? pets[0].id;
-      setSelectedId(fallback);
-    }
-  }, [pets, selectedId, defaultPetId]);
+  // 未選択なら defaultPetId（一覧に無ければ先頭）を選んだ扱いにする
+  const selectedId =
+    pickedId ?? (pets?.find((p) => p.id === defaultPetId)?.id ?? pets?.[0]?.id ?? null);
 
   const selectedEntry = pets?.find((p) => p.id === selectedId) ?? null;
 
@@ -73,6 +70,9 @@ export default function HatchPetSelector({
           boxShadow: 'inset 0 0 0 1px rgba(217,180,120,0.16), 0 30px 60px -25px rgba(0,0,0,0.7)',
         }}
       >
+        <div className="absolute top-3 right-3 z-10">
+          <SpriteMotionToggle />
+        </div>
         <div className="flex flex-col items-center gap-4">
           {/* sprite */}
           <div className="relative grid place-items-center min-h-[200px] w-full">

@@ -2,12 +2,14 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { defaultLocale, isLocale, localeMeta, type Locale } from '@/locales';
 import { localizePath } from '@/lib/locale-path';
 import { getLoginUser, getMyBabies, type GaruLoginUser, type PublicBaby } from '@/lib/baby-api';
 import BabyHatchPet, { hatchPetIdFromUrl } from '@/components/BabyHatchPet';
+
+const noopSubscribe = () => () => {};
 
 type Props = {
     novelId: string;
@@ -154,7 +156,12 @@ export default function ClientNovelView({
     // TTS
     const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
     const [ttsState, setTtsState] = useState<TtsState>('idle');
-    const ttsSupported = typeof window !== 'undefined' && 'speechSynthesis' in window;
+    // SSR では false、ハイドレーション後にブラウザの対応状況へ切り替える（描画差分による hydration エラーを防ぐ）
+    const ttsSupported = useSyncExternalStore(
+        noopSubscribe,
+        () => 'speechSynthesis' in window,
+        () => false
+    );
 
     useEffect(() => {
         if (!ttsSupported) return;

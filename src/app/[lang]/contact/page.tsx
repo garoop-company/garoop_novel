@@ -16,16 +16,16 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
 export default function ContactPage() {
     return (
         <div className="min-h-screen bg-slate-950 text-slate-100 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto bg-slate-900/70 p-8 rounded-lg shadow-md border border-slate-800">
+            <div className="max-w-3xl mx-auto bg-slate-900/70 p-5 sm:p-8 rounded-lg shadow-md border border-slate-800">
                 <h1 className="text-3xl font-bold mb-8 text-slate-100 border-b border-slate-700 pb-4">お問い合わせ</h1>
 
                 <p className="mb-6">
                     当サイトに関するお問い合わせは、以下のメールアドレスまでお願いいたします。
                 </p>
 
-                <div className="bg-slate-800/70 border border-slate-700 p-6 rounded-lg mb-8">
+                <div className="bg-slate-800/70 border border-slate-700 p-4 sm:p-6 rounded-lg mb-8">
                     <h2 className="text-lg font-bold mb-2">メールでのお問い合わせ</h2>
-                    <p className="text-xl font-mono text-amber-300">garoop.company@gmail.com</p>
+                    <p className="text-lg sm:text-xl font-mono text-amber-300 break-all">garoop.company@gmail.com</p>
                 </div>
 
                 <p className="text-sm text-slate-400">

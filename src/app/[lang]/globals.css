@@ -56,3 +56,14 @@
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
+
+/* 「うごかす」OFF・OS の動きを減らす設定では、常時ループする装飾アニメーションを止める */
+html[data-sprite-motion="off"] .animate-float {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float {
+    animation: none;
+  }
+}

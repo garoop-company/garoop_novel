@@ -1,6 +1,5 @@
 import { locales, Locale } from '@/locales';
 import { generateLocalizedMetadata } from '@/lib/seo';
-import Link from 'next/link';
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
     const { lang: rawLang } = await params;

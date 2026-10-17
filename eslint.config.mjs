@@ -1,0 +1,22 @@
+// ESLint flat config（Next 16 で `next lint` が廃止されたため ESLint CLI を直接使う）
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
+
+export default defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  globalIgnores([
+    ".next/**",
+    "out/**",
+    "build/**",
+    "node_modules/**",
+    "public/**",
+    "twa/**",
+    "jules-scratch/**",
+    "next-env.d.ts",
+    "test-results/**",
+    "playwright-report/**",
+    "blob-report/**",
+  ]),
+]);

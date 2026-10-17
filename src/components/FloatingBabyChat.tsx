@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useRef, useState, useCallback } from "react"
+import { useEffect, useRef, useState } from "react"
 import { getMyBabies, type PublicBaby } from "@/lib/baby-api"
 import { BabyChatDialog } from "./BabyChatDialog"
 import BabyHatchPet, { hatchPetIdFromUrl } from "@/components/BabyHatchPet"
+import { usePageVisible, useSpriteMotionEnabled } from "@/lib/sprite-motion"
 
 // ─────────────────────────────────────────────────────────────────────
 // Floating baby companion (v2)
@@ -113,6 +114,10 @@ const COMPANION_CSS = `
   50% { box-shadow: 0 0 0 14px rgba(251, 191, 36, 0); }
 }
 .garu-baby-dragging-glow { animation: garu-baby-glow 1s ease-out infinite; }
+html[data-sprite-motion="off"] .garu-baby-hop { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .garu-baby-hop, .garu-baby-dragging-glow { animation: none; }
+}
 `
 
 interface BabyDotProps {
@@ -121,16 +126,16 @@ interface BabyDotProps {
   hopDelay: number
   isActive: boolean
   isDragging: boolean
+  /** みんな表示モードでは アクティブ以外はタップした時だけスプライトを動かす */
+  spritePlayMode: "auto" | "tap"
   onUpdatePos: (p: Pos) => void
   onTap: () => void
   onDragStart: () => void
   onDragEnd: () => void
 }
 
-function BabyDot({ baby, pos, hopDelay, isActive, isDragging, onUpdatePos, onTap, onDragStart, onDragEnd }: BabyDotProps) {
+function BabyDot({ baby, pos, hopDelay, isActive, isDragging, spritePlayMode, onUpdatePos, onTap, onDragStart, onDragEnd }: BabyDotProps) {
   const pointerStart = useRef<{ sx: number; sy: number; ox: number; oy: number; moved: boolean } | null>(null)
-  const draggingRef = useRef(false)
-  draggingRef.current = isDragging
 
   const [runDir, setRunDir] = useState<"idle" | "running-right" | "running-left">("idle")
   const lastXRef = useRef<number | null>(null)
@@ -152,7 +157,7 @@ function BabyDot({ baby, pos, hopDelay, isActive, isDragging, onUpdatePos, onTap
       start.moved = true
       onDragStart()
     }
-    if (start.moved || draggingRef.current) {
+    if (start.moved || isDragging) {
       const prevX = lastXRef.current
       if (prevX != null) {
         const mdx = e.clientX - prevX
@@ -172,13 +177,14 @@ function BabyDot({ baby, pos, hopDelay, isActive, isDragging, onUpdatePos, onTap
     setRunDir("idle")
     if (dirTimerRef.current) window.clearTimeout(dirTimerRef.current)
     try { (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId) } catch { /* ignore */ }
-    if (draggingRef.current) {
+    if (isDragging || start?.moved) {
       onDragEnd()
       return
     }
     if (start && !start.moved) onTap()
   }
 
+  const petId = hatchPetIdFromUrl(baby.avatarUrl)
   const transition = isDragging
     ? "none"
     : "left 1.4s cubic-bezier(0.34,1.56,0.64,1), top 1.4s cubic-bezier(0.34,1.56,0.64,1)"
@@ -220,19 +226,19 @@ function BabyDot({ baby, pos, hopDelay, isActive, isDragging, onUpdatePos, onTap
       >
         <div
           className={`w-full h-full rounded-full bg-gradient-to-br ${
-            hatchPetIdFromUrl(baby.avatarUrl)
+            petId
               ? "from-white via-pink-50 to-purple-100"
               : isActive
                 ? "from-pink-300 via-pink-400 to-purple-500"
                 : "from-violet-200 via-pink-200 to-purple-300"
           } shadow-2xl flex items-center justify-center text-2xl ring-4 ${
-            hatchPetIdFromUrl(baby.avatarUrl)
+            petId
               ? (isActive ? "ring-pink-400/80" : "ring-pink-200/70")
               : (isActive ? "ring-white/85" : "ring-white/55")
           } ${isDragging ? "garu-baby-dragging-glow" : ""}`}
         >
-          {hatchPetIdFromUrl(baby.avatarUrl) ? (
-            <BabyHatchPet petId={hatchPetIdFromUrl(baby.avatarUrl)!} state={isDragging ? runDir : "idle"} size={SIZE - 6} />
+          {petId ? (
+            <BabyHatchPet petId={petId} state={isDragging ? runDir : "idle"} size={SIZE - 6} playMode={isDragging ? "auto" : spritePlayMode} />
           ) : (
             <span className="text-2xl drop-shadow">{babyEmoji(baby.animalType)}</span>
           )}
@@ -253,49 +259,45 @@ function BabyDot({ baby, pos, hopDelay, isActive, isDragging, onUpdatePos, onTap
 
 export function FloatingBabyChat() {
   const [babies, setBabies] = useState<PublicBaby[]>([])
-  const [activeId, setActiveId] = useState<string | null>(null)
+  // sessionStorage から復元（赤ちゃん取得後にしか描画しないのでハイドレーション差分は出ない）
+  const [activeId, setActiveId] = useState<string | null>(readActiveId)
   const [chatBaby, setChatBaby] = useState<PublicBaby | null>(null)
-  const [multiMode, setMultiMode] = useState(false)
-  const [positions, setPositions] = useState<Record<string, Pos>>({})
+  const [multiMode, setMultiMode] = useState(readMulti)
+  const [positions, setPositions] = useState<Record<string, Pos>>(readPositions)
   const [draggingId, setDraggingId] = useState<string | null>(null)
-
-  // 初回ロード: localStorage 復元
-  useEffect(() => {
-    setPositions(readPositions())
-    setActiveId(readActiveId())
-    setMultiMode(readMulti())
-  }, [])
-
-  const load = useCallback(async () => {
-    const isLogin = typeof window !== "undefined" && sessionStorage.getItem("isLogin") === "true"
-    if (!isLogin) return
-    const list = await getMyBabies()
-    setBabies(list)
-    setActiveId((prev) => (prev && list.find((b) => b.id === prev) ? prev : list[0]?.id ?? null))
-  }, [])
+  const motionEnabled = useSpriteMotionEnabled()
+  const pageVisible = usePageVisible()
 
   useEffect(() => {
+    let alive = true
+    // state の更新は取得完了後のコールバック内だけで行う
+    const load = () => {
+      if (sessionStorage.getItem("isLogin") !== "true") return
+      getMyBabies().then((list) => {
+        if (!alive) return
+        setBabies(list)
+        setActiveId((prev) => (prev && list.find((b) => b.id === prev) ? prev : list[0]?.id ?? null))
+        // 新しい赤ちゃんが居たら初期位置を割り当てる
+        setPositions((prev) => {
+          const next = { ...prev }
+          let changed = false
+          list.forEach((b, i) => {
+            if (!next[b.id]) {
+              next[b.id] = defaultPosFor(i)
+              changed = true
+            }
+          })
+          return changed ? next : prev
+        })
+      }).catch(() => { /* 取得失敗時は表示しない */ })
+    }
     load()
-    const onLogin = () => load()
-    window.addEventListener("garu-login", onLogin)
-    return () => window.removeEventListener("garu-login", onLogin)
-  }, [load])
-
-  // 新しい赤ちゃんが居たら初期位置を割り当てる
-  useEffect(() => {
-    if (babies.length === 0) return
-    setPositions((prev) => {
-      const next = { ...prev }
-      let changed = false
-      babies.forEach((b, i) => {
-        if (!next[b.id]) {
-          next[b.id] = defaultPosFor(i)
-          changed = true
-        }
-      })
-      return changed ? next : prev
-    })
-  }, [babies])
+    window.addEventListener("garu-login", load)
+    return () => {
+      alive = false
+      window.removeEventListener("garu-login", load)
+    }
+  }, [])
 
   useEffect(() => { writePositions(positions) }, [positions])
   useEffect(() => { writeActiveId(activeId) }, [activeId])
@@ -305,9 +307,9 @@ export function FloatingBabyChat() {
   const visibleBabies = multiMode ? babies : babies.filter((b) => b.id === activeId)
   const visibleIds = visibleBabies.map((b) => b.id).join(",")
 
-  // ゆっくりお散歩
+  // ゆっくりお散歩（「うごかす」OFF・タブ非表示の間はお休み）
   useEffect(() => {
-    if (chatBaby) return
+    if (chatBaby || !motionEnabled || !pageVisible) return
     if (visibleIds.length === 0) return
     const id = setInterval(() => {
       setPositions((prev) => {
@@ -329,7 +331,7 @@ export function FloatingBabyChat() {
       })
     }, WANDER_INTERVAL_MS)
     return () => clearInterval(id)
-  }, [visibleIds, chatBaby, draggingId])
+  }, [visibleIds, chatBaby, draggingId, motionEnabled, pageVisible])
 
   // ウィンドウリサイズで画面外に出ないように clamp
   useEffect(() => {
@@ -361,6 +363,7 @@ export function FloatingBabyChat() {
           hopDelay={(i * 230) % 1300}
           isActive={b.id === activeId}
           isDragging={draggingId === b.id}
+          spritePlayMode={multiMode && b.id !== activeId ? "tap" : "auto"}
           onUpdatePos={(p) => updatePos(b.id, p)}
           onDragStart={() => setDraggingId(b.id)}
           onDragEnd={() => setDraggingId(null)}

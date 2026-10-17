@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import type { PublicBaby } from "@/lib/baby-api"
 import BabyHatchPet, { hatchPetIdFromUrl } from "@/components/BabyHatchPet"
+import SpriteMotionToggle from "@/components/SpriteMotionToggle"
 
 const PAGE_TEXT_LIMIT = 4000
 const HISTORY_KEEP = 8
@@ -151,7 +152,7 @@ export function BabyChatDialog({
   const emoji = babyEmoji(baby.animalType)
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center p-0 sm:p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative z-10 w-full sm:max-w-md h-[100svh] sm:h-auto sm:max-h-[85svh] rounded-t-3xl sm:rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/40 shadow-2xl flex flex-col overflow-hidden border border-amber-400/30" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
         <div className="flex items-center gap-2 px-3 pt-4 pb-3 border-b border-amber-400/20 flex-shrink-0">
@@ -188,6 +189,7 @@ export function BabyChatDialog({
               </span>
             )}
           </button>
+          <SpriteMotionToggle compact className="flex-shrink-0" />
           <button
             type="button"
             onClick={onClose}

@@ -4,7 +4,8 @@
 //   pet.json: /hatch-pets/<id>/pet.json   画像: /hatch-pets/<id>/spritesheet.webp (8列x9行/基本セル192x208)
 // CORS 全許可なのでクライアント直接取得でOK。
 
-import { useEffect, useRef, useState, type CSSProperties } from "react"
+import { useEffect, useState, type CSSProperties } from "react"
+import { useSpriteAnimation } from "@/lib/sprite-motion"
 
 const HATCH_BASE = "https://data.garoop.jp"
 
@@ -62,38 +63,40 @@ type Props = {
   size?: number
   fps?: number
   paused?: boolean
+  /** auto: 「うごかす」ON の間は常時再生 / tap: タップ・ホバーした時だけ短く再生（一覧など多数表示向け） */
+  playMode?: "auto" | "tap"
   className?: string
   style?: CSSProperties
 }
 
-export function BabyHatchPet({ petId, state = "idle", size = 56, fps, paused = false, className, style }: Props) {
-  const [pet, setPet] = useState<PetData | null>(() => petCache.get(petId) ?? null)
+export function BabyHatchPet({ petId, state = "idle", size = 56, fps, paused = false, playMode = "auto", className, style }: Props) {
+  // 取得結果は petId と組で持ち、キャッシュ済みならそのまま使う（effect 内で同期 setState しない）
+  const [loaded, setLoaded] = useState<{ id: string; pet: PetData } | null>(null)
+  const pet = petCache.get(petId) ?? (loaded?.id === petId ? loaded.pet : null)
 
   useEffect(() => {
-    const cached = petCache.get(petId)
-    if (cached) { setPet(cached); return }
+    if (petCache.has(petId)) return
     let alive = true
-    setPet(null)
-    fetchPet(petId).then((p) => { if (alive) setPet(p) }).catch(() => {})
+    fetchPet(petId).then((p) => { if (alive) setLoaded({ id: petId, pet: p }) }).catch(() => {})
     return () => { alive = false }
   }, [petId])
 
   const row = pet ? rowForState(pet, state) : undefined
   const frames = Math.max(1, row?.frames ?? 1)
-  const [frame, setFrame] = useState(0)
-  const frameRef = useRef(0)
+  const scale = pet ? size / pet.atlas.cellHeight : 1
+  const cellW = pet ? pet.atlas.cellWidth * scale : size
+  const cellH = pet ? pet.atlas.cellHeight * scale : size
+  const rowIndex = row?.row ?? 0
 
-  useEffect(() => { frameRef.current = 0; setFrame(0) }, [state, petId])
-
-  useEffect(() => {
-    if (paused || !pet || frames <= 1) return
-    const rate = fps ?? STATE_FPS[state] ?? 8
-    const t = setInterval(() => {
-      frameRef.current = (frameRef.current + 1) % frames
-      setFrame(frameRef.current)
-    }, 1000 / rate)
-    return () => clearInterval(t)
-  }, [paused, pet, frames, fps, state, petId])
+  // フレーム送りは DOM を直接更新（再レンダーなし）。画面外・タブ非表示・「うごかす」OFF では止まる
+  const { ref, activate } = useSpriteAnimation({
+    frames,
+    fps: fps ?? STATE_FPS[state] ?? 8,
+    mode: playMode,
+    paused,
+    resetKey: `${petId}:${state}:${size}`,
+    position: (f) => `${-f * cellW}px ${-rowIndex * cellH}px`,
+  })
 
   if (!pet || !row) {
     return (
@@ -103,18 +106,17 @@ export function BabyHatchPet({ petId, state = "idle", size = 56, fps, paused = f
   }
 
   const { atlas } = pet
-  const scale = size / atlas.cellHeight
-  const cellW = atlas.cellWidth * scale
-  const cellH = atlas.cellHeight * scale
 
   return (
-    <div role="img" aria-label={pet.japaneseName || pet.displayName} className={className}
+    <div ref={ref} role="img" aria-label={pet.japaneseName || pet.displayName} className={className}
+      onClick={activate}
+      onPointerEnter={(e) => { if (e.pointerType === "mouse") activate() }}
       style={{
         width: cellW, height: cellH,
         backgroundImage: `url("${pet.spritesheetUrl}")`,
         backgroundRepeat: "no-repeat",
         backgroundSize: `${atlas.columns * cellW}px ${atlas.rows * cellH}px`,
-        backgroundPosition: `${-frame * cellW}px ${-row.row * cellH}px`,
+        backgroundPosition: `0px ${-row.row * cellH}px`,
         imageRendering: "auto",
         ...style,
       }} />

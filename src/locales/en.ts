@@ -10,6 +10,11 @@ export const en = {
         more: "Turn the page →",
         all_news: "Browse the shelf →",
     },
+    motion: {
+        on: "Animate",
+        off: "Pause",
+        label: "Toggle character animation",
+    },
     hero: {
         welcome: "Garoop Bunko ― Welcome to the Night Shelf",
         title: "Garoop Novel",

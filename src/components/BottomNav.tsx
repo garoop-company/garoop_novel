@@ -22,7 +22,7 @@ export default function BottomNav() {
     const pg = (path: string) => localizePath(path, currentLocale);
 
     return (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-slate-950/90 backdrop-blur-xl border-t border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.4)] px-4 pb-safe-area pt-2">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-slate-950/90 backdrop-blur-xl border-t border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.4)] px-4 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-2">
             <div className="flex justify-around items-center max-w-md mx-auto">
                 {NAV_ITEMS.map((item) => {
                     const localizedHref = pg(item.href);

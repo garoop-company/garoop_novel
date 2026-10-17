@@ -47,6 +47,7 @@ import { Suspense } from "react";
 import { BabyCompanion } from "@/components/BabyCompanion";
 import { FloatingBabyChat } from "@/components/FloatingBabyChat";
 import { RegisterServiceWorker } from "@/components/RegisterServiceWorker";
+import { MotionProvider } from "@/components/MotionProvider";
 
 export default async function RootLayout({
   children,
@@ -85,14 +86,16 @@ export default async function RootLayout({
         <Suspense fallback={null}>
           <GaPageView />
         </Suspense>
-        <Header />
-        <BabyCompanion />
-        <FloatingBabyChat />
-        <div className="flex-grow pb-20 md:pb-0">
-          {children}
-        </div>
-        <Footer lang={lang} />
-        <BottomNav />
+        <MotionProvider>
+          <Header />
+          <BabyCompanion />
+          <FloatingBabyChat />
+          <div className="flex-grow pb-20 md:pb-0">
+            {children}
+          </div>
+          <Footer lang={lang} />
+          <BottomNav />
+        </MotionProvider>
         <RegisterServiceWorker />
       </body>
     </html>

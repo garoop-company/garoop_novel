@@ -10,6 +10,11 @@ export const ja = {
         more: "つづきを読む →",
         all_news: "書架をすべて見る →",
     },
+    motion: {
+        on: "うごかす",
+        off: "とめる",
+        label: "キャラクターのアニメーションを切り替え",
+    },
     hero: {
         welcome: "Garoop 文庫 ― 夜の書架へようこそ",
         title: "Garoop Novel",

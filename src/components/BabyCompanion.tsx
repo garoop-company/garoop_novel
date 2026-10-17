@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useRef, useSyncExternalStore } from "react"
 import { getPublicBabies, getMyBabies, type PublicBaby } from "@/lib/baby-api"
 import { BabyChatDialog } from "./BabyChatDialog"
 import BabyHatchPet, { hatchPetIdFromUrl } from "@/components/BabyHatchPet"
+import SpriteMotionToggle from "@/components/SpriteMotionToggle"
 
 const ANIMAL_EMOJI: Record<string, string> = {
   cat: "🐱", dog: "🐶", rabbit: "🐰", fox: "🦊", bear: "🐻",
@@ -58,7 +59,7 @@ function BabyCard({ baby, isOwn = false, onChat }: { baby: PublicBaby; isOwn?: b
         <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl shadow-lg border-2 transition-all group-hover:scale-110 overflow-hidden
           ${isOwn ? "border-amber-400 bg-amber-400/20 animate-pulse" : "border-amber-700/40 bg-slate-800/80"}`}>
           {hatchPetIdFromUrl(baby.avatarUrl) ? (
-            <BabyHatchPet petId={hatchPetIdFromUrl(baby.avatarUrl)!} state="idle" size={46} />
+            <BabyHatchPet petId={hatchPetIdFromUrl(baby.avatarUrl)!} state="idle" size={46} playMode={isOwn ? "auto" : "tap"} />
           ) : (
             <>{babyEmoji(baby.animalType)}</>
           )}
@@ -100,29 +101,43 @@ function BabyCard({ baby, isOwn = false, onChat }: { baby: PublicBaby; isOwn?: b
   )
 }
 
+const WIDE_QUERY = "(min-width: 1440px)"
+function subscribeWide(onChange: () => void) {
+  const mq = window.matchMedia(WIDE_QUERY)
+  mq.addEventListener("change", onChange)
+  return () => mq.removeEventListener("change", onChange)
+}
+
 export function BabyCompanion() {
   const [myBabies, setMyBabies] = useState<PublicBaby[]>([])
   const [publicBabies, setPublicBabies] = useState<PublicBaby[]>([])
   const [loading, setLoading] = useState(true)
   const [chatBaby, setChatBaby] = useState<PublicBaby | null>(null)
-
-  const load = useCallback(async () => {
-    const isLogin = typeof window !== "undefined" && sessionStorage.getItem("isLogin") === "true"
-    const [pub, mine] = await Promise.all([
-      getPublicBabies(20),
-      isLogin ? getMyBabies() : Promise.resolve([]),
-    ])
-    setPublicBabies(pub)
-    setMyBabies(mine)
-    setLoading(false)
-  }, [])
+  // パネルは wide(1440px〜) だけで表示。狭い画面ではカード（pet.json 取得・スプライト）自体を描かない
+  const isWide = useSyncExternalStore(subscribeWide, () => window.matchMedia(WIDE_QUERY).matches, () => false)
 
   useEffect(() => {
+    let alive = true
+    // state の更新は取得完了後のコールバック内だけで行う
+    const load = () => {
+      const isLogin = sessionStorage.getItem("isLogin") === "true"
+      Promise.all([
+        getPublicBabies(20),
+        isLogin ? getMyBabies() : Promise.resolve([] as PublicBaby[]),
+      ]).then(([pub, mine]) => {
+        if (!alive) return
+        setPublicBabies(pub)
+        setMyBabies(mine)
+        setLoading(false)
+      }).catch(() => { if (alive) setLoading(false) })
+    }
     load()
-    const handler = () => { load() }
-    window.addEventListener("garu-login", handler)
-    return () => window.removeEventListener("garu-login", handler)
-  }, [load])
+    window.addEventListener("garu-login", load)
+    return () => {
+      alive = false
+      window.removeEventListener("garu-login", load)
+    }
+  }, [])
 
   const myBabyIds = new Set(myBabies.map(b => b.id))
   const others = publicBabies.filter(b => !myBabyIds.has(b.id))
@@ -132,9 +147,10 @@ export function BabyCompanion() {
     <>
       {/* 右サイド赤ちゃんパネル (sticky) — 本文(最大1280px)に重ならないよう、左右に
           余白が出る wide(1440px〜) でのみ表示。狭い画面では FloatingBabyChat で代替。 */}
-      <div className="hidden wide:flex fixed right-3 top-1/2 -translate-y-1/2 z-40 flex-col items-center max-h-[86vh]">
+      <div className="hidden wide:flex fixed right-3 top-1/2 -translate-y-1/2 z-40 flex-col items-center max-h-[86vh]" data-testid="baby-companion-panel">
         <div className="flex flex-col items-center gap-4 overflow-y-auto max-h-[74vh] scrollbar-none px-2 py-5 rounded-[28px] bg-slate-950/35 border border-amber-200/10 backdrop-blur-sm shadow-xl">
-          {allBabies.map(b => (
+          {isWide && allBabies.length > 0 && <SpriteMotionToggle compact />}
+          {isWide && allBabies.map(b => (
             <BabyCard key={b.id} baby={b} isOwn={myBabyIds.has(b.id)} onChat={setChatBaby} />
           ))}
           {allBabies.length === 0 && !loading && (

@@ -158,8 +158,8 @@ export default async function HomePage({
                   src="/images/garoop_novel_background.png"
                   alt=""
                   fill
+                  sizes="100vw"
                   className="object-cover blur-[3px]"
-                  priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-stone-950/85 via-stone-950/65 to-stone-950/90" />
               </div>
@@ -224,8 +224,9 @@ export default async function HomePage({
                     }}
                     className="group relative inline-flex items-center gap-3 px-9 py-4 rounded-[6px] bg-amber-300 text-stone-900 font-serif font-bold tracking-wider shadow-[0_18px_40px_-12px_rgba(217,164,97,0.55)] hover:bg-amber-200 transition-all"
                   >
-                    <span className="text-xl leading-none">📖</span>
-                    <span>{dict.hero.cta_news}</span>
+                    <span aria-hidden className="text-xl leading-none">📖</span>
+                    {/* 辞書の文言にも 📖 が入っているので二重にならないよう外す */}
+                    <span>{dict.hero.cta_news.replace(/^📖\s*/u, '')}</span>
                   </GaLink>
                 </div>
               </div>
