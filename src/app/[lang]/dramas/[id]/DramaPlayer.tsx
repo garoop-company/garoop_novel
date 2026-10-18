@@ -176,13 +176,29 @@ export default function DramaPlayer({ drama, lang, initialEp }: Props) {
     return () => window.speechSynthesis.removeEventListener('voiceschanged', populate);
   }, [ttsSupported]);
 
-  // エピソード変更時はリセット
-  useEffect(() => {
-    setCursor(0);
-    setPlaying(false);
-    if (ttsSupported) window.speechSynthesis.cancel();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [epIndex]);
+  // エピソードを切り替えたら最初から（停止して読み上げも止める）。
+  // effect ではなく切り替えの操作の中でリセットする
+  const changeEpisode = useCallback(
+    (update: (i: number) => number) => {
+      const next = update(epIndex);
+      if (next === epIndex) return;
+      setEpIndex(next);
+      setCursor(0);
+      setPlaying(false);
+      if (ttsSupported) window.speechSynthesis.cancel();
+    },
+    [epIndex, ttsSupported]
+  );
+
+  // 位置を移す。最後の場面に着いたら自動再生を止める
+  const moveTo = useCallback(
+    (next: number) => {
+      const clamped = Math.min(Math.max(0, next), beats.length - 1);
+      setCursor(clamped);
+      if (clamped >= beats.length - 1) setPlaying(false);
+    },
+    [beats.length]
+  );
 
   const beat = beats[cursor];
   const isLastBeat = cursor >= beats.length - 1;
@@ -228,13 +244,9 @@ export default function DramaPlayer({ drama, lang, initialEp }: Props) {
 
   // 自動再生エンジン
   useEffect(() => {
-    if (!playing || !beat) return;
-    if (isLastBeat) {
-      setPlaying(false);
-      return;
-    }
+    if (!playing || !beat || isLastBeat) return;
     let cancelled = false;
-    const advance = () => { if (!cancelled) setCursor((c) => Math.min(c + 1, beats.length - 1)); };
+    const advance = () => { if (!cancelled) moveTo(cursor + 1); };
 
     const text = beat.kind === 'line' ? beat.line?.text ?? '' : '';
     const speakable = beat.kind === 'line' && !!text;
@@ -256,7 +268,7 @@ export default function DramaPlayer({ drama, lang, initialEp }: Props) {
     else ms = Math.min(Math.max(text.length * 72, 1700), 8000);
     const t = setTimeout(advance, ms / speed);
     return () => { cancelled = true; clearTimeout(t); };
-  }, [playing, cursor, ttsOn, speed, beat, isLastBeat, beats.length, speak, ttsSupported]);
+  }, [playing, cursor, ttsOn, speed, beat, isLastBeat, moveTo, speak, ttsSupported]);
 
   // タイプライター演出
   const fullText = beat?.kind === 'line' ? beat.line?.text ?? '' : '';
@@ -267,8 +279,8 @@ export default function DramaPlayer({ drama, lang, initialEp }: Props) {
   }, [ttsSupported]);
   const goNext = useCallback(() => {
     if (ttsSupported) window.speechSynthesis.cancel();
-    setCursor((c) => Math.min(beats.length - 1, c + 1));
-  }, [beats.length, ttsSupported]);
+    moveTo(cursor + 1);
+  }, [cursor, moveTo, ttsSupported]);
   const togglePlay = useCallback(() => {
     if (isLastBeat && !playing) setCursor(0);
     setPlaying((p) => !p);
@@ -332,7 +344,7 @@ export default function DramaPlayer({ drama, lang, initialEp }: Props) {
             return (
               <button
                 key={ep.number}
-                onClick={() => setEpIndex(i)}
+                onClick={() => changeEpisode(() => i)}
                 className={`flex-shrink-0 px-3.5 py-2 rounded-xl border text-sm font-serif transition ${
                   active
                     ? 'text-stone-900 border-transparent shadow'
@@ -556,7 +568,7 @@ export default function DramaPlayer({ drama, lang, initialEp }: Props) {
               const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
               const p = (e.clientX - rect.left) / rect.width;
               if (ttsSupported) window.speechSynthesis.cancel();
-              setCursor(Math.round(p * (beats.length - 1)));
+              moveTo(Math.round(p * (beats.length - 1)));
             }}
           >
             <div className="h-full rounded-full" style={{ width: `${progress * 100}%`, background: drama.accent }} />
@@ -686,7 +698,7 @@ export default function DramaPlayer({ drama, lang, initialEp }: Props) {
         {/* Episode nav */}
         <div className="mt-8 flex items-center justify-between gap-3">
           <button
-            onClick={() => setEpIndex((i) => Math.max(0, i - 1))}
+            onClick={() => changeEpisode((i) => Math.max(0, i - 1))}
             disabled={epIndex === 0}
             className="px-4 py-2 rounded-full bg-stone-900/50 border border-amber-200/15 text-amber-100/80 text-sm font-serif disabled:opacity-30 hover:bg-stone-900/80"
           >
@@ -699,7 +711,7 @@ export default function DramaPlayer({ drama, lang, initialEp }: Props) {
             一覧へ
           </Link>
           <button
-            onClick={() => setEpIndex((i) => Math.min(drama.episodes.length - 1, i + 1))}
+            onClick={() => changeEpisode((i) => Math.min(drama.episodes.length - 1, i + 1))}
             disabled={epIndex === drama.episodes.length - 1}
             className="px-4 py-2 rounded-full bg-stone-900/50 border border-amber-200/15 text-amber-100/80 text-sm font-serif disabled:opacity-30 hover:bg-stone-900/80"
           >

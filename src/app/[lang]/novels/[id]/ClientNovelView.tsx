@@ -112,18 +112,17 @@ export default function ClientNovelView({
     const [myBabies, setMyBabies] = useState<PublicBaby[]>([]);
     const [authLoaded, setAuthLoaded] = useState(false);
 
-    const loadAuth = useCallback(async () => {
-        const isLogin = typeof window !== 'undefined' && sessionStorage.getItem('isLogin') === 'true';
-        if (!isLogin) {
-            setUser(null);
-            setMyBabies([]);
+    // state の更新は取得完了後のコールバック内だけで行う
+    const loadAuth = useCallback(() => {
+        const isLogin = sessionStorage.getItem('isLogin') === 'true';
+        const pending: Promise<[GaruLoginUser | null, PublicBaby[]]> = isLogin
+            ? Promise.all([getLoginUser(), getMyBabies()])
+            : Promise.resolve([null, []]);
+        return pending.then(([u, babies]) => {
+            setUser(u);
+            setMyBabies(babies ?? []);
             setAuthLoaded(true);
-            return;
-        }
-        const [u, babies] = await Promise.all([getLoginUser(), getMyBabies()]);
-        setUser(u);
-        setMyBabies(babies ?? []);
-        setAuthLoaded(true);
+        });
     }, []);
 
     useEffect(() => {
@@ -182,14 +181,13 @@ export default function ClientNovelView({
         };
     }, [page, ttsSupported]);
 
-    useEffect(() => {
-        // also reset state on page change
-        if (ttsSupported) {
-            window.speechSynthesis.cancel();
-            setTtsState('idle');
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page]);
+    // ページが変わったら読み上げ状態を戻す（読み上げ自体は上の effect の cleanup で止まる）。
+    // effect ではなくレンダー中に前回のページと比べて調整する
+    const [ttsPage, setTtsPage] = useState(page);
+    if (ttsPage !== page) {
+        setTtsPage(page);
+        setTtsState('idle');
+    }
 
     const speak = useCallback(() => {
         if (!ttsSupported) return;

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { defaultLocale, isLocale } from './locales';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
     const segments = pathname.split('/').filter(Boolean);
     const currentPrefix = segments[0];

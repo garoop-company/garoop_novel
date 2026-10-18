@@ -67,11 +67,14 @@ export function BabyChatDialog({
 
   const hasSwitcher = babies.length > 0 && !!onSelectBaby
 
-  useEffect(() => {
+  // 話し相手の赤ちゃんが変わったら会話をリセット（effect ではなくレンダー中に前回と比べて調整）
+  const [shownBabyId, setShownBabyId] = useState(baby.id)
+  if (shownBabyId !== baby.id) {
+    setShownBabyId(baby.id)
     setMessages([])
     setError(null)
     setSwitcherOpen(false)
-  }, [baby.id])
+  }
 
   useEffect(() => { inputRef.current?.focus() }, [])
   useEffect(() => {
