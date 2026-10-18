@@ -7,7 +7,8 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
-    "generate:daily-novels": "node scripts/generate-daily-novels.mjs"
+    "generate:daily-novels": "node scripts/generate-daily-novels.mjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@react-three/drei": "^10.0.0",
@@ -23,6 +24,7 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^20.0.0",
     "@types/react": "^19.0.0",

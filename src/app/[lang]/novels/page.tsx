@@ -2,18 +2,37 @@ import { locales, Locale, localeMeta, getDictionary } from '@/locales';
 import { generateLocalizedMetadata } from '@/lib/seo';
 import { localizePath } from '@/lib/locale-path';
 
-export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+export async function generateMetadata({ params, searchParams }: Props) {
   const { lang: rawLang } = await params;
   const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
   const dict = getDictionary(lang);
+  const sp = await searchParams;
+  const page = parsePage(sp.page);
+  // 絞り込み（lang/category/q）付きの一覧は 1 ページ目の素の一覧を canonical にする
+  const filtered = Boolean(sp.lang || sp.category || sp.q);
   return generateLocalizedMetadata({
-    title: `${dict.sections.latest_news.title} | Garoop Novel`,
+    title: `${dict.sections.latest_news.title}${page > 1 ? ` (${page})` : ''} | Garoop Novel`,
     description: dict.sections.latest_news.subtitle,
     lang,
     path: '/novels',
+    page: filtered ? undefined : page,
   });
 }
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import Pager from '@/components/Pager';
+import { SITE_URL } from '@/lib/seo';
+
+/** 1 ページに並べる冊数。NOVELS_PAGE_SIZE（サーバー側の環境変数）で上書きできる（E2E でページ送りを確かめる用） */
+const PAGE_SIZE = (() => {
+  const n = parseInt(process.env.NOVELS_PAGE_SIZE ?? '', 10);
+  return Number.isFinite(n) && n > 0 ? n : 24;
+})();
+
+function parsePage(raw: string | string[] | undefined): number {
+  const n = parseInt(String(Array.isArray(raw) ? raw[0] : raw ?? '1'), 10);
+  return Number.isFinite(n) && n >= 1 ? n : 1;
+}
 import { fetchJson, NOVELS_INDEX_PATH } from '@/lib/data-source';
 
 type Novel = {
@@ -40,14 +59,8 @@ type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
-const SPINE_PALETTE = [
-  { bg: 'linear-gradient(180deg,#3b1f1a 0%,#2a1410 60%,#3b1f1a 100%)', accent: '#e6c98a' },
-  { bg: 'linear-gradient(180deg,#1f2a3b 0%,#0f1828 60%,#1f2a3b 100%)', accent: '#cfa86b' },
-  { bg: 'linear-gradient(180deg,#2c2419 0%,#1a140b 60%,#2c2419 100%)', accent: '#d6b573' },
-  { bg: 'linear-gradient(180deg,#3b2a1f 0%,#241710 60%,#3b2a1f 100%)', accent: '#c89d5e' },
-  { bg: 'linear-gradient(180deg,#1f3b33 0%,#0f1f1a 60%,#1f3b33 100%)', accent: '#dcb96f' },
-  { bg: 'linear-gradient(180deg,#2a1f3b 0%,#150f24 60%,#2a1f3b 100%)', accent: '#d8b264' },
-];
+// 背表紙の色は globals.css の .novel-spine-0〜5 に定義（インライン style の重複で HTML が膨らまないように）
+const SPINE_VARIANTS = 6;
 
 const NovelsPage = async (props: Props) => {
   const { lang: rawLang } = await props.params;
@@ -79,33 +92,54 @@ const NovelsPage = async (props: Props) => {
   }
 
   // Group by category for shelf-style display
-  const grouped = new Map<string, Novel[]>();
+  const allGrouped = new Map<string, Novel[]>();
   for (const n of filtered) {
-    if (!grouped.has(n.category)) grouped.set(n.category, []);
-    grouped.get(n.category)!.push(n);
+    if (!allGrouped.has(n.category)) allGrouped.set(n.category, []);
+    allGrouped.get(n.category)!.push(n);
   }
   // Sort within each group by episodeNumber
-  for (const [, list] of grouped) {
+  for (const [, list] of allGrouped) {
     list.sort((a, b) => (a.episodeNumber ?? 0) - (b.episodeNumber ?? 0));
   }
 
-  const buildHref = (next: Partial<{ lang: string; category: string; q: string }>) => {
+  // 書架の並び順のままページ分割し、そのページ分だけを書架ごとにまとめ直す
+  const ordered = Array.from(allGrouped.values()).flat();
+  const totalPages = Math.max(1, Math.ceil(ordered.length / PAGE_SIZE));
+  const page = parsePage(searchParams.page);
+  if (page > totalPages) notFound();
+  const pageItems = ordered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const grouped = new Map<string, Novel[]>();
+  for (const n of pageItems) {
+    if (!grouped.has(n.category)) grouped.set(n.category, []);
+    grouped.get(n.category)!.push(n);
+  }
+
+  const buildHref = (next: Partial<{ lang: string; category: string; q: string; page: number }>) => {
     const params = new URLSearchParams();
     const nextLang = next.lang ?? lang;
     const nextCategory = next.category ?? category;
     const nextQ = next.q ?? q;
 
-    if (nextLang !== 'all') params.set('lang', nextLang);
+    // 言語の既定値はルートの言語。既定と同じなら付けない（'all' は明示しないと既定に戻ってしまうので付ける）
+    if (nextLang !== routeLang) params.set('lang', nextLang);
     if (nextCategory !== 'all') params.set('category', nextCategory);
     if (nextQ) params.set('q', nextQ);
+    // 絞り込みを変えたら 1 ページ目に戻る（page は明示したときだけ付ける）
+    if (next.page && next.page > 1) params.set('page', String(next.page));
 
     const qs = params.toString();
     const base = localizePath('/novels', routeLang);
     return qs ? `${base}?${qs}` : base;
   };
 
+  const pageHref = (p: number) => buildHref({ page: p });
+  const absolute = (href: string) => `${SITE_URL}${href}`;
+
   return (
     <main className="relative min-h-screen text-amber-50 overflow-x-hidden">
+      {/* ページ送りの前後関係（React が <head> に移す） */}
+      {page > 1 && <link rel="prev" href={absolute(pageHref(page - 1))} />}
+      {page < totalPages && <link rel="next" href={absolute(pageHref(page + 1))} />}
       {/* Backdrop */}
       <div className="fixed inset-0 z-[-1] overflow-hidden">
         <div
@@ -241,66 +275,37 @@ const NovelsPage = async (props: Props) => {
               <div className="flex items-baseline justify-between mb-5 border-b border-amber-200/15 pb-3">
                 <h2 className="font-serif text-2xl text-amber-50 tracking-wider">{cat}</h2>
                 <span className="font-serif text-xs text-amber-200/60 tracking-[0.25em] uppercase">
-                  {list.length} 巻
+                  {allGrouped.get(cat)?.length ?? list.length} 巻
                 </span>
               </div>
 
               {/* Shelf */}
-              <div
-                className="relative rounded-[10px] p-4 sm:p-6"
-                style={{
-                  background:
-                    'linear-gradient(180deg, rgba(60,38,22,0.5) 0%, rgba(34,21,12,0.65) 100%)',
-                  boxShadow:
-                    'inset 0 0 0 1px rgba(217,180,120,0.18), 0 25px 40px -20px rgba(0,0,0,0.6)',
-                }}
-              >
+              <div className="novel-shelf relative rounded-[10px] p-4 sm:p-6">
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
-                  {list.map((novel, i) => {
-                    const palette = SPINE_PALETTE[i % SPINE_PALETTE.length];
-                    return (
-                      <Link
-                        href={localizePath(`/novels/${novel.id}`, routeLang)}
-                        key={`${novel.id}-${novel.lang}`}
-                        className="group relative h-[260px] sm:h-[300px] rounded-[3px] overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:rotate-[-1deg]"
-                        style={{
-                          background: palette.bg,
-                          boxShadow:
-                            '0 16px 28px -12px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,220,170,0.08), inset 4px 0 8px rgba(0,0,0,0.4), inset -4px 0 8px rgba(0,0,0,0.4)',
-                        }}
-                      >
-                        <div className="absolute top-3 left-3 right-3 h-px" style={{ backgroundColor: palette.accent, opacity: 0.5 }} />
-                        <div className="absolute bottom-3 left-3 right-3 h-px" style={{ backgroundColor: palette.accent, opacity: 0.5 }} />
-
-                        <div
-                          className="absolute inset-0 flex flex-col items-center justify-between py-6 px-2 text-center"
-                          style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
-                        >
-                          <span className="font-serif text-[9px] tracking-[0.25em] uppercase" style={{ color: palette.accent, opacity: 0.85 }}>
-                            {novel.episodeNumber ? `第${novel.episodeNumber}巻` : novel.lang.toUpperCase()}
-                          </span>
-                          <h3 className="font-serif text-[13px] sm:text-sm leading-tight px-1 line-clamp-[10]" style={{ color: '#f5e9c8' }}>
-                            {novel.title}
-                          </h3>
-                          <span className="font-serif text-[9px] tracking-widest" style={{ color: palette.accent, opacity: 0.7 }}>
-                            Garoop 文庫
-                          </span>
-                        </div>
-
-                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                          style={{ background: 'linear-gradient(135deg, rgba(255,235,180,0.10) 0%, transparent 50%)' }}
-                        />
-                      </Link>
-                    );
-                  })}
+                  {list.map((novel, i) => (
+                    <Link
+                      href={localizePath(`/novels/${novel.id}`, routeLang)}
+                      key={`${novel.id}-${novel.lang}`}
+                      className={`novel-spine novel-spine-${i % SPINE_VARIANTS} group relative h-[260px] sm:h-[300px] rounded-[3px] overflow-hidden transition-transform duration-300 hover:-translate-y-2 hover:rotate-[-1deg]`}
+                    >
+                      <div className="novel-spine-rule top-3" />
+                      <div className="novel-spine-rule bottom-3" />
+                      <div className="novel-spine-body absolute inset-0 flex flex-col items-center justify-between py-6 px-2 text-center">
+                        <span className="novel-spine-accent font-serif text-[9px] tracking-[0.25em] uppercase opacity-85">
+                          {novel.episodeNumber ? `第${novel.episodeNumber}巻` : novel.lang.toUpperCase()}
+                        </span>
+                        <h3 className="novel-spine-title font-serif text-[13px] sm:text-sm leading-tight px-1 line-clamp-[10]">
+                          {novel.title}
+                        </h3>
+                        <span className="novel-spine-accent font-serif text-[9px] tracking-widest opacity-70">
+                          Garoop 文庫
+                        </span>
+                      </div>
+                      <div className="novel-spine-shine absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    </Link>
+                  ))}
                 </div>
-                <div
-                  className="mt-4 h-3 rounded"
-                  style={{
-                    background: 'linear-gradient(180deg, #3b2418 0%, #1f140c 100%)',
-                    boxShadow: '0 6px 14px rgba(0,0,0,0.6)',
-                  }}
-                />
+                <div className="novel-shelf-board mt-4 h-3 rounded" />
               </div>
 
               {/* Synopsis cards beneath each shelf */}
@@ -311,15 +316,7 @@ const NovelsPage = async (props: Props) => {
                     key={`syn-${novel.id}-${novel.lang}`}
                     className="group block"
                   >
-                    <article
-                      className="relative h-full rounded-[6px] p-5 transition-all duration-300 hover:-translate-y-0.5"
-                      style={{
-                        background:
-                          'linear-gradient(180deg, rgba(245,228,191,0.04) 0%, rgba(245,228,191,0.01) 100%)',
-                        boxShadow:
-                          'inset 0 0 0 1px rgba(217,180,120,0.16)',
-                      }}
-                    >
+                    <article className="novel-synopsis relative h-full rounded-[6px] p-5 transition-all duration-300 hover:-translate-y-0.5">
                       <div className="flex items-start gap-3">
                         <span className="font-serif text-amber-200/70 text-[11px] tracking-[0.25em] uppercase mt-1">
                           {novel.episodeNumber ? `Vol.${String(novel.episodeNumber).padStart(2, '0')}` : '—'}
@@ -340,6 +337,7 @@ const NovelsPage = async (props: Props) => {
             </div>
           ))
         )}
+        <Pager current={page} total={totalPages} hrefFor={pageHref} labels={dict.pager} />
       </section>
     </main>
   );

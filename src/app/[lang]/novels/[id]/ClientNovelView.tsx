@@ -15,7 +15,9 @@ type Props = {
     novelId: string;
     title: string;
     category: string;
-    content: string[];
+    /** 表示中のページ本文だけ（全ページをクライアントへ送らない） */
+    pageContent: string;
+    totalPages: number;
     companionLines?: string[];
     page: number;
     lang: string;
@@ -90,14 +92,14 @@ export default function ClientNovelView({
     novelId,
     title,
     category,
-    content,
+    pageContent,
+    totalPages,
     companionLines,
     page,
     lang,
     sourceVideoUrl,
 }: Props) {
-    const totalPages = content.length;
-    const currentPageContent = content[page - 1] ?? '';
+    const currentPageContent = pageContent;
     const hasPrevPage = page > 1;
     const hasNextPage = page < totalPages;
     const isFirst = page === 1;

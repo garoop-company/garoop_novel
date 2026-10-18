@@ -10,6 +10,12 @@ export const ja = {
         more: "つづきを読む →",
         all_news: "書架をすべて見る →",
     },
+    pager: {
+        nav: "ページ送り",
+        prev: "まえのページ",
+        next: "つぎのページ",
+        page: "{n}ページ目",
+    },
     motion: {
         on: "うごかす",
         off: "とめる",

@@ -10,6 +10,12 @@ export const en = {
         more: "Turn the page →",
         all_news: "Browse the shelf →",
     },
+    pager: {
+        nav: "Pagination",
+        prev: "Previous page",
+        next: "Next page",
+        page: "Page {n}",
+    },
     motion: {
         on: "Animate",
         off: "Pause",

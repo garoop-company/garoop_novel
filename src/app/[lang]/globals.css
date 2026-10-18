@@ -67,3 +67,49 @@ html[data-sprite-motion="off"] .animate-float {
     animation: none;
   }
 }
+
+/* 小説一覧（/novels）の書架。カードごとのインライン style を共通クラスにまとめて HTML を軽くする */
+.novel-shelf {
+  background: linear-gradient(180deg, rgba(60, 38, 22, 0.5) 0%, rgba(34, 21, 12, 0.65) 100%);
+  box-shadow: inset 0 0 0 1px rgba(217, 180, 120, 0.18), 0 25px 40px -20px rgba(0, 0, 0, 0.6);
+}
+.novel-shelf-board {
+  background: linear-gradient(180deg, #3b2418 0%, #1f140c 100%);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+}
+.novel-spine {
+  background: var(--spine-bg);
+  box-shadow: 0 16px 28px -12px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 220, 170, 0.08),
+    inset 4px 0 8px rgba(0, 0, 0, 0.4), inset -4px 0 8px rgba(0, 0, 0, 0.4);
+}
+.novel-spine-0 { --spine-bg: linear-gradient(180deg, #3b1f1a 0%, #2a1410 60%, #3b1f1a 100%); --spine-accent: #e6c98a; }
+.novel-spine-1 { --spine-bg: linear-gradient(180deg, #1f2a3b 0%, #0f1828 60%, #1f2a3b 100%); --spine-accent: #cfa86b; }
+.novel-spine-2 { --spine-bg: linear-gradient(180deg, #2c2419 0%, #1a140b 60%, #2c2419 100%); --spine-accent: #d6b573; }
+.novel-spine-3 { --spine-bg: linear-gradient(180deg, #3b2a1f 0%, #241710 60%, #3b2a1f 100%); --spine-accent: #c89d5e; }
+.novel-spine-4 { --spine-bg: linear-gradient(180deg, #1f3b33 0%, #0f1f1a 60%, #1f3b33 100%); --spine-accent: #dcb96f; }
+.novel-spine-5 { --spine-bg: linear-gradient(180deg, #2a1f3b 0%, #150f24 60%, #2a1f3b 100%); --spine-accent: #d8b264; }
+.novel-spine-rule {
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  height: 1px;
+  background-color: var(--spine-accent);
+  opacity: 0.5;
+}
+.novel-spine-body {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+.novel-spine-accent {
+  color: var(--spine-accent);
+}
+.novel-spine-title {
+  color: #f5e9c8;
+}
+.novel-spine-shine {
+  background: linear-gradient(135deg, rgba(255, 235, 180, 0.1) 0%, transparent 50%);
+}
+.novel-synopsis {
+  background: linear-gradient(180deg, rgba(245, 228, 191, 0.04) 0%, rgba(245, 228, 191, 0.01) 100%);
+  box-shadow: inset 0 0 0 1px rgba(217, 180, 120, 0.16);
+}

@@ -196,7 +196,8 @@ export default async function Page(props: Props) {
         novelId={novel.id}
         title={novel.title}
         category={novel.category}
-        content={content}
+        pageContent={content[page - 1] ?? ''}
+        totalPages={content.length}
         companionLines={companionLines}
         page={page}
         lang={novel.lang}

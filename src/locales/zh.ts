@@ -10,6 +10,12 @@ export const zh = {
         more: "翻到下一页 →",
         all_news: "浏览整个书架 →",
     },
+    pager: {
+        nav: "分页",
+        prev: "上一页",
+        next: "下一页",
+        page: "第{n}页",
+    },
     motion: {
         on: "动起来",
         off: "停止",
