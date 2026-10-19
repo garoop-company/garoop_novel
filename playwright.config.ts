@@ -46,6 +46,8 @@ export default defineConfig({
     stdout: "ignore",
     stderr: "pipe",
     // 小説は現在 19 冊で既定の 24 冊/ページだと 1 ページに収まるため、E2E では 8 冊/ページにしてページ送りを確かめる
-    env: { NOVELS_PAGE_SIZE: "8" },
+    // RECAPTCHA_SECRET は空にして、E2E 中にサーバーから Google へ問い合わせないようにする
+    // （判定ロジックは e2e/recaptcha-api.spec.ts で fetch を差し替えて確かめる）
+    env: { NOVELS_PAGE_SIZE: "8", RECAPTCHA_SECRET: "" },
   },
 });

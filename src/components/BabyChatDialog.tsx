@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react"
 import type { PublicBaby } from "@/lib/baby-api"
 import BabyHatchPet, { hatchPetIdFromUrl } from "@/components/BabyHatchPet"
 import SpriteMotionToggle from "@/components/SpriteMotionToggle"
+import RecaptchaNotice from "@/components/RecaptchaNotice"
+import { preloadRecaptcha, recaptchaHeaders, RECAPTCHA_FAILED } from "@/lib/recaptcha"
 
 const PAGE_TEXT_LIMIT = 4000
 const HISTORY_KEEP = 8
@@ -77,6 +79,8 @@ export function BabyChatDialog({
   }
 
   useEffect(() => { inputRef.current?.focus() }, [])
+  // reCAPTCHA はチャットを開いたときだけ読む（送信時の待ち時間を減らす）
+  useEffect(() => { preloadRecaptcha() }, [])
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" })
   }, [messages.length, loading])
@@ -102,7 +106,7 @@ export function BabyChatDialog({
       const url = "/api/chat-with-baby"
       const res = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...(await recaptchaHeaders("chat")) },
         signal: controller.signal,
         body: JSON.stringify({
           baby: {
@@ -121,6 +125,7 @@ export function BabyChatDialog({
       if (!res.ok) {
         const detail = await res.text().catch(() => "")
         console.warn("[BabyChatDialog]", url, "HTTP", res.status, detail)
+        if (res.status === 403 && detail.includes(RECAPTCHA_FAILED)) throw new Error(RECAPTCHA_FAILED)
         throw new Error(`HTTP ${res.status}`)
       }
       const data = await res.json().catch(() => null)
@@ -135,6 +140,8 @@ export function BabyChatDialog({
       const msg =
         e instanceof Error && e.name === "AbortError"
           ? "じかんがかかりすぎちゃった…もういちど話しかけてね"
+          : e instanceof Error && e.message === RECAPTCHA_FAILED
+            ? "いまはおへんじできないよ…すこしまってね"
           : e instanceof TypeError
             ? "ネットにつながってないみたい…回線をたしかめてね"
             : "おへんじがうまく返ってこなかったよ…もう一度ためしてね"
@@ -334,6 +341,7 @@ export function BabyChatDialog({
             送る
           </button>
         </div>
+        <RecaptchaNotice className="flex-shrink-0 px-3 pb-1.5 text-center text-amber-200" />
       </div>
     </div>
   )

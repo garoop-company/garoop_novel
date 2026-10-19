@@ -13,14 +13,18 @@
  */
 
 // サイトキーは公開される値（ページの HTML に出る）なので既定値をここに置く。
-// シークレットキーは kids_api の環境変数 RECAPTCHA_SECRET にだけ置くこと。
+// シークレットキーはサーバーの環境変数 RECAPTCHA_SECRET にだけ置くこと（kids_api と、このサイトの /api/chat-with-baby）。
+// リポジトリ・ドキュメント・テストには絶対に書かない。
 export const RECAPTCHA_SITE_KEY =
-  process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6LcUzuctAAAAAF59gtgAtPj4bLvFzWAKj6r01WHd"
+  process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6LfJLPYtAAAAAHZEcASIof6DA1EJy568OrePNZKu"
 
 export const RECAPTCHA_HEADER = "X-Recaptcha-Token"
 
 /** kids_api の graph/recaptcha_helpers.go と同じ名前にすること */
-export type RecaptchaAction = "login" | "signup" | "forgot_password" | "reset_password"
+export type KidsApiRecaptchaAction = "login" | "signup" | "forgot_password" | "reset_password"
+/** このサイト自身の API ルートで判定する操作（src/lib/recaptcha-server.ts） */
+export type LocalRecaptchaAction = "chat"
+export type RecaptchaAction = KidsApiRecaptchaAction | LocalRecaptchaAction
 
 type Grecaptcha = {
   ready: (cb: () => void) => void

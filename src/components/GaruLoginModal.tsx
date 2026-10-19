@@ -6,6 +6,7 @@ import {
   type GaruLoginUser,
 } from "@/lib/baby-api"
 import { preloadRecaptcha, RECAPTCHA_FAILED, RECAPTCHA_FAILED_MESSAGE } from "@/lib/recaptcha"
+import RecaptchaNotice from "@/components/RecaptchaNotice"
 
 type View = "login" | "register" | "forgotPassword"
 
@@ -354,6 +355,7 @@ export function GaruLoginModal({ onClose, onLogin }: {
                 }
               </div>
             )}
+            <RecaptchaNotice className="text-[#8a7687] text-center" />
           </div>
         </div>
       </div>

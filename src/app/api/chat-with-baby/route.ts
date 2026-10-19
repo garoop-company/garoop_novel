@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server"
+import { RECAPTCHA_FAILED, RECAPTCHA_HEADER } from "@/lib/recaptcha"
+import { verifyRecaptcha } from "@/lib/recaptcha-server"
 
 const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 const DEFAULT_GROQ_MODELS = [
@@ -108,6 +110,12 @@ export async function POST(req: Request) {
 
     if (!body?.message || typeof body.message !== "string") {
       return NextResponse.json({ error: "Invalid message" }, { status: 400 })
+    }
+
+    // reCAPTCHA v3（RECAPTCHA_ENFORCE=1 のときだけ止める。Groq を呼ぶ前に判定してコストを守る）
+    const verdict = await verifyRecaptcha(req.headers.get(RECAPTCHA_HEADER), "chat")
+    if (!verdict.allowed) {
+      return NextResponse.json({ error: RECAPTCHA_FAILED }, { status: 403 })
     }
 
     const apiKey = process.env.GROQ_API_KEY
