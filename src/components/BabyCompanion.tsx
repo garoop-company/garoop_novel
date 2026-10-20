@@ -2,9 +2,12 @@
 
 import { useState, useEffect, useRef, useSyncExternalStore } from "react"
 import { getPublicBabies, getMyBabies, type PublicBaby } from "@/lib/baby-api"
-import { BabyChatDialog } from "./BabyChatDialog"
 import BabyHatchPet, { hatchPetIdFromUrl } from "@/components/BabyHatchPet"
 import SpriteMotionToggle from "@/components/SpriteMotionToggle"
+import dynamic from "next/dynamic"
+
+// チャット画面は赤ちゃんを押したときだけ要るので、初回の JS から外して後から読む
+const BabyChatDialog = dynamic(() => import("./BabyChatDialog").then((m) => m.BabyChatDialog))
 
 const ANIMAL_EMOJI: Record<string, string> = {
   cat: "🐱", dog: "🐶", rabbit: "🐰", fox: "🦊", bear: "🐻",

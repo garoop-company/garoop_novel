@@ -10,7 +10,14 @@ const nextConfig = {
     ],
   },
   async headers() {
+    // public/ の画像は名前にハッシュが付かないので immutable にはせず、
+    // 1 日は端末に置き、その後 1 週間は古い物を出しつつ裏で取り直す。
+    const staticAssetCache = [
+      { key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' },
+    ];
     return [
+      { source: '/images/:path*', headers: staticAssetCache },
+      { source: '/:file(icon-192|icon-512|icon-maskable-512|garuchan).:ext(png|webp)', headers: staticAssetCache },
       {
         // Service Worker は毎回取り直させる。長く溜められると、
         // sw.js を直しても利用者の端末で古い版が動き続ける。

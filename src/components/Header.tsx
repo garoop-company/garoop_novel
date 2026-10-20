@@ -1,14 +1,17 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import { useState, useEffect, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getDictionary } from '@/locales';
 import LanguageSwitcher from './LanguageSwitcher';
 import { detectLocaleFromPathname, localizePath } from '@/lib/locale-path';
-import { GaruLoginModal } from './GaruLoginModal';
-import { PlanInfoModal } from './PlanInfoModal';
+// ログイン・プラン説明のモーダルは押されたときだけ要るので、初回の JS から外して後から読む
+const GaruLoginModal = dynamic(() => import('./GaruLoginModal').then((m) => m.GaruLoginModal));
+const PlanInfoModal = dynamic(() => import('./PlanInfoModal').then((m) => m.PlanInfoModal));
 import { clearClientAuthSession, getLoginUser, getPlanUi, logoutUser, type GaruLoginUser } from '@/lib/baby-api';
 
 export default function Header() {
@@ -112,12 +115,17 @@ export default function Header() {
                         </div>
                     </button>
 
-                    {/* Logo */}
-                    <Link href={pg('/')} className="flex items-center gap-2 group">
-                        <div className="w-9 h-9 rounded-full flex items-center justify-center text-xl text-amber-200 border border-amber-300/30 bg-amber-400/10">
-                            🕯️
-                        </div>
-                        <span className="font-serif text-lg sm:text-xl font-bold text-amber-100 tracking-wider group-hover:text-amber-200 transition-colors">
+                    {/* Logo（サイト名の左にロゴを 1 つだけ置く） */}
+                    <Link href={pg('/')} className="flex min-w-0 items-center gap-2.5 group">
+                        <Image
+                            src="/icon-192.webp"
+                            alt=""
+                            width={32}
+                            height={32}
+                            preload
+                            className="h-8 w-8 shrink-0 rounded-lg object-cover ring-1 ring-amber-300/30 group-hover:ring-amber-200/60 transition-shadow"
+                        />
+                        <span className="truncate font-serif text-lg sm:text-xl font-bold leading-none text-amber-100 tracking-wider group-hover:text-amber-200 transition-colors">
                             {dict.hero.title}
                         </span>
                     </Link>

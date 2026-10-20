@@ -62,6 +62,9 @@ export default async function RootLayout({
     <html lang={lang}>
       <head>
         <meta name="icon" content="/favicon.ico" />
+        {/* globals.css の @import で読む Google Fonts へ、CSS を待たずに先に接続しておく */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {GA_MEASUREMENT_ID ? (
           <>
             <Script

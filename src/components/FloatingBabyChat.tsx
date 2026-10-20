@@ -2,9 +2,12 @@
 
 import { useEffect, useRef, useState } from "react"
 import { getMyBabies, type PublicBaby } from "@/lib/baby-api"
-import { BabyChatDialog } from "./BabyChatDialog"
 import BabyHatchPet, { hatchPetIdFromUrl } from "@/components/BabyHatchPet"
 import { usePageVisible, useSpriteMotionEnabled } from "@/lib/sprite-motion"
+import dynamic from "next/dynamic"
+
+// チャット画面は赤ちゃんを押したときだけ要るので、初回の JS から外して後から読む
+const BabyChatDialog = dynamic(() => import("./BabyChatDialog").then((m) => m.BabyChatDialog))
 
 // ─────────────────────────────────────────────────────────────────────
 // Floating baby companion (v2)
