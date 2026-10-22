@@ -1,5 +1,5 @@
 import { locales, Locale, localeMeta, getDictionary } from '@/locales';
-import { generateLocalizedMetadata } from '@/lib/seo';
+import { generateLocalizedMetadata, JA_ONLY } from '@/lib/seo';
 import { localizePath } from '@/lib/locale-path';
 
 export async function generateMetadata({ params, searchParams }: Props) {
@@ -16,6 +16,8 @@ export async function generateMetadata({ params, searchParams }: Props) {
     lang,
     path: '/novels',
     page: filtered ? undefined : page,
+    // 書架の見出し以外（説明文・ボタン）と並ぶ作品は日本語だけなので、日本語版を canonical にする
+    availableLocales: JA_ONLY,
   });
 }
 import Link from 'next/link';

@@ -7,9 +7,11 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     const { lang: rawLang } = await params;
     const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
 
+    // 本文は辞書で訳してあるので、タイトル・説明も言語ごとに変える（全言語で同じだと重複扱いされる）
+    const dict = getDictionary(lang);
     return generateLocalizedMetadata({
-        title: 'よくある質問 | Garoop Novel',
-        description: 'Garoop Novelに関するよくある質問にお答えします。AI小説や運営について。',
+        title: `${dict.faq.title} | Garoop Novel`,
+        description: dict.faq.description,
         lang,
         path: '/faq',
     });

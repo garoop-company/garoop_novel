@@ -1,6 +1,20 @@
 import Link from 'next/link';
 import GaLink from '@/components/GaLink';
 import { fetchJson, VIDEOS_INDEX_PATH } from '@/lib/data-source';
+import { locales, Locale } from '@/locales';
+import { generateLocalizedMetadata, JA_ONLY } from '@/lib/seo';
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang: rawLang } = await params;
+  const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
+  return generateLocalizedMetadata({
+    title: 'Featured Videos ── 厳選動画 | Garoop Novel',
+    description: '厳選された動画コンテンツをお楽しみください。Garoop Novel がおすすめする動画の一覧です。',
+    lang,
+    path: '/videos',
+    availableLocales: JA_ONLY,
+  });
+}
 
 type Video = {
   id: string;

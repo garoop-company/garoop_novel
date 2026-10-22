@@ -1,5 +1,5 @@
 import { locales, Locale } from '@/locales';
-import { generateLocalizedMetadata } from '@/lib/seo';
+import { generateLocalizedMetadata, JA_ONLY } from '@/lib/seo';
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
     const { lang: rawLang } = await params;
@@ -10,6 +10,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
         description: 'Garoop Novelの運営者情報。サイトの目的や運営者について紹介します。',
         lang,
         path: '/about',
+        availableLocales: JA_ONLY,
     });
 }
 

@@ -11,7 +11,9 @@ export function proxy(request: NextRequest) {
             const redirectUrl = request.nextUrl.clone();
             const rest = segments.slice(1).join('/');
             redirectUrl.pathname = rest ? `/${rest}` : '/';
-            return NextResponse.redirect(redirectUrl);
+            // 既定言語の接頭辞（/ja/...）は恒久的に外す。307（一時）だと検索エンジンが
+            // /ja/... を別 URL として持ち続けるので 308（恒久）にする。
+            return NextResponse.redirect(redirectUrl, 308);
         }
         return NextResponse.next();
     }

@@ -83,7 +83,6 @@ export default async function HomePage({
         <div className="absolute top-[60%] right-[10%] w-72 h-28 bg-rose-300/10 blur-3xl rounded-full animate-float opacity-40" style={{ animationDuration: '10s', animationDelay: '1.5s' }} />
       </div>
 
-      <link rel="canonical" href={`${SITE_URL}${localizePath('/', lang)}`} />
       <Script
         id="structured-data"
         type="application/ld+json"

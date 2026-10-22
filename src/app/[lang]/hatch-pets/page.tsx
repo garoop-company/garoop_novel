@@ -1,5 +1,5 @@
 import { locales, Locale } from '@/locales';
-import { generateLocalizedMetadata } from '@/lib/seo';
+import { generateLocalizedMetadata, JA_ONLY } from '@/lib/seo';
 import { fetchHatchPetIndex, type HatchPetIndexEntry } from '@/lib/hatch-pets';
 import HatchPetSelector from '@/components/hatch-pet/HatchPetSelector';
 
@@ -12,6 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       'ガルちゃんたち Hatch Pet が動き出す。好きなペットを選んで、待機・ジャンプ・手をふる・おしごと…いろんな動きを楽しめるアニメーション図鑑。',
     lang,
     path: '/hatch-pets',
+    availableLocales: JA_ONLY,
     image: '/images/dramas/garuchan/portrait.webp',
   });
 }

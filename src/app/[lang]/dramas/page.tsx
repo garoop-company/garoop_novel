@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { locales, Locale } from '@/locales';
-import { generateLocalizedMetadata } from '@/lib/seo';
+import { generateLocalizedMetadata, JA_ONLY } from '@/lib/seo';
 import { localizePath } from '@/lib/locale-path';
 import { getAllDramas } from '@/lib/dramas';
 
@@ -14,6 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
       'カンガルーのガルちゃんが主演する本格スパイ・ドラマ「スパイ・ガルーン」。動物たちが繰り広げる60分×8話のサスペンスを、アニメーションで再生して楽しめます。',
     lang,
     path: '/dramas',
+    availableLocales: JA_ONLY,
   });
 }
 

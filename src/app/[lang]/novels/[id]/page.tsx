@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import ClientNovelView from './ClientNovelView';
-import { locales, Locale, localeMeta } from '@/locales';
+import { locales, Locale, localeMeta, defaultLocale, isLocale } from '@/locales';
 import { localizePath } from '@/lib/locale-path';
 import { fetchJson, NOVELS_INDEX_PATH, chapterPath } from '@/lib/data-source';
 
@@ -35,6 +35,22 @@ async function getNovelById(id: string, lang: string): Promise<Novel | undefined
     novels.find((n) => n.id === id && n.lang === 'ja') ??
     novels.find((n) => n.id === id)
   );
+}
+
+/** その作品の本文が用意されている言語（novels.json に載っている言語だけ） */
+async function getNovelLocales(id: string): Promise<Locale[]> {
+  const novels = await getNovels();
+  const found = novels
+    .filter((n) => n.id === id)
+    .map((n) => n.lang)
+    .filter((l): l is Locale => isLocale(l));
+  return Array.from(new Set(found));
+}
+
+/** 本文のある言語で開かれていなければ、本文の言語（＝canonical の言語）を返す */
+function contentLocale(lang: Locale, available: Locale[]): Locale {
+  if (available.length === 0 || available.includes(lang)) return lang;
+  return available.includes(defaultLocale) ? defaultLocale : available[0];
 }
 
 async function getChapter(novel: Novel): Promise<{ pages: string[]; companionLines: string[] }> {
@@ -90,6 +106,8 @@ export async function generateMetadata(props: {
     path: `/novels/${novel.id}`,
     type: 'article',
     page,
+    // 本文の無い言語の URL（/en/novels/... で日本語本文を出している）は、本文の言語へ canonical を向ける
+    availableLocales: await getNovelLocales(novel.id),
   });
 }
 
@@ -111,7 +129,9 @@ export default async function Page(props: Props) {
   if (isNaN(page) || page < 1) page = 1;
   if (page > content.length) page = content.length;
 
-  const canonical = `${SITE_URL}${localizePath(`/novels/${novel.id}`, lang)}${page > 1 ? `?page=${page}` : ''}`;
+  // canonical は generateMetadata（generateLocalizedMetadata）と同じ規則で決める
+  const canonicalLang = contentLocale(lang, await getNovelLocales(novel.id));
+  const canonical = `${SITE_URL}${localizePath(`/novels/${novel.id}`, canonicalLang)}${page > 1 ? `?page=${page}` : ''}`;
 
   // Prev / Next（複数ページ記事向け：クロール導線を明確化）
   const prevHref = page > 1 ? `${SITE_URL}${localizePath(`/novels/${novel.id}`, lang)}?page=${page - 1}` : null;
@@ -181,8 +201,7 @@ export default async function Page(props: Props) {
 
   return (
     <div className="bg-slate-950 min-h-screen text-slate-100 flex flex-col items-center p-4 sm:p-8 relative overflow-hidden">
-      {/* Prev/Next/Canonical 明示（head要素にリンク出力） */}
-      <link rel="canonical" href={canonical} />
+      {/* Prev/Next 明示（head要素にリンク出力）。canonical は generateMetadata が出すのでここでは出さない（二重になる） */}
       {prevHref && <link rel="prev" href={prevHref} />}
       {nextHref && <link rel="next" href={nextHref} />}
 

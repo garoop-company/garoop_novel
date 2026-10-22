@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { locales, Locale, localeMeta } from '@/locales';
 import { localizePath } from '@/lib/locale-path';
-import { generateLocalizedMetadata, SITE_URL } from '@/lib/seo';
+import { generateLocalizedMetadata, JA_ONLY, SITE_URL } from '@/lib/seo';
 import { getAllDramas, getDramaById } from '@/lib/dramas';
 import DramaPlayer from './DramaPlayer';
 
@@ -30,6 +30,7 @@ export async function generateMetadata(props: {
     path: `/dramas/${drama.id}`,
     type: 'article',
     image: '/images/dramas/garuchan/portrait.webp',
+    availableLocales: JA_ONLY,
   });
 }
 
@@ -49,7 +50,8 @@ export default async function DramaDetailPage(props: Props) {
   if (isNaN(epNumber) || epNumber < 1) epNumber = 1;
   if (epNumber > drama.episodes.length) epNumber = drama.episodes.length;
 
-  const canonical = `${SITE_URL}${localizePath(`/dramas/${drama.id}`, lang)}`;
+  // 台本は日本語だけなので、どの言語で開かれても canonical は日本語版（generateMetadata と同じ）
+  const canonical = `${SITE_URL}${localizePath(`/dramas/${drama.id}`, 'ja')}`;
 
   const jsonLdSeries = {
     '@context': 'https://schema.org',
@@ -85,7 +87,6 @@ export default async function DramaDetailPage(props: Props) {
 
   return (
     <>
-      <link rel="canonical" href={canonical} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSeries) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }} />
       <DramaPlayer drama={drama} lang={lang} initialEp={epNumber} />

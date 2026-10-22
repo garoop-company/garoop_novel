@@ -16,8 +16,14 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
     path: '/',
   });
 
+  // canonical・hreflang・og:url はページごとに決める。レイアウトで持つと、
+  // generateMetadata の無いページ（videos・sso など）がトップページの canonical を
+  // 引き継いでしまい、Search Console で「代替ページ（適切な canonical タグあり）」になる。
+  const { alternates: _alternates, openGraph, ...rest } = metadata;
+  void _alternates;
   return {
-    ...metadata,
+    ...rest,
+    openGraph: openGraph ? { ...openGraph, url: undefined } : undefined,
     applicationName: 'Garoop Novel',
     // iOS で「ホーム画面に追加」したときの表示。
     // manifest（src/app/manifest.ts）は iOS では一部しか読まれないので、こちらでも指定する。
