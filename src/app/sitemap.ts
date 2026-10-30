@@ -5,6 +5,7 @@ import { fetchJson, NOVELS_INDEX_PATH } from '@/lib/data-source'
 import { PREFECTURES } from '@/lib/area/prefectures'
 import { CITIES } from '@/lib/area/cities'
 import { getAllDramas } from '@/lib/dramas'
+import { posts } from '@/lib/blog'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const siteUrl = 'https://novel.garoop.jp'
@@ -40,6 +41,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             lastModified: new Date(),
             changeFrequency: page === '/novels' ? 'weekly' : 'monthly',
             priority: page === '/novels' ? 0.9 : 0.5,
+        })
+    }
+    for (const path of ['/blog', ...posts.map((post) => `/blog/${post.slug}`)]) {
+        entries.push({
+            url: `${siteUrl}${path}`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: path === '/blog' ? 0.7 : 0.6,
         })
     }
     for (const drama of getAllDramas()) {

@@ -30,6 +30,9 @@ export default function Footer({ lang = 'ja' }: FooterProps) {
                         <Link href={pg('/faq')} className="hover:text-amber-200 transition-colors">
                             {dict.common.faq}
                         </Link>
+                        <Link href={pg('/blog')} className="hover:text-amber-200 transition-colors">
+                            {lang === 'ja' ? 'ブログ' : 'Blog'}
+                        </Link>
                         <Link href={pg('/privacy')} className="hover:text-amber-200 transition-colors">
                             {dict.common.privacy}
                         </Link>
