@@ -79,6 +79,12 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
                             p: 'leading-8',
                             ul: 'list-disc space-y-2 pl-6 leading-7',
                             quote: 'border-l-4 border-slate-700 bg-slate-800 px-4 py-3 text-sm leading-7 text-slate-100 rounded',
+                            source: 'grid gap-2',
+                            sourceLabel: 'text-xs font-bold tracking-widest text-slate-400',
+                            card: 'flex items-center gap-4 rounded-2xl border border-slate-700 bg-slate-900 p-4 no-underline transition hover:border-amber-200/60',
+                            cardIcon: 'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-slate-800 text-lg font-bold text-amber-200',
+                            cardSite: 'block truncate text-xs text-slate-400',
+                            cardTitle: 'mt-1 block font-bold leading-snug text-slate-100',
                         }}
                     />
                 </div>
