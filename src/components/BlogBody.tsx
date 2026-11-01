@@ -1,4 +1,6 @@
 import { Fragment, type ReactNode } from 'react';
+import OgImage from '@/components/OgImage';
+import { getOgp } from '@/lib/ogp';
 
 type Source = { url: string; title: string; publisher?: string; note?: string };
 
@@ -97,7 +99,31 @@ export type BlogBodyClassNames = {
     cardIcon: string;
     cardSite: string;
     cardTitle: string;
+    cardDesc: string;
+    cardImage: string;
 };
+
+/* 出典カード。X・LINE・note のリンクのように、出典ページの OGP 画像と説明があれば並べる */
+async function SourceCard({ source, classNames }: { source: Source; classNames: BlogBodyClassNames }) {
+    const ogp = await getOgp(source.url);
+    return (
+        <a href={source.url} target="_blank" rel="noopener noreferrer" className={classNames.card}>
+            {!ogp?.image && (
+                <span className={classNames.cardIcon} aria-hidden="true">
+                    ↗
+                </span>
+            )}
+            <span className="min-w-0 flex-1">
+                <span className={classNames.cardSite}>
+                    {[source.publisher, hostOf(source.url), source.note].filter(Boolean).join(' · ')}
+                </span>
+                <span className={classNames.cardTitle}>{source.title}</span>
+                {ogp?.description && <span className={classNames.cardDesc}>{ogp.description}</span>}
+            </span>
+            {ogp?.image && <OgImage src={ogp.image} className={classNames.cardImage} />}
+        </a>
+    );
+}
 
 export default function BlogBody({ body, classNames }: { body: string; classNames: BlogBodyClassNames }) {
     return (
@@ -123,15 +149,7 @@ export default function BlogBody({ body, classNames }: { body: string; className
                             <aside key={i} className={classNames.source} aria-label="出典">
                                 <span className={classNames.sourceLabel}>出典</span>
                                 {block.sources.map((s) => (
-                                    <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer" className={classNames.card}>
-                                        <span className={classNames.cardIcon} aria-hidden="true">↗</span>
-                                        <span className="min-w-0 flex-1">
-                                            <span className={classNames.cardSite}>
-                                                {[s.publisher, hostOf(s.url), s.note].filter(Boolean).join(' · ')}
-                                            </span>
-                                            <span className={classNames.cardTitle}>{s.title}</span>
-                                        </span>
-                                    </a>
+                                    <SourceCard key={s.url} source={s} classNames={classNames} />
                                 ))}
                             </aside>
                         );

@@ -85,6 +85,8 @@ export default async function BlogPostPage({ params }: { params: Promise<Params>
                             cardIcon: 'flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-slate-800 text-lg font-bold text-amber-200',
                             cardSite: 'block truncate text-xs text-slate-400',
                             cardTitle: 'mt-1 block font-bold leading-snug text-slate-100',
+                            cardDesc: 'mt-1 hidden overflow-hidden text-xs leading-relaxed text-slate-400 [-webkit-box-orient:vertical] [-webkit-line-clamp:2] sm:[display:-webkit-box]',
+                            cardImage: 'aspect-square w-24 flex-shrink-0 rounded-lg bg-slate-800 object-cover sm:aspect-[1.91/1] sm:w-44',
                         }}
                     />
                 </div>
