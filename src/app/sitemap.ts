@@ -43,6 +43,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: page === '/novels' ? 0.9 : 0.5,
         })
     }
+    // 日本語と英語だけ本文があるページ（ほかの言語は canonical が日本語版を向くので載せない）
+    for (const page of ['/account/delete']) {
+        const jaEnLocales = ['ja', 'en'] as const
+        const languages: Record<string, string> = {}
+        for (const l of jaEnLocales) languages[l] = `${siteUrl}${localizePath(page, l)}`
+        languages['x-default'] = `${siteUrl}${localizePath(page, defaultLocale)}`
+        for (const l of jaEnLocales) {
+            entries.push({
+                url: `${siteUrl}${localizePath(page, l)}`,
+                lastModified: new Date(),
+                changeFrequency: 'monthly',
+                priority: 0.4,
+                alternates: { languages },
+            })
+        }
+    }
     for (const path of ['/blog', ...posts.map((post) => `/blog/${post.slug}`)]) {
         entries.push({
             url: `${siteUrl}${path}`,

@@ -344,6 +344,7 @@ export default function Header() {
                             {/* Footer of drawer */}
                             <div className="p-4 border-t border-amber-200/10 flex flex-col gap-2">
                                 {isLogin ? (
+                                    <>
                                     <button
                                         type="button"
                                         onClick={() => { handleLogout(); closeMenu(); }}
@@ -352,6 +353,14 @@ export default function Header() {
                                         <span>🚪</span>
                                         <span>{currentLocale === 'ja' ? 'ログアウト' : 'Sign out'}</span>
                                     </button>
+                                    <Link
+                                        href={pg('/account/delete')}
+                                        onClick={closeMenu}
+                                        className="text-center text-amber-200/50 hover:text-amber-200/80 text-xs font-serif underline-offset-2 hover:underline transition"
+                                    >
+                                        {currentLocale === 'ja' ? 'アカウントの削除' : 'Delete account'}
+                                    </Link>
+                                    </>
                                 ) : (
                                     <button
                                         type="button"

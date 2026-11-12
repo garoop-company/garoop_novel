@@ -51,12 +51,13 @@ function isUnauthenticated(data: unknown): boolean {
 }
 
 // headers: 追加で送るヘッダー（ログイン・登録などで reCAPTCHA のトークンを載せる）
-async function gql(query: string, headers?: Record<string, string>): Promise<unknown> {
+// variables: GraphQL の変数（入力を文字列に埋め込まずに送りたいとき）
+async function gql(query: string, headers?: Record<string, string>, variables?: Record<string, unknown>): Promise<unknown> {
   try {
     const res = await fetch(`${KIDS_API}/query`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...headers },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify(variables ? { query, variables } : { query }),
       credentials: "include",
     })
     const data = await res.json()
@@ -168,6 +169,31 @@ export async function socialLoginCallback(
 
 export async function logoutUser(): Promise<void> {
   await gql(`mutation { logout { success } }`)
+}
+
+/**
+ * アカウント削除（kids_api の deleteAccount）。取り消せない。
+ *
+ * Garoop 共通アカウントそのものが消えるので、ほかの Garoop アプリからも消える。
+ * confirmation は画面に出した語（"DELETE"）をそのまま打たせたもの。
+ * Garoop Pay のおさいふを開設ずみのアカウントは、保護者の合言葉（passcode）が必要。
+ * 成功すると kids_api がセッションも消す（ブラウザ側の状態は呼び出し側で消す）。
+ *
+ * code: unauthenticated / passcode_required / passcode_mismatch / passcode_locked /
+ *       confirmation_mismatch / not_found / backend_error（通信できなかったときは network）
+ */
+export const DELETE_CONFIRMATION = "DELETE"
+
+export async function deleteAccount(confirmation: string, passcode?: string): Promise<{ ok: boolean; code: string | null }> {
+  const data = await gql(
+    `mutation DeleteAccount($input: DeleteAccountInput!) { deleteAccount(input: $input) { ok code } }`,
+    undefined,
+    { input: { confirmation, passcode: passcode || null, origin: "web" } },
+  ) as { data?: { deleteAccount?: { ok: boolean; code: string | null } | null } } | null
+  if (!data) return { ok: false, code: "network" }
+  if (isUnauthenticated(data)) return { ok: false, code: "unauthenticated" }
+  const r = data.data?.deleteAccount
+  return { ok: !!r?.ok, code: r?.code ?? (r ? null : "backend_error") }
 }
 
 // 別ドメインから受け取ったワンタイムトークンを使って sessionId Cookie を発行してもらう。

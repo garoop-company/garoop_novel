@@ -39,6 +39,9 @@ export default function Footer({ lang = 'ja' }: FooterProps) {
                         <Link href={pg('/terms')} className="hover:text-amber-200 transition-colors">
                             {dict.common.terms}
                         </Link>
+                        <Link href={pg('/account/delete')} className="hover:text-amber-200 transition-colors">
+                            {lang === 'ja' ? 'アカウントの削除' : 'Delete account'}
+                        </Link>
                         <Link href={pg('/contact')} className="hover:text-amber-200 transition-colors">
                             {dict.common.contact}
                         </Link>

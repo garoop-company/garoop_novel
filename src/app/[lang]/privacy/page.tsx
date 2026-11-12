@@ -36,7 +36,14 @@ export default function PrivacyPage() {
                 </section>
 
                 <section className="mb-8">
-                    <h2 className="text-xl font-bold mb-4 text-slate-100">3. 免責事項</h2>
+                    <h2 className="text-xl font-bold mb-4 text-slate-100">3. アカウントの削除</h2>
+                    <p className="mb-4">
+                        Garoop アカウントとそれに紐づくデータは、<a href="https://novel.garoop.jp/account/delete" className="text-amber-200 underline hover:text-amber-100">https://novel.garoop.jp/account/delete</a> からいつでも削除できます。Garoop アカウントは Garoop の全アプリで共通のため、削除すると Garoop の全アプリから消えます。
+                    </p>
+                </section>
+
+                <section className="mb-8">
+                    <h2 className="text-xl font-bold mb-4 text-slate-100">4. 免責事項</h2>
                     <p className="mb-4">
                         当ブログからのリンクやバナーなどで移動したサイトで提供される情報、サービス等について一切の責任を負いません。<br />
                         また当ブログのコンテンツ・情報について、できる限り正確な情報を掲載するよう努めておりますが、正確性や安全性を保証するものではありません。情報が古くなっていることもございます。<br />
