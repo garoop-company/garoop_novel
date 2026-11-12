@@ -7,6 +7,7 @@ import aiFilmHumanStory from './ai-film-human-story';
 import tvDramaAiSandbox from './tv-drama-ai-sandbox';
 import sameCharacterEveryScene from './same-character-every-scene';
 import storyWorldOwnAi from './story-world-own-ai';
+import aiMangaFesReadersVote from './ai-manga-fes-readers-vote';
 
 /** 記事を足すときは、ここに import を1行と配列に1つ足す（並び順は lib/blog/index.ts で日付順にする） */
-export const POSTS: BlogPost[] = [readerBecomesTheHeroByus, sayHowAiHelped, storyToScreenTools, charactersWithTaste, aiFilmHumanStory, tvDramaAiSandbox, sameCharacterEveryScene, storyWorldOwnAi];
+export const POSTS: BlogPost[] = [readerBecomesTheHeroByus, sayHowAiHelped, storyToScreenTools, charactersWithTaste, aiFilmHumanStory, tvDramaAiSandbox, sameCharacterEveryScene, storyWorldOwnAi, aiMangaFesReadersVote];
