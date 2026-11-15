@@ -1,8 +1,35 @@
 import type { Metadata, Viewport } from "next";
 import { locales, Locale } from "@/locales";
 import Script from "next/script";
+import { Cormorant_Garamond, Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
 import "./globals.css";
 import { generateLocalizedMetadata } from "@/lib/seo";
+
+// フォント。以前は globals.css の @import で Google Fonts から読んでいたが、
+// 「HTML → CSS → Google の CSS → フォント」と順番待ちになり最初の表示が遅れるので next/font にした。
+// 書体・太さは以前と同じ。
+const cormorant = Cormorant_Garamond({
+  weight: ["500", "600", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-cormorant",
+});
+// 日本語フォントは Google 側で 100 個以上の小さなファイルに分かれていて、preload すると全部を
+// 最初に取りにいってしまう。preload しなくても、ページで使う文字のファイルだけをブラウザが取る（unicode-range）。
+const notoSans = Noto_Sans_JP({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  preload: false,
+  variable: "--font-noto-sans",
+});
+const notoSerif = Noto_Serif_JP({
+  weight: ["500", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  preload: false,
+  variable: "--font-noto-serif",
+});
 
 // ✅ メタデータ（SEO対策）
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
@@ -65,12 +92,9 @@ export default async function RootLayout({
   const { lang: rawLang } = await params;
   const lang = (locales.includes(rawLang as Locale) ? rawLang : 'ja') as Locale;
   return (
-    <html lang={lang}>
+    <html lang={lang} className={`${cormorant.variable} ${notoSans.variable} ${notoSerif.variable}`}>
       <head>
         <meta name="icon" content="/favicon.ico" />
-        {/* globals.css の @import で読む Google Fonts へ、CSS を待たずに先に接続しておく */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {GA_MEASUREMENT_ID ? (
           <>
             <Script

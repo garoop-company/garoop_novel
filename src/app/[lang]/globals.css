@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Noto Sans JP", "Noto Sans", sans-serif;
-  --font-serif: "Cormorant Garamond", "Noto Serif JP", serif;
+  /* フォントは layout.tsx の next/font で読み込む（このサイトから配るので Google への接続も CSS の待ちもない） */
+  --font-sans: var(--font-noto-sans), "Noto Sans", sans-serif;
+  --font-serif: var(--font-cormorant), var(--font-noto-serif), serif;
   /* 本文(最大1280px)の左右に赤ちゃんパネル分の余白が出る幅。`wide:` バリアントで利用 */
   --breakpoint-wide: 1440px;
 }
