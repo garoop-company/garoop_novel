@@ -7,6 +7,7 @@ import {
 } from "@/lib/baby-api"
 import { preloadRecaptcha, RECAPTCHA_FAILED, RECAPTCHA_FAILED_MESSAGE } from "@/lib/recaptcha"
 import RecaptchaNotice from "@/components/RecaptchaNotice"
+import { navigateOutsideFrame } from "@/lib/navigate-outside-frame"
 
 type View = "login" | "register" | "forgotPassword"
 
@@ -236,7 +237,7 @@ export function GaruLoginModal({ onClose, onLogin }: {
       }
       sessionStorage.setItem("login_provider", provider)
       localStorage.setItem("login_provider", provider)
-      window.location.href = authUrl
+      navigateOutsideFrame(authUrl)
     } catch {
       setPendingProvider(null)
       setSocialError("SNSログインの準備に失敗しました。時間をおいて再度お試しください。")
